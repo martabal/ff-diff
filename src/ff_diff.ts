@@ -1,10 +1,11 @@
-import { existsSync, mkdirSync } from "fs";
+import { existsSync, mkdirSync, writeFileSync } from "fs";
+import { rm } from "fs/promises";
 import path from "path";
 import {
   installFirefox,
   cleanOptions,
   __dirname,
-  removeFolder,
+  printOptions,
 } from "./helpers";
 import { type ChangedKey, comparePrefs, getPrefs, type Key } from "./firefox";
 
@@ -18,10 +19,11 @@ type ShowDiff<T> = {
   const version1 = process.argv[2];
   const version2 = process.argv[3];
   const installDir = path.join(__dirname, "dist");
+  const changelogDir = path.join(__dirname, "changelog");
 
   if (!version1 || !version2) {
     console.error(
-      `Usage: npm run compare_ff_prefs <version1> <version2> [--clean-archives] [--clean-sources]`,
+      `Usage: npm run compare_ff_prefs <version1> <version2> [--clean-archives] [--clean-sources] [--do-not-print-changelog-in-console] [--save-in-changelog-file]`,
     );
     process.exit(1);
   }
@@ -49,9 +51,9 @@ type ShowDiff<T> = {
 
     if (cleanOptions.sources) {
       console.log(`Removing sources for Firefox v${version1}`);
-      await removeFolder(firefoxV1Dir);
+      await rm(firefoxV1Dir, { recursive: true });
       console.log(`Removing sources for Firefox v${version2}`);
-      await removeFolder(firefoxV1Dir);
+      await rm(firefoxV1Dir, { recursive: true });
     } else {
       console.log(`Keeping sources for Firefox v${version1}`);
       console.log(`Keeping sources for Firefox v${version2}`);
@@ -92,13 +94,34 @@ type ShowDiff<T> = {
       },
     ];
 
-    for (const { label, keys, format } of sections) {
-      console.log(`\n${label} in ${version2}:`);
+    const output = [];
+    for (let i = 0; i < sections.length; i++) {
+      const { label, keys, format } = sections[i];
+      output.push(`${label} in ${version2}:`);
       if (keys.length) {
-        console.log(keys.map((key) => format(key)).join("\n"));
+        output.push(keys.map((key) => format(key)).join("\n"));
       } else {
-        console.log("(none)");
+        output.push("(none)");
       }
+      if (i < sections.length - 1) {
+        output.push("\n");
+      }
+    }
+
+    if (printOptions.saveInChangelogFile) {
+      if (!existsSync(changelogDir)) {
+        console.log("creating changelog directory");
+        mkdirSync(changelogDir);
+      }
+      const changelogPath = path.join(
+        changelogDir,
+        `${version1}-${version2}.txt`,
+      );
+      console.log(`writing changelog to ${changelogPath}`);
+      writeFileSync(changelogPath, output.join("\n") + "\n");
+    }
+    if (!printOptions.doNotPrintConsole) {
+      console.log(output.join("\n"));
     }
   } catch (err) {
     console.error("Error:", err);

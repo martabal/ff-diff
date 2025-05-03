@@ -21,6 +21,6 @@ export default tseslint.config([
     },
   },
   {
-    ignores: ["dist", "build", "node_modules"],
+    ignores: ["build", "changelog", "dist", "node_modules"],
   },
 ]);

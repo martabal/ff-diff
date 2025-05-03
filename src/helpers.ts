@@ -1,22 +1,34 @@
 import { execSync } from "child_process";
-import { createWriteStream, existsSync, mkdirSync, rmSync, rm } from "fs";
+import { createWriteStream, existsSync, mkdirSync, rmSync } from "fs";
 import path from "path";
 import { pipeline, Readable } from "stream";
 import { promisify } from "util";
 
-export type Options = {
+export type SourcesOptions = {
   archives: boolean;
   sources: boolean;
 };
 
-export const cleanOptions: Options = {
+export type PrintOptions = {
+  doNotPrintConsole: boolean;
+  saveInChangelogFile: boolean;
+};
+
+export const cleanOptions: SourcesOptions = {
   archives: process.argv.includes("--remove-archive"),
   sources: process.argv.includes("--remove-sources"),
 };
 
-export const keepOptions: Options = {
+export const keepOptions: SourcesOptions = {
   archives: process.argv.includes("--keep-archive"),
   sources: process.argv.includes("--keep-sources"),
+};
+
+export const printOptions: PrintOptions = {
+  doNotPrintConsole: process.argv.includes(
+    "--do-not-print-changelog-in-console",
+  ),
+  saveInChangelogFile: process.argv.includes("--save-in-changelog-file"),
 };
 
 export const __dirname = process.cwd();
@@ -46,15 +58,6 @@ const downloadFile = async (url: string, dest: string) => {
   const nodeReadableStream = Readable.from(readableStream);
 
   await streamPipeline(nodeReadableStream, createWriteStream(dest));
-};
-
-export const removeFolder = async (path: string) => {
-  await rm(path, { recursive: true }, (err) => {
-    if (err) {
-      console.log(`can't delete ${path}`);
-    }
-    console.log(`${path} is deleted!`);
-  });
 };
 
 export const installFirefox = async (

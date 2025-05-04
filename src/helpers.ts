@@ -28,7 +28,7 @@ export const printOptions: PrintOptions = {
   doNotPrintConsole: process.argv.includes(
     "--do-not-print-changelog-in-console",
   ),
-  saveInChangelogFile: process.argv.includes("--save-in-changelog-file"),
+  saveInChangelogFile: process.argv.includes("--save-changelog-in-file"),
 };
 
 export const __dirname = process.cwd();
@@ -80,6 +80,7 @@ export const installFirefox = async (
   const executablePath = path.join(destPath, "firefox");
 
   if (!existsSync(archivePath)) {
+    console.log(`Downloading firefox ${version}`);
     const downloadUrl = `https://archive.mozilla.org/pub/firefox/releases/${version}/linux-x86_64/en-US/firefox-${version}.tar.xz`;
     await downloadFile(downloadUrl, archivePath);
   } else {
@@ -92,9 +93,9 @@ export const installFirefox = async (
   }
 
   if (cleanOptions.archives) {
-    console.log(`Removing archive for Firefox v${version}`);
+    console.log(`Removing archive for Firefox ${version}`);
     await rmSync(archivePath);
   } else {
-    console.log(`Keeping archive for Firefox v${version}`);
+    console.log(`Keeping archive for Firefox ${version}`);
   }
 };

@@ -13,7 +13,7 @@ import { type ChangedKey, comparePrefs, getPrefs, type Key } from "./firefox";
 type ShowDiff<T> = {
   label: string;
   keys: T[];
-  format: (key: T) => string;
+  formatter: (key: T, format: "md" | "txt") => string;
 };
 
 (async () => {
@@ -24,7 +24,7 @@ type ShowDiff<T> = {
 
   if (!version1 || !version2) {
     console.error(
-      `Usage: npm run compare_ff_prefs <version1> <version2> [--clean-archives] [--clean-sources] [--do-not-print-changelog-in-console] [--save-in-changelog-file] [--compare-userjs <path>]`,
+      `Usage: npm run compare_ff_prefs <version1> <version2> [--clean-archives] [--clean-sources] [--do-not-print-changelog-in-console] [--save-changelog-in-file] [--compare-userjs <path>]`,
     );
     process.exit(1);
   }
@@ -32,7 +32,7 @@ type ShowDiff<T> = {
   const compareUserjs = getArgumentValue("--compare-userjs");
 
   console.log(
-    `Installing Firefox v${version1} and v${version2} in "dist" directory`,
+    `Installing Firefox ${version1} and ${version2} in "dist" directory`,
   );
 
   if (!existsSync(installDir)) {
@@ -40,99 +40,107 @@ type ShowDiff<T> = {
   }
 
   try {
-    await installFirefox(version1, installDir);
-    await installFirefox(version2, installDir);
+    const versions = [version1, version2];
+    await Promise.all(versions.map((v) => installFirefox(v, installDir)));
 
-    const firefoxV1Dir = path.join(installDir, `${version1}/firefox`);
-    const firefoxV2Dir = path.join(installDir, `${version2}/firefox`);
+    const dirs = versions.map((v) => path.join(installDir, v, "firefox"));
+    const paths = dirs.map((d) => path.join(d, "firefox"));
 
-    const firefoxV1Path = path.join(firefoxV1Dir, "firefox");
-    const firefoxV2Path = path.join(firefoxV2Dir, "firefox");
+    const prefs = await Promise.all(paths.map(getPrefs));
 
-    const prefsV1 = await getPrefs(firefoxV1Path);
-    const prefsV2 = await getPrefs(firefoxV2Path);
+    const action = cleanOptions.sources ? "Removing" : "Keeping";
+    versions.forEach((v) => console.log(`${action} sources for Firefox ${v}`));
 
     if (cleanOptions.sources) {
-      console.log(`Removing sources for Firefox v${version1}`);
-      await rm(firefoxV1Dir, { recursive: true });
-      console.log(`Removing sources for Firefox v${version2}`);
-      await rm(firefoxV1Dir, { recursive: true });
-    } else {
-      console.log(`Keeping sources for Firefox v${version1}`);
-      console.log(`Keeping sources for Firefox v${version2}`);
+      await Promise.all(dirs.map((d) => rm(d, { recursive: true })));
     }
 
-    const configDiff = comparePrefs(prefsV1, prefsV2);
+    const configDiff = comparePrefs(prefs[0], prefs[1]);
+    const tickFor = (format: string) => (format === "md" ? "`" : "");
+    const tickTxtFor = (format: string) => (format === "txt" ? " " : "");
+    const symbol = (format: "md" | "txt", symbol: string) =>
+      format == "md" ? "-" : symbol;
 
     const sections: ShowDiff<ChangedKey | Key>[] = [
       {
         label: "✅ New keys",
         keys: configDiff.addedKeys,
-        format: (keyString) => {
-          const { key, value } = keyString as Key;
-
-          return ` + ${key}: ${value}`;
+        formatter: (item, format) => {
+          const { key, value } = item as Key;
+          const tick = tickFor(format);
+          const tickTxt = tickTxtFor(format);
+          return `${tickTxt}${symbol(format, "+")} ${tick}${key}${tick}: ${tick}${value}${tick}`;
         },
       },
       {
         label: "❌ Removed keys",
         keys: configDiff.removedKeys,
-        format: (keyString) => {
-          const { key } = keyString as Key;
-
-          return ` - ${key}`;
+        formatter: (item, format) => {
+          const { key } = item as Key;
+          const tick = tickFor(format);
+          const tickTxt = tickTxtFor(format);
+          return `${tickTxt}${symbol(format, "-")} ${tick}${key}${tick}`;
         },
       },
       {
         label: "🔁 Changed keys",
         keys: configDiff.changedKeys,
-        format: (keyString) => {
-          const { key, value, newValue } = keyString as ChangedKey;
-
-          return `  ~ ${key}: ${value} -> ${newValue}`;
+        formatter: (item, format) => {
+          const { key, value, newValue } = item as ChangedKey;
+          const tick = tickFor(format);
+          const tickTxt = tickTxtFor(format);
+          return `${tickTxt}${symbol(format, "~")} ${tick}${key}${tick}: ${tick}${value}${tick} -> ${tick}${newValue}${tick}`;
         },
       },
     ];
 
-    const output = [];
-    for (let i = 0; i < sections.length; i++) {
-      const { label, keys, format } = sections[i];
-      output.push(`${label} in ${version2}:`);
-      if (keys.length) {
-        output.push(keys.map((key) => format(key)).join("\n"));
-      } else {
-        output.push("(none)");
-      }
-      if (i < sections.length - 1) {
-        output.push("\n");
-      }
-    }
+    const generateOutput = (format: "md" | "txt") => {
+      const lines: string[] = [];
+
+      sections.forEach(({ label, keys, formatter }, index) => {
+        const header =
+          format === "md"
+            ? `## ${label} in ${version2}\n`
+            : `${label} in ${version2}:\n`;
+        const content = keys.length
+          ? keys.map((key) => formatter(key, format)).join("\n")
+          : "(none)";
+
+        lines.push(header, content);
+
+        if (index < sections.length - 1) {
+          lines.push("");
+        }
+      });
+
+      return lines;
+    };
+
+    const outputMD = generateOutput("md");
+    const outputTXT = generateOutput("txt");
 
     if (printOptions.saveInChangelogFile) {
+      const title = `# Changelog Firefox ${version1}-${version2}\n\n`;
       if (!existsSync(changelogDir)) {
         console.log("creating changelog directory");
         mkdirSync(changelogDir);
       }
       const changelogPath = path.join(
         changelogDir,
-        `${version1}-${version2}.txt`,
+        `${version1}-${version2}.md`,
       );
       console.log(`writing changelog to ${changelogPath}`);
-      writeFileSync(changelogPath, output.join("\n") + "\n");
+      writeFileSync(changelogPath, title + outputMD.join("\n") + "\n");
     }
+
     if (!printOptions.doNotPrintConsole) {
-      console.log(output.join("\n"));
+      console.log(outputTXT.join("\n"));
     }
 
     if (compareUserjs) {
       if (!printOptions.doNotPrintConsole) {
         console.log("\n");
       }
-      configDiff.changedKeys.push({
-        key: "browser.ml.chat.enabled",
-        value: "true",
-        newValue: "false",
-      });
 
       const userJsContent = readFileSync(compareUserjs, "utf-8");
 

@@ -40,3 +40,7 @@ The Firefox sources will be downloaded into the `dist/` directory. By default, t
 
 > [!NOTE]  
 > The script may take some time to run depending on your connection speed.
+
+Example of a generated changelog:
+
+![Image of the example](./images/changelog-example.png)

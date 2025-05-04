@@ -41,18 +41,23 @@ type ShowDiff<T> = {
 
   try {
     const versions = [version1, version2];
-    await Promise.all(versions.map((v) => installFirefox(v, installDir)));
+    await Promise.all(
+      versions.map((version) => installFirefox(version, installDir)),
+    );
 
-    const dirs = versions.map((v) => path.join(installDir, v, "firefox"));
-    const paths = dirs.map((d) => path.join(d, "firefox"));
+    const dirs = versions.map((version) =>
+      path.join(installDir, version, "firefox"),
+    );
+    const paths = dirs.map((dir) => path.join(dir, "firefox"));
 
     const prefs = await Promise.all(paths.map(getPrefs));
 
-    const action = cleanOptions.sources ? "Removing" : "Keeping";
-    versions.forEach((v) => console.log(`${action} sources for Firefox ${v}`));
+    for (const version of versions) {
+      console.log(`Removing sources for Firefox ${version}`);
+    }
 
     if (cleanOptions.sources) {
-      await Promise.all(dirs.map((d) => rm(d, { recursive: true })));
+      await Promise.all(dirs.map((dir) => rm(dir, { recursive: true })));
     }
 
     const configDiff = comparePrefs(prefs[0], prefs[1]);
@@ -99,13 +104,15 @@ type ShowDiff<T> = {
     const generateOutput = (format: "md" | "txt") => {
       const lines: string[] = [];
 
-      sections.forEach(({ label, keys, formatter }, index) => {
+      for (let index = 0; index < sections.length; index++) {
+        const { label, keys, formatter } = sections[index];
+
         const header =
           format === "md"
             ? `<details open><summary>\n\n## ${label} in ${version2}\n</summary>\n`
-            : `${label} in ${version2}:\n`;
+            : `${label} in ${version2}:`;
         const content = keys.length
-          ? `${keys.map((key) => formatter(key, format)).join("\n")}${"\n\n</details>"}`
+          ? `${keys.map((key) => formatter(key, format)).join("\n")}${format === "md" ? "\n\n</details>" : ""}`
           : "(none)";
 
         lines.push(header, content);
@@ -113,7 +120,7 @@ type ShowDiff<T> = {
         if (index < sections.length - 1) {
           lines.push("");
         }
-      });
+      }
 
       return lines;
     };

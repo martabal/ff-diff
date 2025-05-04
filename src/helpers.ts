@@ -80,7 +80,12 @@ export const installFirefox = async (
   if (!existsSync(archivePath)) {
     console.log(`Downloading firefox ${version}`);
     const downloadUrl = `https://archive.mozilla.org/pub/firefox/releases/${version}/linux-x86_64/en-US/firefox-${version}.tar.xz`;
-    await downloadFile(downloadUrl, archivePath);
+    try {
+      await downloadFile(downloadUrl, archivePath);
+    } catch (error) {
+      console.error(`Can't download firefox ${version}: ${error}`);
+      process.exit(1);
+    }
   } else {
     console.log(`Archive already exists at ${archivePath}. Skipping download.`);
   }

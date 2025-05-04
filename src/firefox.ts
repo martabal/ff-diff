@@ -26,9 +26,9 @@ export type ConfigDiff = {
 interface FirefoxGlobal extends Window {
   Services: {
     prefs: {
-      getChildList: (prefix: string) => string[];
-      getPrefType: (name: string) => number;
       getDefaultBranch: (prefix: string) => {
+        getChildList: (prefix: string) => string[];
+        getPrefType: (name: string) => number;
         getBoolPref: (name: string) => "boolean";
         getIntPref: (name: string) => "number";
         getStringPref: (name: string) => "string";
@@ -36,6 +36,7 @@ interface FirefoxGlobal extends Window {
       PREF_BOOL: number;
       PREF_INT: number;
       PREF_STRING: number;
+      PREF_INVALID: number;
     };
   };
 }
@@ -53,47 +54,42 @@ export const getPrefs = async (
 
   let prefs: FirefoxPref[] = [];
 
-  try {
-    await driver.get("about:config");
+  await driver.get("about:config");
 
-    prefs = await driver.executeScript<FirefoxPref[]>(function () {
-      const services = (globalThis as unknown as FirefoxGlobal).Services;
-      const gPrefBranch = services.prefs;
-      const defaultBranch = gPrefBranch.getDefaultBranch("");
-      const prefs: FirefoxPref[] = [];
-
-      for (const name of gPrefBranch.getChildList("")) {
-        try {
-          let value;
-          switch (gPrefBranch.getPrefType(name)) {
-            case gPrefBranch.PREF_BOOL:
-              value = defaultBranch.getBoolPref(name);
-              break;
-            case gPrefBranch.PREF_INT:
-              value = defaultBranch.getIntPref(name);
-              break;
-            default:
-              value = defaultBranch.getStringPref(name);
-              break;
-          }
-
-          prefs.push({
-            name,
-            value,
-          });
-        } catch (error) {
-          console.error(error);
+  prefs = await driver.executeScript<FirefoxPref[]>(function () {
+    const services = (globalThis as unknown as FirefoxGlobal).Services;
+    const gPrefBranch = services.prefs;
+    const defaultBranch = services.prefs.getDefaultBranch("");
+    const prefs: FirefoxPref[] = [];
+    for (const name of defaultBranch.getChildList("")) {
+      let value;
+      try {
+        switch (defaultBranch.getPrefType(name)) {
+          case gPrefBranch.PREF_BOOL:
+            value = defaultBranch.getBoolPref(name);
+            break;
+          case gPrefBranch.PREF_INT:
+            value = defaultBranch.getIntPref(name);
+            break;
+          case gPrefBranch.PREF_STRING:
+            value = defaultBranch.getStringPref(name);
+            break;
+          case gPrefBranch.PREF_INVALID:
+          default:
+            continue;
         }
+        prefs.push({
+          name,
+          value,
+        });
+      } catch (error) {
+        console.log(error);
       }
+    }
+    return prefs;
+  });
 
-      return prefs;
-    });
-  } catch (error) {
-    console.error(error);
-  } finally {
-    await driver.quit();
-  }
-
+  await driver.quit();
   return prefs;
 };
 

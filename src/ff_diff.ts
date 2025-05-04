@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, writeFileSync } from "fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { rm } from "fs/promises";
 import path from "path";
 import {
@@ -6,6 +6,7 @@ import {
   cleanOptions,
   __dirname,
   printOptions,
+  getArgumentValue,
 } from "./helpers";
 import { type ChangedKey, comparePrefs, getPrefs, type Key } from "./firefox";
 
@@ -23,10 +24,12 @@ type ShowDiff<T> = {
 
   if (!version1 || !version2) {
     console.error(
-      `Usage: npm run compare_ff_prefs <version1> <version2> [--clean-archives] [--clean-sources] [--do-not-print-changelog-in-console] [--save-in-changelog-file]`,
+      `Usage: npm run compare_ff_prefs <version1> <version2> [--clean-archives] [--clean-sources] [--do-not-print-changelog-in-console] [--save-in-changelog-file] [--compare-userjs <path>]`,
     );
     process.exit(1);
   }
+
+  const compareUserjs = getArgumentValue("--compare-userjs");
 
   console.log(
     `Installing Firefox v${version1} and v${version2} in "dist" directory`,
@@ -59,15 +62,12 @@ type ShowDiff<T> = {
       console.log(`Keeping sources for Firefox v${version2}`);
     }
 
-    const { addedKeys, removedKeys, changedKeys } = comparePrefs(
-      prefsV1,
-      prefsV2,
-    );
+    const configDiff = comparePrefs(prefsV1, prefsV2);
 
     const sections: ShowDiff<ChangedKey | Key>[] = [
       {
         label: "✅ New keys",
-        keys: addedKeys,
+        keys: configDiff.addedKeys,
         format: (keyString) => {
           const { key, value } = keyString as Key;
 
@@ -76,7 +76,7 @@ type ShowDiff<T> = {
       },
       {
         label: "❌ Removed keys",
-        keys: removedKeys,
+        keys: configDiff.removedKeys,
         format: (keyString) => {
           const { key } = keyString as Key;
 
@@ -85,7 +85,7 @@ type ShowDiff<T> = {
       },
       {
         label: "🔁 Changed keys",
-        keys: changedKeys,
+        keys: configDiff.changedKeys,
         format: (keyString) => {
           const { key, value, newValue } = keyString as ChangedKey;
 
@@ -122,6 +122,42 @@ type ShowDiff<T> = {
     }
     if (!printOptions.doNotPrintConsole) {
       console.log(output.join("\n"));
+    }
+
+    if (compareUserjs) {
+      if (!printOptions.doNotPrintConsole) {
+        console.log("\n");
+      }
+      configDiff.changedKeys.push({
+        key: "browser.ml.chat.enabled",
+        value: "true",
+        newValue: "false",
+      });
+
+      const userJsContent = readFileSync(compareUserjs, "utf-8");
+
+      const userKeys = [...userJsContent.matchAll(/user_pref\("([^"]+)"/g)].map(
+        (match) => match[1],
+      );
+
+      const changed = configDiff.changedKeys.filter((k) =>
+        userKeys.includes(k.key),
+      );
+      const removed = configDiff.removedKeys.filter((k) =>
+        userKeys.includes(k.key),
+      );
+
+      if (changed.length > 0) {
+        console.log("The following user.js settings were changed:", changed);
+      }
+
+      if (removed.length > 0) {
+        console.log("The following user.js settings were removed:", removed);
+      }
+
+      if (changed.length === 0 && removed.length === 0) {
+        console.log("No user.js settings were changed.");
+      }
     }
   } catch (err) {
     console.error("Error:", err);

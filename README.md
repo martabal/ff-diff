@@ -36,7 +36,7 @@ for example:
 npm run ff_diff 137.0 138.0
 ```
 
-The Firefox sources will be downloaded into the `dist/` directory. By default, the script keeps the archives and the sources extracted from the archives. If you want to remove them, you can execute the script with the `--clean-archives` `--clean-sources` arguments.
+The Firefox sources will be downloaded into the `dist/` directory. By default, the script keeps the archives and the sources extracted from the archives. If you want to remove them, you can execute the script with the `--clean-archives` `--clean-sources` arguments. If you use a custom `user.js`. You can check if some of the keys are removed/changed with the argument `--compare-userjs <path_to_your_userjs>`.
 
 > [!NOTE]  
 > The script may take some time to run depending on your connection speed.

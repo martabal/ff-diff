@@ -1,6 +1,6 @@
 # ff_diff
 
-ff_diff is a simple node script to compare changes in user.js preference files between two versions of Firefox. You don't need to mess with your firefox instance.
+`ff_diff` is a simple node script to compare changes in user.js preference files between two versions of Firefox. You don't need to mess with your firefox instance.
 
 Features:
 
@@ -36,11 +36,21 @@ for example:
 npm run ff_diff 137.0 138.0
 ```
 
-The Firefox sources will be downloaded into the `dist/` directory. By default, the script keeps the archives and the sources extracted from the archives. If you want to remove them, you can execute the script with the `--clean-archives` `--clean-sources` arguments. If you use a custom `user.js`. You can check if some of the keys are removed/changed with the argument `--compare-userjs <path_to_your_userjs>`.
+If you use a custom `user.js`. You can check if some of the keys are removed/changed with the argument `--compare-userjs <path_to_your_userjs>`.
+
+## Clean
+
+The Firefox sources will be downloaded into the `dist/` directory. By default, the script keeps the archives and the sources extracted from the archives. If you want to remove them, you can execute the script with the `--remove-archives` `--remove-sources` arguments. But you can also use the script `npm run clean` to delete all archives and sources in `dist/`. If you want to use specific version you can use:
+
+```bash
+npm run clean -- --keep <version1>,<version2>
+```
+
+If you want to only keep archives you can use `npm run clean -- --keep <version1>,<version2> --keep-archives` or `npm run clean -- --keep <version1>,<version2> --keep-sources` if you want to keep the sources
 
 > [!NOTE]  
 > The script may take some time to run depending on your connection speed.
 
-Example of a generated changelog:
+Example of a generated diffs:
 
-![Image of the example](./images/changelog-example.png)
+![Image of the example](./images/diffs-example.png)

@@ -20,11 +20,11 @@ type ShowDiff<T> = {
   const version1 = process.argv[2];
   const version2 = process.argv[3];
   const installDir = path.join(__dirname, "dist");
-  const changelogDir = path.join(__dirname, "changelog");
+  const diffsDir = path.join(__dirname, "diffs");
 
   if (!version1 || !version2) {
     console.error(
-      `Usage: npm run compare_ff_prefs <version1> <version2> [--clean-archives] [--clean-sources] [--do-not-print-changelog-in-console] [--save-changelog-in-file] [--compare-userjs <path>]`,
+      `Usage: npm run compare_ff_prefs <version1> <version2> [--clean-archives] [--clean-sources] [--do-not-print-diffs-in-console] [--save-diffs-in-file] [--compare-userjs <path>]`,
     );
     process.exit(1);
   }
@@ -60,6 +60,8 @@ type ShowDiff<T> = {
     const tickTxtFor = (format: string) => (format === "txt" ? " " : "");
     const symbol = (format: "md" | "txt", symbol: string) =>
       format == "md" ? "-" : symbol;
+    const formatValue = (val: string | number | boolean) =>
+      val === "" ? '""' : val;
 
     const sections: ShowDiff<ChangedKey | Key>[] = [
       {
@@ -69,7 +71,7 @@ type ShowDiff<T> = {
           const { key, value } = item as Key;
           const tick = tickFor(format);
           const tickTxt = tickTxtFor(format);
-          return `${tickTxt}${symbol(format, "+")} ${tick}${key}${tick}: ${tick}${value}${tick}`;
+          return `${tickTxt}${symbol(format, "+")} ${tick}${key}${tick}: ${tick}${formatValue(value)}${tick}`;
         },
       },
       {
@@ -89,7 +91,7 @@ type ShowDiff<T> = {
           const { key, value, newValue } = item as ChangedKey;
           const tick = tickFor(format);
           const tickTxt = tickTxtFor(format);
-          return `${tickTxt}${symbol(format, "~")} ${tick}${key}${tick}: ${tick}${value}${tick} -> ${tick}${newValue}${tick}`;
+          return `${tickTxt}${symbol(format, "~")} ${tick}${key}${tick}: ${tick}${formatValue(value)}${tick} -> ${tick}${formatValue(newValue)}${tick}`;
         },
       },
     ];
@@ -100,10 +102,10 @@ type ShowDiff<T> = {
       sections.forEach(({ label, keys, formatter }, index) => {
         const header =
           format === "md"
-            ? `## ${label} in ${version2}\n`
+            ? `<details open><summary>\n\n## ${label} in ${version2}\n</summary>\n`
             : `${label} in ${version2}:\n`;
         const content = keys.length
-          ? keys.map((key) => formatter(key, format)).join("\n")
+          ? `${keys.map((key) => formatter(key, format)).join("\n")}${"\n\n</details>"}`
           : "(none)";
 
         lines.push(header, content);
@@ -119,18 +121,15 @@ type ShowDiff<T> = {
     const outputMD = generateOutput("md");
     const outputTXT = generateOutput("txt");
 
-    if (printOptions.saveInChangelogFile) {
-      const title = `# Changelog Firefox ${version1}-${version2}\n\n`;
-      if (!existsSync(changelogDir)) {
-        console.log("creating changelog directory");
-        mkdirSync(changelogDir);
+    if (printOptions.saveDiffsInFile) {
+      const title = `# Diffs Firefox ${version1}-${version2}\n\n`;
+      if (!existsSync(diffsDir)) {
+        console.log("creating diffs directory");
+        mkdirSync(diffsDir);
       }
-      const changelogPath = path.join(
-        changelogDir,
-        `${version1}-${version2}.md`,
-      );
-      console.log(`writing changelog to ${changelogPath}`);
-      writeFileSync(changelogPath, title + outputMD.join("\n") + "\n");
+      const diffsPath = path.join(diffsDir, `${version1}-${version2}.md`);
+      console.log(`writing diffs to ${diffsPath}`);
+      writeFileSync(diffsPath, title + outputMD.join("\n") + "\n");
     }
 
     if (!printOptions.doNotPrintConsole) {

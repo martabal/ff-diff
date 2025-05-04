@@ -11,24 +11,22 @@ export type SourcesOptions = {
 
 export type PrintOptions = {
   doNotPrintConsole: boolean;
-  saveInChangelogFile: boolean;
+  saveDiffsInFile: boolean;
 };
 
 export const cleanOptions: SourcesOptions = {
-  archives: process.argv.includes("--remove-archive"),
+  archives: process.argv.includes("--remove-archives"),
   sources: process.argv.includes("--remove-sources"),
 };
 
 export const keepOptions: SourcesOptions = {
-  archives: process.argv.includes("--keep-archive"),
+  archives: process.argv.includes("--keep-archives"),
   sources: process.argv.includes("--keep-sources"),
 };
 
 export const printOptions: PrintOptions = {
-  doNotPrintConsole: process.argv.includes(
-    "--do-not-print-changelog-in-console",
-  ),
-  saveInChangelogFile: process.argv.includes("--save-changelog-in-file"),
+  doNotPrintConsole: process.argv.includes("--do-not-print-diffs-in-console"),
+  saveDiffsInFile: process.argv.includes("--save-diffs-in-file"),
 };
 
 export const __dirname = process.cwd();

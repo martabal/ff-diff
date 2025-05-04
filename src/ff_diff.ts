@@ -39,141 +39,137 @@ type ShowDiff<T> = {
     mkdirSync(installDir);
   }
 
-  try {
-    const versions = [version1, version2];
-    await Promise.all(
-      versions.map((version) => installFirefox(version, installDir)),
-    );
+  const versions = [version1, version2];
+  await Promise.all(
+    versions.map((version) => installFirefox(version, installDir)),
+  );
 
-    const dirs = versions.map((version) =>
-      path.join(installDir, version, "firefox"),
-    );
-    const paths = dirs.map((dir) => path.join(dir, "firefox"));
+  const dirs = versions.map((version) =>
+    path.join(installDir, version, "firefox"),
+  );
+  const paths = dirs.map((dir) => path.join(dir, "firefox"));
 
-    const prefs = await Promise.all(paths.map(getPrefs));
+  const prefs = await Promise.all(paths.map(getPrefs));
 
-    for (const version of versions) {
-      console.log(`Removing sources for Firefox ${version}`);
-    }
+  for (const version of versions) {
+    console.log(`Removing sources for Firefox ${version}`);
+  }
 
-    if (cleanOptions.sources) {
-      await Promise.all(dirs.map((dir) => rm(dir, { recursive: true })));
-    }
+  if (cleanOptions.sources) {
+    await Promise.all(dirs.map((dir) => rm(dir, { recursive: true })));
+  }
 
-    const configDiff = comparePrefs(prefs[0], prefs[1]);
-    const tickFor = (format: string) => (format === "md" ? "`" : "");
-    const tickTxtFor = (format: string) => (format === "txt" ? " " : "");
-    const symbol = (format: "md" | "txt", symbol: string) =>
-      format == "md" ? "-" : symbol;
-    const formatValue = (val: string | number | boolean) =>
-      val === "" ? '""' : val;
+  const configDiff = comparePrefs(prefs[0], prefs[1]);
+  const tickFor = (format: string) => (format === "md" ? "`" : "");
+  const tickTxtFor = (format: string) => (format === "txt" ? " " : "");
+  const symbol = (format: "md" | "txt", symbol: string) =>
+    format == "md" ? "-" : symbol;
+  const formatValue = (val: string | number | boolean) =>
+    val === "" ? '""' : val;
 
-    const sections: ShowDiff<ChangedKey | Key>[] = [
-      {
-        label: "✅ New keys",
-        keys: configDiff.addedKeys,
-        formatter: (item, format) => {
-          const { key, value } = item as Key;
-          const tick = tickFor(format);
-          const tickTxt = tickTxtFor(format);
-          return `${tickTxt}${symbol(format, "+")} ${tick}${key}${tick}: ${tick}${formatValue(value)}${tick}`;
-        },
+  const sections: ShowDiff<ChangedKey | Key>[] = [
+    {
+      label: "✅ New keys",
+      keys: configDiff.addedKeys,
+      formatter: (item, format) => {
+        const { key, value } = item as Key;
+        const tick = tickFor(format);
+        const tickTxt = tickTxtFor(format);
+        return `${tickTxt}${symbol(format, "+")} ${tick}${key}${tick}: ${tick}${formatValue(value)}${tick}`;
       },
-      {
-        label: "❌ Removed keys",
-        keys: configDiff.removedKeys,
-        formatter: (item, format) => {
-          const { key } = item as Key;
-          const tick = tickFor(format);
-          const tickTxt = tickTxtFor(format);
-          return `${tickTxt}${symbol(format, "-")} ${tick}${key}${tick}`;
-        },
+    },
+    {
+      label: "❌ Removed keys",
+      keys: configDiff.removedKeys,
+      formatter: (item, format) => {
+        const { key } = item as Key;
+        const tick = tickFor(format);
+        const tickTxt = tickTxtFor(format);
+        return `${tickTxt}${symbol(format, "-")} ${tick}${key}${tick}`;
       },
-      {
-        label: "🔁 Changed keys",
-        keys: configDiff.changedKeys,
-        formatter: (item, format) => {
-          const { key, value, newValue } = item as ChangedKey;
-          const tick = tickFor(format);
-          const tickTxt = tickTxtFor(format);
-          return `${tickTxt}${symbol(format, "~")} ${tick}${key}${tick}: ${tick}${formatValue(value)}${tick} -> ${tick}${formatValue(newValue)}${tick}`;
-        },
+    },
+    {
+      label: "🔁 Changed keys",
+      keys: configDiff.changedKeys,
+      formatter: (item, format) => {
+        const { key, value, newValue } = item as ChangedKey;
+        const tick = tickFor(format);
+        const tickTxt = tickTxtFor(format);
+        return `${tickTxt}${symbol(format, "~")} ${tick}${key}${tick}: ${tick}${formatValue(value)}${tick} -> ${tick}${formatValue(newValue)}${tick}`;
       },
-    ];
+    },
+  ];
 
-    const generateOutput = (format: "md" | "txt") => {
-      const lines: string[] = [];
+  const generateOutput = (format: "md" | "txt") => {
+    const lines: string[] = [];
 
-      for (let index = 0; index < sections.length; index++) {
-        const { label, keys, formatter } = sections[index];
+    for (let index = 0; index < sections.length; index++) {
+      const { label, keys, formatter } = sections[index];
 
-        const header =
-          format === "md"
-            ? `<details open><summary>\n\n## ${label} in ${version2}\n</summary>\n`
-            : `${label} in ${version2}:`;
-        const content = keys.length
-          ? `${keys.map((key) => formatter(key, format)).join("\n")}${format === "md" ? "\n\n</details>" : ""}`
-          : "(none)";
+      const header =
+        format === "md"
+          ? `<details open><summary>\n\n## ${label} in ${version2}\n</summary>\n`
+          : `${label} in ${version2}:`;
+      const content = keys.length
+        ? `${keys.map((key) => formatter(key, format)).join("\n")}${format === "md" ? "\n\n</details>" : ""}`
+        : "(none)";
 
-        lines.push(header, content);
+      lines.push(header, content);
 
-        if (index < sections.length - 1) {
-          lines.push("");
-        }
+      if (index < sections.length - 1) {
+        lines.push("");
       }
-
-      return lines;
-    };
-
-    const outputMD = generateOutput("md");
-    const outputTXT = generateOutput("txt");
-
-    if (printOptions.saveDiffsInFile) {
-      const title = `# Diffs Firefox ${version1}-${version2}\n\n`;
-      if (!existsSync(diffsDir)) {
-        console.log("creating diffs directory");
-        mkdirSync(diffsDir);
-      }
-      const diffsPath = path.join(diffsDir, `${version1}-${version2}.md`);
-      console.log(`writing diffs to ${diffsPath}`);
-      writeFileSync(diffsPath, title + outputMD.join("\n") + "\n");
     }
 
+    return lines;
+  };
+
+  const outputMD = generateOutput("md");
+  const outputTXT = generateOutput("txt");
+
+  if (printOptions.saveDiffsInFile) {
+    const title = `# Diffs Firefox ${version1}-${version2}\n\n`;
+    if (!existsSync(diffsDir)) {
+      console.log("creating diffs directory");
+      mkdirSync(diffsDir);
+    }
+    const diffsPath = path.join(diffsDir, `${version1}-${version2}.md`);
+    console.log(`writing diffs to ${diffsPath}`);
+    writeFileSync(diffsPath, title + outputMD.join("\n") + "\n");
+  }
+
+  if (!printOptions.doNotPrintConsole) {
+    console.log(outputTXT.join("\n"));
+  }
+
+  if (compareUserjs) {
     if (!printOptions.doNotPrintConsole) {
-      console.log(outputTXT.join("\n"));
+      console.log("\n");
     }
 
-    if (compareUserjs) {
-      if (!printOptions.doNotPrintConsole) {
-        console.log("\n");
-      }
+    const userJsContent = readFileSync(compareUserjs, "utf-8");
 
-      const userJsContent = readFileSync(compareUserjs, "utf-8");
+    const userKeys = [...userJsContent.matchAll(/user_pref\("([^"]+)"/g)].map(
+      (match) => match[1],
+    );
 
-      const userKeys = [...userJsContent.matchAll(/user_pref\("([^"]+)"/g)].map(
-        (match) => match[1],
-      );
+    const changed = configDiff.changedKeys.filter((k) =>
+      userKeys.includes(k.key),
+    );
+    const removed = configDiff.removedKeys.filter((k) =>
+      userKeys.includes(k.key),
+    );
 
-      const changed = configDiff.changedKeys.filter((k) =>
-        userKeys.includes(k.key),
-      );
-      const removed = configDiff.removedKeys.filter((k) =>
-        userKeys.includes(k.key),
-      );
-
-      if (changed.length > 0) {
-        console.log("The following user.js settings were changed:", changed);
-      }
-
-      if (removed.length > 0) {
-        console.log("The following user.js settings were removed:", removed);
-      }
-
-      if (changed.length === 0 && removed.length === 0) {
-        console.log("No user.js settings were changed.");
-      }
+    if (changed.length > 0) {
+      console.log("The following user.js settings were changed:", changed);
     }
-  } catch (err) {
-    console.error("Error:", err);
+
+    if (removed.length > 0) {
+      console.log("The following user.js settings were removed:", removed);
+    }
+
+    if (changed.length === 0 && removed.length === 0) {
+      console.log("No user.js settings were changed.");
+    }
   }
 })();

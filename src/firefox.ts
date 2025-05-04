@@ -17,7 +17,7 @@ export interface ChangedKey extends Key {
 
 type ConfigType = string | number | boolean;
 
-type ConfigDiff = {
+export type ConfigDiff = {
   addedKeys: Key[];
   removedKeys: Key[];
   changedKeys: ChangedKey[];

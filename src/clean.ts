@@ -1,17 +1,13 @@
 import { readdir, rm } from "fs/promises";
 import { join } from "path";
-import { argv } from "process";
-import { __dirname, keepOptions } from "./helpers";
+import { __dirname, getArgumentValue, keepOptions } from "./helpers";
 
 const parseKeepArgument = (): number[] => {
-  const keepIndex = argv.indexOf("--keep");
-  if (keepIndex === -1 || keepIndex + 1 >= argv.length) {
-    console.error("Error: '--keep' argument is missing values.");
-    process.exit(1);
+  const args = getArgumentValue("--keep");
+  if (!args) {
+    return [];
   }
-
-  const keepValues = argv[keepIndex + 1].split(",");
-  const versions = keepValues.map((value) => {
+  const versions = args.split(",").map((value) => {
     const version = parseInt(value, 10);
     if (isNaN(version)) {
       console.error(`Error: Invalid version '${value}' provided.`);
@@ -25,6 +21,7 @@ const parseKeepArgument = (): number[] => {
 
 const showKeptVersions = () => {
   const keptVersions = parseKeepArgument();
+  console.log(keptVersions);
   console.log("Versions kept:", keptVersions.join(", "));
   removeFolders(keptVersions);
 };

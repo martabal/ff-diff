@@ -36,9 +36,20 @@ export const __dirname = process.cwd();
 export const getArgumentValue = (argument: string): string | undefined => {
   const args = process.argv;
   const versionIndex = args.indexOf(argument);
-
+  if (versionIndex + 1 >= args.length) {
+    console.error(
+      `Error: Argument "${argument}" is provided but has no value.`,
+    );
+    process.exit(1);
+  }
   if (versionIndex !== -1 && versionIndex + 1 < args.length) {
     const versionValue = args[versionIndex + 1];
+    if (versionValue.startsWith("--")) {
+      console.error(
+        `Error: Argument "${argument}" is provided but has no value.`,
+      );
+      process.exit(1);
+    }
     return versionValue;
   } else {
     return undefined;

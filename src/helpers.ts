@@ -93,7 +93,5 @@ export const installFirefox = async (
   if (cleanOptions.archives) {
     console.log(`Removing archive for Firefox ${version}`);
     await rmSync(archivePath);
-  } else {
-    console.log(`Keeping archive for Firefox ${version}`);
   }
 };

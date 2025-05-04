@@ -21,7 +21,6 @@ const parseKeepArgument = (): number[] => {
 
 const showKeptVersions = () => {
   const keptVersions = parseKeepArgument();
-  console.log(keptVersions);
   console.log("Versions kept:", keptVersions.join(", "));
   removeFolders(keptVersions);
 };

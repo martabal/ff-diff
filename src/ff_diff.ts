@@ -153,22 +153,32 @@ type ShowDiff<T> = {
       (match) => match[1],
     );
 
-    const changed = configDiff.changedKeys.filter((k) =>
-      userKeys.includes(k.key),
-    );
-    const removed = configDiff.removedKeys.filter((k) =>
-      userKeys.includes(k.key),
-    );
+    const isUserKey = (k: { key: string }) => userKeys.includes(k.key);
 
-    if (changed.length > 0) {
-      console.log("The following user.js settings were changed:", changed);
-    }
+    const changed = configDiff.changedKeys.filter(isUserKey);
+    const removed = configDiff.removedKeys.filter(isUserKey);
 
-    if (removed.length > 0) {
-      console.log("The following user.js settings were removed:", removed);
-    }
+    if (changed.length || removed.length) {
+      if (changed.length) {
+        console.log(
+          "The following user.js settings were changed:\n" +
+            changed
+              .map((pref) => `~ ${pref.key}: ${pref.value} -> ${pref.newValue}`)
+              .join("\n"),
+        );
+      }
 
-    if (changed.length === 0 && removed.length === 0) {
+      if (changed.length && removed.length) {
+        console.log();
+      }
+
+      if (removed.length) {
+        console.log(
+          "The following user.js settings were removed:\n" +
+            removed.map((pref) => `- ${pref.key}`).join("\n"),
+        );
+      }
+    } else {
       console.log("No user.js settings were changed.");
     }
   }

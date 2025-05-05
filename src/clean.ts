@@ -1,6 +1,11 @@
 import { readdir, rm } from "fs/promises";
 import { join } from "path";
-import { __dirname, getArgumentValue, keepOptions } from "./helpers";
+import {
+  __dirname,
+  getArgumentValue,
+  installDir,
+  keepOptions,
+} from "./helpers";
 
 const parseKeepArgument = (): number[] => {
   const args = getArgumentValue("--keep");
@@ -26,14 +31,12 @@ export const clean = () => {
 };
 
 async function removeFolders(keptVersions: number[]) {
-  const distDir = join(__dirname, "dist");
-
   try {
-    const entries = await readdir(distDir, { withFileTypes: true });
+    const entries = await readdir(installDir, { withFileTypes: true });
     let hasChanged = false;
 
     for (const entry of entries) {
-      const fullPath = join(distDir, entry.name);
+      const fullPath = join(installDir, entry.name);
 
       if (
         entry.isDirectory() &&

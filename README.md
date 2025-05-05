@@ -43,7 +43,7 @@ If you use a custom `user.js`. You can check if some of the keys are removed/cha
 The Firefox sources will be downloaded into the `dist/` directory. By default, the script keeps the archives and the sources extracted from the archives. If you want to remove them, you can execute the script with the `--remove-archives` `--remove-sources` arguments. But you can also use the script `npm run clean` to delete all archives and sources in `dist/`. If you want to use specific version you can use:
 
 ```bash
-npm run clean -- --keep <version1>,<version2>
+npm run ff_diff clean -- --keep <version1>,<version2>
 ```
 
 If you want to only keep archives you can use `npm run clean -- --keep <version1>,<version2> --keep-archives` or `npm run clean -- --keep <version1>,<version2> --keep-sources` if you want to keep the sources

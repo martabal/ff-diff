@@ -19,7 +19,7 @@ const parseKeepArgument = (): number[] => {
   return versions;
 };
 
-const showKeptVersions = () => {
+export const clean = () => {
   const keptVersions = parseKeepArgument();
   console.log("Versions kept:", keptVersions.join(", "));
   removeFolders(keptVersions);
@@ -69,5 +69,3 @@ async function removeFolders(keptVersions: number[]) {
     process.exit(1);
   }
 }
-
-showKeptVersions();

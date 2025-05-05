@@ -17,10 +17,7 @@ type ShowDiff<T> = {
   formatter: (key: T, format: "md" | "txt") => string;
 };
 
-(async () => {
-  const version1 = process.argv[2];
-  const version2 = process.argv[3];
-
+export const ff_diff = async (version1: string, version2: string) => {
   const removedSymbol = "❌";
   const addedSymbol = "✅";
   const changedSymbol = "🔁";
@@ -194,4 +191,4 @@ type ShowDiff<T> = {
       );
     }
   }
-})();
+};

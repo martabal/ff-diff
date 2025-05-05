@@ -1,11 +1,6 @@
 import { readdir, rm } from "fs/promises";
 import { join } from "path";
-import {
-  __dirname,
-  getArgumentValue,
-  installDir,
-  keepOptions,
-} from "./helpers";
+import { getArgumentValue, installDir, keepOptions } from "./helpers";
 
 const parseKeepArgument = (): number[] => {
   const args = getArgumentValue("--keep");

@@ -5,8 +5,7 @@
   "description": "compare changes in user.js preference files between two versions of Firefox",
   "author": "martabal",
   "bin": {
-    "ff_diff": "./build/ff_diff.js",
-    "clean_ff_diff": "./build/clean.js"
+    "ff_diff": "./build/ff_diff.js"
   },
   "files": [
     "build/"
@@ -17,8 +16,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "clean": "tsc && node build/clean.js",
-    "ff_diff": "tsc && node build/ff_diff.js",
+    "ff_diff": "tsc && node build/index.js",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
     "lint": "npx --node-options='--experimental-strip-types' eslint --flag unstable_native_nodejs_ts_config"

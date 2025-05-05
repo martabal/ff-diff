@@ -22,13 +22,6 @@ export const ff_diff = async (version1: string, version2: string) => {
   const addedSymbol = "✅";
   const changedSymbol = "🔁";
 
-  if (!version1 || !version2) {
-    console.error(
-      `Usage: npm run compare_ff_prefs <version1> <version2> [--clean-archives] [--clean-sources] [--do-not-print-diffs-in-console] [--save-diffs-in-file] [--compare-userjs <path>]`,
-    );
-    process.exit(1);
-  }
-
   const compareUserjs = getArgumentValue("--compare-userjs");
 
   console.log(
@@ -36,7 +29,7 @@ export const ff_diff = async (version1: string, version2: string) => {
   );
 
   if (!existsSync(installDir)) {
-    mkdirSync(installDir);
+    mkdirSync(installDir, { recursive: true });
   }
 
   const versions = [version1, version2];

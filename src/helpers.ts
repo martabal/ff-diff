@@ -6,6 +6,7 @@ import {
   readdirSync,
   rmSync,
 } from "fs";
+import { homedir } from "os";
 import path from "path";
 import { pipeline, Readable } from "stream";
 import { promisify } from "util";
@@ -35,7 +36,10 @@ export const printOptions: PrintOptions = {
   saveDiffsInFile: process.argv.includes("--save-diffs-in-file"),
 };
 
-export const __dirname = process.cwd();
+export const __dirname =
+  process.env.USE_CURRENT_DIR === "true"
+    ? process.cwd()
+    : path.join(homedir(), ".ff_diff");
 
 export const getArgumentValue = (argument: string): string | undefined => {
   const args = process.argv;

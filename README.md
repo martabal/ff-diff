@@ -53,4 +53,4 @@ If you want to only keep archives you can use `npm run clean -- --keep <version1
 
 Example of a generated diffs:
 
-![Image of the example](./images/diffs-example.png)
+![Image of the example](https://raw.githubusercontent.com/martabal/ff_diff/refs/heads/main/images/diffs-example.png)

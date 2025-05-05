@@ -163,7 +163,10 @@ type ShowDiff<T> = {
         console.log(
           "The following user.js settings were changed:\n" +
             changed
-              .map((pref) => `~ ${pref.key}: ${pref.value} -> ${pref.newValue}`)
+              .map(
+                (pref) =>
+                  `~ ${pref.key}: ${formatValue(pref.value)} -> ${formatValue(pref.newValue)}`,
+              )
               .join("\n"),
         );
       }

@@ -4,9 +4,10 @@ import path from "path";
 import {
   installFirefox,
   cleanOptions,
-  __dirname,
   printOptions,
   getArgumentValue,
+  installDir,
+  diffsDir,
 } from "./helpers";
 import { type ChangedKey, comparePrefs, getPrefs, type Key } from "./firefox";
 
@@ -19,8 +20,7 @@ type ShowDiff<T> = {
 (async () => {
   const version1 = process.argv[2];
   const version2 = process.argv[3];
-  const installDir = path.join(__dirname, "dist");
-  const diffsDir = path.join(__dirname, "diffs");
+
   const removedSymbol = "❌";
   const addedSymbol = "✅";
   const changedSymbol = "🔁";
@@ -43,9 +43,7 @@ type ShowDiff<T> = {
   }
 
   const versions = [version1, version2];
-  await Promise.all(
-    versions.map((version) => installFirefox(version, installDir)),
-  );
+  await Promise.all(versions.map((version) => installFirefox(version)));
 
   const dirs = versions.map((version) =>
     path.join(installDir, version, "firefox"),

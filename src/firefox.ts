@@ -6,6 +6,11 @@ export type FirefoxPref = {
   value: ConfigType;
 };
 
+type FirefoxScript = {
+  prefs: FirefoxPref[];
+  errors: string[];
+};
+
 export type Key = {
   key: string;
   value: ConfigType;
@@ -32,11 +37,12 @@ interface FirefoxGlobal extends Window {
         getBoolPref: (name: string) => "boolean";
         getIntPref: (name: string) => "number";
         getStringPref: (name: string) => "string";
+        prefHasDefaultValue: (name: string) => boolean;
+        PREF_BOOL: number;
+        PREF_INT: number;
+        PREF_STRING: number;
+        PREF_INVALID: number;
       };
-      PREF_BOOL: number;
-      PREF_INT: number;
-      PREF_STRING: number;
-      PREF_INVALID: number;
     };
   };
 }
@@ -52,43 +58,49 @@ export const getPrefs = async (
     .setFirefoxOptions(options)
     .build();
 
-  let prefs: FirefoxPref[] = [];
-
   await driver.get("about:config");
 
-  prefs = await driver.executeScript<FirefoxPref[]>(function () {
-    const services = (globalThis as unknown as FirefoxGlobal).Services;
-    const gPrefBranch = services.prefs;
-    const defaultBranch = services.prefs.getDefaultBranch("");
-    const prefs: FirefoxPref[] = [];
-    for (const name of defaultBranch.getChildList("")) {
-      let value;
-      try {
-        switch (defaultBranch.getPrefType(name)) {
-          case gPrefBranch.PREF_BOOL:
-            value = defaultBranch.getBoolPref(name);
-            break;
-          case gPrefBranch.PREF_INT:
-            value = defaultBranch.getIntPref(name);
-            break;
-          case gPrefBranch.PREF_STRING:
-            value = defaultBranch.getStringPref(name);
-            break;
-          case gPrefBranch.PREF_INVALID:
-          default:
-            continue;
-        }
-        prefs.push({
-          name,
-          value,
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    return prefs;
-  });
+  const { prefs, errors } = await driver.executeScript<FirefoxScript>(
+    function () {
+      const services = (globalThis as unknown as FirefoxGlobal).Services;
+      const defaultBranch = services.prefs.getDefaultBranch("");
+      const prefs: FirefoxPref[] = [];
+      const errors: string[] = [];
+      for (const name of defaultBranch.getChildList("")) {
+        let value;
+        try {
+          if (defaultBranch.prefHasDefaultValue(name)) {
+            switch (defaultBranch.getPrefType(name)) {
+              case defaultBranch.PREF_BOOL:
+                value = defaultBranch.getBoolPref(name);
+                break;
+              case defaultBranch.PREF_INT:
+                value = defaultBranch.getIntPref(name);
+                break;
+              case defaultBranch.PREF_STRING:
+                value = defaultBranch.getStringPref(name);
+                break;
+              case defaultBranch.PREF_INVALID:
+              default:
+                continue;
+            }
+            prefs.push({
+              name,
+              value,
+            });
+          }
+        } catch (error) {
+          errors.push(name);
 
+          console.log(error);
+        }
+      }
+      return { prefs, errors };
+    },
+  );
+  if (errors.length){
+    console.error(`Errors with prefs${errors}`)
+  }
   await driver.quit();
   return prefs;
 };

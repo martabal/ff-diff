@@ -21,6 +21,9 @@ type ShowDiff<T> = {
   const version2 = process.argv[3];
   const installDir = path.join(__dirname, "dist");
   const diffsDir = path.join(__dirname, "diffs");
+  const removedSymbol = "❌";
+  const addedSymbol = "✅";
+  const changedSymbol = "🔁";
 
   if (!version1 || !version2) {
     console.error(
@@ -69,7 +72,7 @@ type ShowDiff<T> = {
 
   const sections: ShowDiff<ChangedKey | Key>[] = [
     {
-      label: "✅ New keys",
+      label: `${addedSymbol} New keys`,
       keys: configDiff.addedKeys,
       formatter: (item, format) => {
         const { key, value } = item as Key;
@@ -79,7 +82,7 @@ type ShowDiff<T> = {
       },
     },
     {
-      label: "❌ Removed keys",
+      label: `${removedSymbol} Removed keys`,
       keys: configDiff.removedKeys,
       formatter: (item, format) => {
         const { key } = item as Key;
@@ -89,7 +92,7 @@ type ShowDiff<T> = {
       },
     },
     {
-      label: "🔁 Changed keys",
+      label: `${changedSymbol} Changed values`,
       keys: configDiff.changedKeys,
       formatter: (item, format) => {
         const { key, value, newValue } = item as ChangedKey;
@@ -147,6 +150,8 @@ type ShowDiff<T> = {
       console.log("\n");
     }
 
+    console.log("Comparing prefs with the ones from your user.js\n");
+
     const userJsContent = readFileSync(compareUserjs, "utf-8");
 
     const userKeys = [...userJsContent.matchAll(/user_pref\("([^"]+)"/g)].map(
@@ -161,7 +166,7 @@ type ShowDiff<T> = {
     if (changed.length || removed.length) {
       if (changed.length) {
         console.log(
-          "The following user.js settings were changed:\n" +
+          `${changedSymbol} The following user.js prefs were changed:\n` +
             changed
               .map(
                 (pref) =>
@@ -169,6 +174,8 @@ type ShowDiff<T> = {
               )
               .join("\n"),
         );
+      } else {
+        console.log("No prefs from your user.js settings were changed.\n");
       }
 
       if (changed.length && removed.length) {
@@ -177,12 +184,16 @@ type ShowDiff<T> = {
 
       if (removed.length) {
         console.log(
-          "The following user.js settings were removed:\n" +
+          `${removedSymbol} The following prefs were removed:\n` +
             removed.map((pref) => `- ${pref.key}`).join("\n"),
         );
+      } else {
+        console.log("No prefs from your user.js settings were removed.");
       }
     } else {
-      console.log("No user.js settings were changed.");
+      console.log(
+        "No prefs from your user.js settings were changed or removed.",
+      );
     }
   }
 })();

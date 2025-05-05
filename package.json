@@ -4,6 +4,10 @@
   "license": "MIT",
   "description": "compare changes in user.js preference files between two versions of Firefox",
   "author": "martabal",
+  "bin": {
+    "ff_diff": "./build/ff_diff.js",
+    "clean_ff_diff": "./build/clean.js"
+  },
   "scripts": {
     "build": "tsc",
     "clean": "tsc && node build/clean.js",

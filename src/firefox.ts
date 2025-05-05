@@ -68,38 +68,32 @@ export const getPrefs = async (
       const errors: string[] = [];
       for (const name of defaultBranch.getChildList("")) {
         let value;
-        try {
-          if (defaultBranch.prefHasDefaultValue(name)) {
-            switch (defaultBranch.getPrefType(name)) {
-              case defaultBranch.PREF_BOOL:
-                value = defaultBranch.getBoolPref(name);
-                break;
-              case defaultBranch.PREF_INT:
-                value = defaultBranch.getIntPref(name);
-                break;
-              case defaultBranch.PREF_STRING:
-                value = defaultBranch.getStringPref(name);
-                break;
-              case defaultBranch.PREF_INVALID:
-              default:
-                continue;
-            }
-            prefs.push({
-              name,
-              value,
-            });
+        if (defaultBranch.prefHasDefaultValue(name)) {
+          switch (defaultBranch.getPrefType(name)) {
+            case defaultBranch.PREF_BOOL:
+              value = defaultBranch.getBoolPref(name);
+              break;
+            case defaultBranch.PREF_INT:
+              value = defaultBranch.getIntPref(name);
+              break;
+            case defaultBranch.PREF_STRING:
+              value = defaultBranch.getStringPref(name);
+              break;
+            case defaultBranch.PREF_INVALID:
+            default:
+              continue;
           }
-        } catch (error) {
-          errors.push(name);
-
-          console.log(error);
+          prefs.push({
+            name,
+            value,
+          });
         }
       }
       return { prefs, errors };
     },
   );
-  if (errors.length){
-    console.error(`Errors with prefs${errors}`)
+  if (errors.length) {
+    console.error(`Errors with prefs${errors}`);
   }
   await driver.quit();
   return prefs;

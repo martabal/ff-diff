@@ -1,12 +1,19 @@
 {
   "name": "ff_diff",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "license": "MIT",
   "description": "compare changes in user.js preference files between two versions of Firefox",
   "author": "martabal",
   "bin": {
     "ff_diff": "./build/ff_diff.js",
     "clean_ff_diff": "./build/clean.js"
+  },
+  "files": [
+    "build/"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/martabal/ff_diff.git"
   },
   "scripts": {
     "build": "tsc",

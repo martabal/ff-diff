@@ -16,10 +16,13 @@ import {
   getPrefs,
 } from "./firefox";
 
-type ShowDiff<T> = {
+type PrintDiff = {
   label: string;
-  keys: T[];
-  formatter: (key: T, format: "md" | "txt") => string;
+  keys: (FirefoxChangedPref | FirefoxPref)[];
+  formatter: (
+    key: FirefoxChangedPref | FirefoxPref,
+    format: "md" | "txt",
+  ) => string;
 };
 
 export const diff = async (version1: string, version2: string) => {
@@ -63,7 +66,7 @@ export const diff = async (version1: string, version2: string) => {
   const formatValue = (val: string | number | boolean) =>
     val === "" ? '""' : val;
 
-  const sections: ShowDiff<FirefoxChangedPref | FirefoxPref>[] = [
+  const sections: PrintDiff[] = [
     {
       label: `${addedSymbol} New keys`,
       keys: configDiff.addedKeys,

@@ -3,7 +3,7 @@ import firefox from "selenium-webdriver/firefox.js";
 
 export type FirefoxPref = {
   key: string;
-  value: ConfigType;
+  value: Pref;
 };
 
 type FirefoxScript = {
@@ -12,12 +12,12 @@ type FirefoxScript = {
 };
 
 export interface FirefoxChangedPref extends FirefoxPref {
-  newValue: ConfigType;
+  newValue: Pref;
 }
 
-type ConfigType = string | number | boolean;
+type Pref = string | number | boolean;
 
-export type ConfigDiff = {
+type PrefsDiff = {
   addedKeys: FirefoxPref[];
   removedKeys: FirefoxPref[];
   changedKeys: FirefoxChangedPref[];
@@ -62,7 +62,7 @@ export const getPrefs = async (
       const prefs: FirefoxPref[] = [];
       const errors: string[] = [];
       for (const key of defaultBranch.getChildList("")) {
-        let value: ConfigType;
+        let value: Pref;
         if (defaultBranch.prefHasDefaultValue(key)) {
           switch (defaultBranch.getPrefType(key)) {
             case defaultBranch.PREF_BOOL:
@@ -97,11 +97,11 @@ export const getPrefs = async (
 export const comparePrefs = (
   prefsV1: FirefoxPref[],
   prefsV2: FirefoxPref[],
-): ConfigDiff => {
-  const prefsMapV1 = new Map<string, ConfigType>(
+): PrefsDiff => {
+  const prefsMapV1 = new Map<string, Pref>(
     prefsV1.map(({ key, value }) => [key, value]),
   );
-  const prefsMapV2 = new Map<string, ConfigType>(
+  const prefsMapV2 = new Map<string, Pref>(
     prefsV2.map(({ key, value }) => [key, value]),
   );
 

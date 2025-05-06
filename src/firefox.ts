@@ -2,7 +2,7 @@ import { Builder, Browser, WebDriver } from "selenium-webdriver";
 import firefox from "selenium-webdriver/firefox.js";
 
 export type FirefoxPref = {
-  name: string;
+  key: string;
   value: ConfigType;
 };
 
@@ -11,21 +11,16 @@ type FirefoxScript = {
   errors: string[];
 };
 
-export type Key = {
-  key: string;
-  value: ConfigType;
-};
-
-export interface ChangedKey extends Key {
+export interface FirefoxChangedPref extends FirefoxPref {
   newValue: ConfigType;
 }
 
 type ConfigType = string | number | boolean;
 
 export type ConfigDiff = {
-  addedKeys: Key[];
-  removedKeys: Key[];
-  changedKeys: ChangedKey[];
+  addedKeys: FirefoxPref[];
+  removedKeys: FirefoxPref[];
+  changedKeys: FirefoxChangedPref[];
 };
 
 interface FirefoxGlobal extends Window {
@@ -66,25 +61,25 @@ export const getPrefs = async (
       const defaultBranch = services.prefs.getDefaultBranch("");
       const prefs: FirefoxPref[] = [];
       const errors: string[] = [];
-      for (const name of defaultBranch.getChildList("")) {
+      for (const key of defaultBranch.getChildList("")) {
         let value: ConfigType;
-        if (defaultBranch.prefHasDefaultValue(name)) {
-          switch (defaultBranch.getPrefType(name)) {
+        if (defaultBranch.prefHasDefaultValue(key)) {
+          switch (defaultBranch.getPrefType(key)) {
             case defaultBranch.PREF_BOOL:
-              value = defaultBranch.getBoolPref(name);
+              value = defaultBranch.getBoolPref(key);
               break;
             case defaultBranch.PREF_INT:
-              value = defaultBranch.getIntPref(name);
+              value = defaultBranch.getIntPref(key);
               break;
             case defaultBranch.PREF_STRING:
-              value = defaultBranch.getStringPref(name);
+              value = defaultBranch.getStringPref(key);
               break;
             case defaultBranch.PREF_INVALID:
             default:
               continue;
           }
           prefs.push({
-            name,
+            key,
             value,
           });
         }
@@ -104,15 +99,15 @@ export const comparePrefs = (
   prefsV2: FirefoxPref[],
 ): ConfigDiff => {
   const prefsMapV1 = new Map<string, ConfigType>(
-    prefsV1.map(({ name, value }) => [name, value]),
+    prefsV1.map(({ key, value }) => [key, value]),
   );
   const prefsMapV2 = new Map<string, ConfigType>(
-    prefsV2.map(({ name, value }) => [name, value]),
+    prefsV2.map(({ key, value }) => [key, value]),
   );
 
-  const addedKeys: Key[] = [];
-  const removedKeys: Key[] = [];
-  const changedKeys: ChangedKey[] = [];
+  const addedKeys: FirefoxPref[] = [];
+  const removedKeys: FirefoxPref[] = [];
+  const changedKeys: FirefoxChangedPref[] = [];
 
   for (const [key, value] of prefsMapV1.entries()) {
     if (!prefsMapV2.has(key)) {

@@ -34,9 +34,9 @@ interface FirefoxGlobal extends Window {
       getDefaultBranch: (prefix: string) => {
         getChildList: (prefix: string) => string[];
         getPrefType: (name: string) => number;
-        getBoolPref: (name: string) => "boolean";
-        getIntPref: (name: string) => "number";
-        getStringPref: (name: string) => "string";
+        getBoolPref: (name: string) => boolean;
+        getIntPref: (name: string) => number;
+        getStringPref: (name: string) => string;
         prefHasDefaultValue: (name: string) => boolean;
         PREF_BOOL: number;
         PREF_INT: number;
@@ -67,7 +67,7 @@ export const getPrefs = async (
       const prefs: FirefoxPref[] = [];
       const errors: string[] = [];
       for (const name of defaultBranch.getChildList("")) {
-        let value;
+        let value: ConfigType;
         if (defaultBranch.prefHasDefaultValue(name)) {
           switch (defaultBranch.getPrefType(name)) {
             case defaultBranch.PREF_BOOL:

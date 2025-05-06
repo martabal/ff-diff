@@ -9,7 +9,12 @@ import {
   installDir,
   diffsDir,
 } from "./helpers";
-import { type ChangedKey, comparePrefs, getPrefs, type Key } from "./firefox";
+import {
+  type FirefoxChangedPref,
+  comparePrefs,
+  type FirefoxPref,
+  getPrefs,
+} from "./firefox";
 
 type ShowDiff<T> = {
   label: string;
@@ -58,12 +63,12 @@ export const diff = async (version1: string, version2: string) => {
   const formatValue = (val: string | number | boolean) =>
     val === "" ? '""' : val;
 
-  const sections: ShowDiff<ChangedKey | Key>[] = [
+  const sections: ShowDiff<FirefoxChangedPref | FirefoxPref>[] = [
     {
       label: `${addedSymbol} New keys`,
       keys: configDiff.addedKeys,
       formatter: (item, format) => {
-        const { key, value } = item as Key;
+        const { key, value } = item as FirefoxPref;
         const tick = tickFor(format);
         const tickTxt = tickTxtFor(format);
         return `${tickTxt}${symbol(format, "+")} ${tick}${key}${tick}: ${tick}${formatValue(value)}${tick}`;
@@ -73,7 +78,7 @@ export const diff = async (version1: string, version2: string) => {
       label: `${removedSymbol} Removed keys`,
       keys: configDiff.removedKeys,
       formatter: (item, format) => {
-        const { key } = item as Key;
+        const { key } = item as FirefoxPref;
         const tick = tickFor(format);
         const tickTxt = tickTxtFor(format);
         return `${tickTxt}${symbol(format, "-")} ${tick}${key}${tick}`;
@@ -83,7 +88,7 @@ export const diff = async (version1: string, version2: string) => {
       label: `${changedSymbol} Changed values`,
       keys: configDiff.changedKeys,
       formatter: (item, format) => {
-        const { key, value, newValue } = item as ChangedKey;
+        const { key, value, newValue } = item as FirefoxChangedPref;
         const tick = tickFor(format);
         const tickTxt = tickTxtFor(format);
         return `${tickTxt}${symbol(format, "~")} ${tick}${key}${tick}: ${tick}${formatValue(value)}${tick} -> ${tick}${formatValue(newValue)}${tick}`;

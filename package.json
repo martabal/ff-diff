@@ -1,22 +1,22 @@
 {
-  "name": "ff_diff",
+  "name": "ff-diff",
   "version": "0.1.7",
   "license": "MIT",
   "description": "compare changes in user.js preference files between two versions of Firefox",
   "author": "martabal",
   "bin": {
-    "ff_diff": "./build/index.js"
+    "ff-diff": "./build/index.js"
   },
   "files": [
     "build/"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/martabal/ff_diff.git"
+    "url": "git+https://github.com/martabal/ff-diff.git"
   },
   "scripts": {
     "build": "tsc",
-    "ff_diff": "tsc && USE_CURRENT_DIR=true node build/index.js",
+    "ff-diff": "tsc && USE_CURRENT_DIR=true node build/index.js",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
     "lint": "npx --node-options='--experimental-strip-types' eslint --flag unstable_native_nodejs_ts_config"

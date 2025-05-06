@@ -39,7 +39,7 @@ export const printOptions: PrintOptions = {
 export const __dirname =
   process.env.USE_CURRENT_DIR === "true"
     ? process.cwd()
-    : path.join(homedir(), ".ff_diff");
+    : path.join(homedir(), ".ff-diff");
 
 export const getArgumentValue = (argument: string): string | undefined => {
   const args = process.argv;

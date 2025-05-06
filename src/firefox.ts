@@ -23,7 +23,7 @@ export type ConfigDiff = {
   changedKeys: FirefoxChangedPref[];
 };
 
-interface FirefoxGlobal extends Window {
+interface FirefoxGlobal {
   Services: {
     prefs: {
       getDefaultBranch: (prefix: string) => {

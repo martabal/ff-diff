@@ -11,12 +11,12 @@ import path from "path";
 import { pipeline, Readable } from "stream";
 import { promisify } from "util";
 
-export type SourcesOptions = {
+type SourcesOptions = {
   archives: boolean;
   sources: boolean;
 };
 
-export type PrintOptions = {
+type PrintOptions = {
   doNotPrintConsole: boolean;
   saveDiffsInFile: boolean;
 };
@@ -36,7 +36,7 @@ export const printOptions: PrintOptions = {
   saveDiffsInFile: process.argv.includes("--save-diffs-in-file"),
 };
 
-export const __dirname =
+const __dirname =
   process.env.USE_CURRENT_DIR === "true"
     ? process.cwd()
     : path.join(homedir(), ".ff-diff");

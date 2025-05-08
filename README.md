@@ -14,7 +14,28 @@ Requirements:
 - node >= 22 and npm
 - tar
 
+## Installation (NPM)
+
+```bash
+npm i -g ff-diff
+```
+
 ## Usage
+
+```bash
+$ ff-diff
+Usage:
+  ff-diff clean [--keep <version1>,<version2>] [--keep-archives] [--keep-sources]
+  ff-diff <version1> <version2> [--clean-archives] [--clean-sources] [--do-not-print-diffs-in-console] [--save-diffs-in-file] [--compare-userjs <path>]
+```
+
+Example:
+
+```bash
+ff-diff 137.0 138.0
+```
+
+## Develop
 
 Clone this repository:
 

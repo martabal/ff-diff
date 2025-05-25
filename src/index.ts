@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-import { clean } from "./clean";
-import { diff } from "./diff";
+import { clean } from "./clean.js";
+import { diff } from "./diff.js";
 
 (async () => {
   const firstArg = process.argv[2];

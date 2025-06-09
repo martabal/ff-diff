@@ -22,14 +22,14 @@
     "lint": "npx --node-options='--experimental-strip-types' eslint --flag unstable_native_nodejs_ts_config"
   },
   "devDependencies": {
-    "@eslint/js": "9.27.0",
-    "@eslint/markdown": "6.4.0",
+    "@eslint/js": "9.28.0",
+    "@eslint/markdown": "6.5.0",
     "@types/selenium-webdriver": "4.1.28",
-    "eslint": "9.27.0",
+    "eslint": "9.28.0",
     "globals": "16.2.0",
     "prettier": "3.5.3",
     "typescript": "5.8.3",
-    "typescript-eslint": "8.32.1"
+    "typescript-eslint": "8.33.1"
   },
   "dependencies": {
     "selenium-webdriver": "4.33.0"

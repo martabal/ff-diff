@@ -61,7 +61,10 @@ If you use a custom `user.js`. You can check if some of the keys are removed/cha
 
 ## Clean
 
-The Firefox sources will be downloaded into the `dist/` directory. By default, the script keeps the archives and the sources extracted from the archives. If you want to remove them, you can execute the script with the `--remove-archives` `--remove-sources` arguments. But you can also use the script `npm run clean` to delete all archives and sources in `dist/`. If you want to use specific version you can use:
+When running the script in development mode with `npm run dev`, Firefox sources and binaries are saved in the current directory.
+In production mode (i.e., when the script is installed globally using `npm i -g ff-diff`), these files are stored in `~/.ff-diff`.
+
+By default, the script keep both the downloaded archives and the extracted source files. To remove them, you can run the script with the `--remove-archives` and/or `--remove-sources` arguments. If you want to use specific version you can use:
 
 ```bash
 npm run ff-diff clean -- --keep <version1>,<version2>
@@ -75,3 +78,4 @@ If you want to only keep archives you can use `npm run clean -- --keep <version1
 Example of a generated diffs:
 
 ![Image of the example](https://raw.githubusercontent.com/martabal/ff-diff/refs/heads/main/images/diffs-example.png)
+`

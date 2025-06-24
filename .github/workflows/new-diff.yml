@@ -1,0 +1,40 @@
+name: Create new diff in discussions
+
+on:
+  workflow_dispatch:
+    inputs:
+      version1:
+        description: "Old version"
+        required: true
+      version2:
+        description: "New version"
+        required: true
+
+permissions:
+  discussions: write
+
+jobs:
+  create-discussion:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install latest node LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ff-diff
+        run: npm run ff-diff -- ${{ github.event.inputs.version1 }} ${{ github.event.inputs.version2 }} --save-diffs-in-file
+
+      - name: Create a new GitHub Discussion
+        uses: abirismyname/create-discussion@main
+        with:
+          title: Diffs ${{ github.event.inputs.version1 }}-${{ github.event.inputs.version2 }}
+          body-filepath: diffs/${{ github.event.inputs.version1 }}-${{ github.event.inputs.version2 }}.md
+          category-name: Diffs
+          github-token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,12 +1,21 @@
 {
   "compilerOptions": {
-    "module": "nodenext",
-    "target": "ESNext",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "strict": true,
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "target": "es2022",
+    "sourceMap": true,
+    "outDir": "./build",
+    "incremental": true,
     "skipLibCheck": true,
-    "outDir": "./build"
+    "esModuleInterop": true,
+    "baseUrl": "./"
   },
-  "include": ["src/**/*"]
+  "exclude": ["build", "dist", "node_modules"]
 }

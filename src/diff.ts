@@ -8,13 +8,13 @@ import {
   getArgumentValue,
   installDir,
   diffsDir,
-} from "./helpers.js";
+} from "./helpers";
 import {
   type FirefoxChangedPref,
   comparePrefs,
   type FirefoxPref,
   getPrefs,
-} from "./firefox.js";
+} from "./firefox";
 
 type PrintDiff = {
   label: string;

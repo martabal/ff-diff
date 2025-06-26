@@ -11,7 +11,7 @@ Features:
 Requirements:
 
 - Internet connection (for downloading Firefox binaries)
-- node >= 22 and npm
+- node >= 20 and npm
 - tar
 
 ## Installation (NPM)

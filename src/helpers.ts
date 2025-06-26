@@ -66,7 +66,7 @@ export const getArgumentValue = (argument: string): string | undefined => {
 
 const streamPipeline = promisify(pipeline);
 
-export const installDir = path.join(__dirname, "dist");
+export const installDir = path.join(__dirname, "firefox");
 export const diffsDir = path.join(__dirname, "diffs");
 
 const downloadFile = async (url: string, fileDest: string): Promise<string> => {

@@ -5,7 +5,7 @@
   "description": "compare changes in user.js preference files between two versions of Firefox",
   "author": "martabal",
   "bin": {
-    "ff-diff": "./build/index.js"
+    "ff-diff": "./dist/index.js"
   },
   "files": [
     "dist/"

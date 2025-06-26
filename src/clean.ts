@@ -28,19 +28,19 @@ export const clean = () => {
 async function removeFolders(keptVersions: number[]) {
   try {
     const entries = await readdir(installDir, { withFileTypes: true });
-    let hasChanged = false;
 
-    for (const entry of entries) {
+    const removalPromises = entries.map(async (entry) => {
       const fullPath = join(installDir, entry.name);
+      let shouldRemove = false;
+      let logMessage = "";
 
       if (
         entry.isDirectory() &&
         !keptVersions.includes(parseInt(entry.name)) &&
         !keepOptions.sources
       ) {
-        console.log(`Removing folder: ${entry.name}`);
-        await rm(fullPath, { recursive: true, force: true });
-        hasChanged = true;
+        shouldRemove = true;
+        logMessage = `Removing folder: ${entry.name}`;
       }
 
       if (
@@ -50,13 +50,22 @@ async function removeFolders(keptVersions: number[]) {
       ) {
         const version = parseInt(entry.name.slice("firefox-".length), 10);
         if (!keptVersions.includes(version)) {
-          console.log(`Remove archive: ${entry.name}`);
-
-          await rm(fullPath, { recursive: true, force: true });
-          hasChanged = true;
+          shouldRemove = true;
+          logMessage = `Remove archive: ${entry.name}`;
         }
       }
-    }
+
+      if (shouldRemove) {
+        console.log(logMessage);
+        await rm(fullPath, { recursive: true, force: true });
+        return true;
+      }
+
+      return false;
+    });
+
+    const results = await Promise.all(removalPromises);
+    const hasChanged = results.some((changed) => changed);
     if (!hasChanged) {
       console.log("No archives/sources has been removed");
     } else {

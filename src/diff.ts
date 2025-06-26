@@ -33,7 +33,7 @@ export const diff = async (version1: string, version2: string) => {
   const compareUserjs = getArgumentValue("--compare-userjs");
 
   console.log(
-    `Installing Firefox ${version1} and ${version2} in "dist" directory`,
+    `Installing Firefox ${version1} and ${version2} in "${installDir}" directory`,
   );
 
   if (!existsSync(installDir)) {
@@ -150,11 +150,13 @@ export const diff = async (version1: string, version2: string) => {
 
     const userJsContent = readFileSync(compareUserjs, "utf-8");
 
-    const userKeys = [...userJsContent.matchAll(/user_pref\("([^"]+)"/g)].map(
-      (match) => match[1],
+    const userKeys = new Set(
+      [...userJsContent.matchAll(/user_pref\("([^"]+)"/g)].map(
+        (match) => match[1],
+      ),
     );
 
-    const isUserKey = (k: { key: string }) => userKeys.includes(k.key);
+    const isUserKey = (k: { key: string }) => userKeys.has(k.key);
 
     const changed = configDiff.changedKeys.filter(isUserKey);
     const removed = configDiff.removedKeys.filter(isUserKey);

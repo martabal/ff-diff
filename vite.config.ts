@@ -7,7 +7,7 @@ export default defineConfig({
     rollupOptions: {
       input: "src/index.ts",
       output: {
-        dir: "build",
+        dir: "dist",
       },
     },
     minify,

@@ -9,13 +9,13 @@
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    "target": "es2022",
+    "target": "esnext",
     "sourceMap": true,
-    "outDir": "./build",
+    "outDir": "./dist",
     "incremental": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "baseUrl": "./"
   },
-  "exclude": ["build", "dist", "node_modules"]
+  "exclude": ["dist", "firefox", "node_modules"]
 }

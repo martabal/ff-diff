@@ -24,7 +24,7 @@
   ],
   "scripts": {
     "build": "MINIFY=true vite build",
-    "ff-diff": "vite build && USE_CURRENT_DIR=true node dist/index.js",
+    "ff-diff": "vite build -l warn && USE_CURRENT_DIR=true node dist/index.js",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
     "lint": "oxlint"

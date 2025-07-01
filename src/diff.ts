@@ -25,6 +25,13 @@ type PrintDiff = {
   ) => string;
 };
 
+const tickFor = (format: string) => (format === "md" ? "`" : "");
+const tickTxtFor = (format: string) => (format === "txt" ? " " : "");
+const symbol = (format: "md" | "txt", symbol: string) =>
+  format == "md" ? "-" : symbol;
+const formatValue = (val: string | number | boolean) =>
+  val === "" ? '""' : val;
+
 export const diff = async (version1: string, version2: string) => {
   const removedSymbol = "❌";
   const addedSymbol = "✅";
@@ -59,12 +66,6 @@ export const diff = async (version1: string, version2: string) => {
   }
 
   const configDiff = comparePrefs(prefs[0], prefs[1]);
-  const tickFor = (format: string) => (format === "md" ? "`" : "");
-  const tickTxtFor = (format: string) => (format === "txt" ? " " : "");
-  const symbol = (format: "md" | "txt", symbol: string) =>
-    format == "md" ? "-" : symbol;
-  const formatValue = (val: string | number | boolean) =>
-    val === "" ? '""' : val;
 
   const sections: PrintDiff[] = [
     {

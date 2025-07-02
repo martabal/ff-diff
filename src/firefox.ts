@@ -112,7 +112,7 @@ export const comparePrefs = (
   for (const [key, value] of prefsMapV1.entries()) {
     if (!prefsMapV2.has(key)) {
       removedKeys.push({ key, value: value });
-    } else if (JSON.stringify(value) !== JSON.stringify(prefsMapV2.get(key))) {
+    } else if (value !== prefsMapV2.get(key)) {
       changedKeys.push({
         key,
         value: value,

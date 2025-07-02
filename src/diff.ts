@@ -19,18 +19,51 @@ import {
 type PrintDiff = {
   label: string;
   keys: (FirefoxChangedPref | FirefoxPref)[];
-  formatter: (
-    key: FirefoxChangedPref | FirefoxPref,
-    format: "md" | "txt",
-  ) => string;
+  formatter: (key: FirefoxChangedPref | FirefoxPref, format: Format) => string;
 };
 
-const tickFor = (format: string) => (format === "md" ? "`" : "");
-const tickTxtFor = (format: string) => (format === "txt" ? " " : "");
-const symbol = (format: "md" | "txt", symbol: string) =>
-  format == "md" ? "-" : symbol;
 const formatValue = (val: string | number | boolean) =>
   val === "" ? '""' : val;
+
+type Value = string | number | boolean;
+
+enum Format {
+  Markdown,
+  Text,
+}
+
+interface Ticks {
+  tickStart: string;
+  tickSymbol: string | undefined;
+  tickKeyValue: Value;
+}
+
+interface AllFormated extends Ticks {
+  tickSymbol: string;
+}
+
+const formatTicks: Record<Format, Ticks> = {
+  [Format.Markdown]: {
+    tickStart: "",
+    tickSymbol: "-",
+    tickKeyValue: "`",
+  },
+  [Format.Text]: {
+    tickStart: " ",
+    tickSymbol: undefined,
+    tickKeyValue: "",
+  },
+};
+
+const handleFormatTicks = (format: Format, symbol: string): AllFormated => {
+  const { tickStart, tickSymbol, tickKeyValue } = formatTicks[format];
+
+  return {
+    tickStart,
+    tickSymbol: tickSymbol ?? symbol,
+    tickKeyValue,
+  };
+};
 
 export const diff = async (version1: string, version2: string) => {
   const removedSymbol = "❌";
@@ -73,9 +106,13 @@ export const diff = async (version1: string, version2: string) => {
       keys: configDiff.addedKeys,
       formatter: (item, format) => {
         const { key, value } = item as FirefoxPref;
-        const tick = tickFor(format);
-        const tickTxt = tickTxtFor(format);
-        return `${tickTxt}${symbol(format, "+")} ${tick}${key}${tick}: ${tick}${formatValue(value)}${tick}`;
+        const {
+          tickStart,
+          tickSymbol,
+          tickKeyValue: tick,
+        } = handleFormatTicks(format, "+");
+        const formattedValue = formatValue(value);
+        return `${tickStart}${tickSymbol} ${tick}${key}${tick}: ${tick}${formattedValue}${tick}`;
       },
     },
     {
@@ -83,9 +120,12 @@ export const diff = async (version1: string, version2: string) => {
       keys: configDiff.removedKeys,
       formatter: (item, format) => {
         const { key } = item as FirefoxPref;
-        const tick = tickFor(format);
-        const tickTxt = tickTxtFor(format);
-        return `${tickTxt}${symbol(format, "-")} ${tick}${key}${tick}`;
+        const {
+          tickStart,
+          tickSymbol,
+          tickKeyValue: tick,
+        } = handleFormatTicks(format, "-");
+        return `${tickStart}${tickSymbol} ${tick}${key}${tick}`;
       },
     },
     {
@@ -93,25 +133,30 @@ export const diff = async (version1: string, version2: string) => {
       keys: configDiff.changedKeys,
       formatter: (item, format) => {
         const { key, value, newValue } = item as FirefoxChangedPref;
-        const tick = tickFor(format);
-        const tickTxt = tickTxtFor(format);
-        return `${tickTxt}${symbol(format, "~")} ${tick}${key}${tick}: ${tick}${formatValue(value)}${tick} -> ${tick}${formatValue(newValue)}${tick}`;
+        const {
+          tickStart,
+          tickSymbol,
+          tickKeyValue: tick,
+        } = handleFormatTicks(format, "~");
+        const formattedValue = formatValue(value);
+        const formattedValueNewValue = formatValue(newValue);
+        return `${tickStart}${tickSymbol} ${tick}${key}${tick}: ${tick}${formattedValue}${tick} -> ${tick}${formattedValueNewValue}${tick}`;
       },
     },
   ];
 
-  const generateOutput = (format: "md" | "txt") => {
+  const generateOutput = (format: Format) => {
     const lines: string[] = [];
 
     for (let index = 0; index < sections.length; index++) {
       const { label, keys, formatter } = sections[index];
 
       const header =
-        format === "md"
+        format === Format.Markdown
           ? `<details open><summary>\n\n## ${label} in ${version2}\n</summary>\n`
           : `${label} in ${version2}:`;
       const content = keys.length
-        ? `${keys.map((key) => formatter(key, format)).join("\n")}${format === "md" ? "\n\n</details>" : ""}`
+        ? `${keys.map((key) => formatter(key, format)).join("\n")}${format === Format.Markdown ? "\n\n</details>" : ""}`
         : "(none)";
 
       lines.push(header, content);
@@ -124,10 +169,8 @@ export const diff = async (version1: string, version2: string) => {
     return lines;
   };
 
-  const outputMD = generateOutput("md");
-  const outputTXT = generateOutput("txt");
-
   if (printOptions.saveDiffsInFile) {
+    const outputMD = generateOutput(Format.Markdown);
     const title = `# Diffs Firefox ${version1}-${version2}\n\n`;
     if (!existsSync(diffsDir)) {
       console.log("creating diffs directory");
@@ -139,6 +182,7 @@ export const diff = async (version1: string, version2: string) => {
   }
 
   if (!printOptions.doNotPrintConsole) {
+    const outputTXT = generateOutput(Format.Text);
     console.log(outputTXT.join("\n"));
   }
 

@@ -6,8 +6,9 @@ import {
   readdirSync,
   rmSync,
 } from "fs";
-import { homedir } from "os";
+import { arch, homedir, platform } from "os";
 import path from "path";
+import { exit } from "process";
 import { pipeline, Readable } from "stream";
 import { promisify } from "util";
 
@@ -69,6 +70,30 @@ const streamPipeline = promisify(pipeline);
 export const installDir = path.join(__dirname, "firefox");
 export const diffsDir = path.join(__dirname, "diffs");
 
+const getArchitecture = () => {
+  const architecture = arch();
+  switch (architecture) {
+    case "arm64":
+      return "aarch64";
+    case "x64":
+      return "x86_64";
+    default:
+      console.error(`Your architecture (${architecture}) is not supported`);
+      exit(1);
+  }
+};
+
+const getPlatform = () => {
+  const os = platform();
+  switch (os) {
+    case "linux":
+      return "linux";
+    default:
+      console.error(`Your platform (${os}) is not supported`);
+      exit(1);
+  }
+};
+
 const downloadFile = async (url: string, fileDest: string): Promise<string> => {
   let response = await fetch(url);
   fileDest = path.join(installDir, `${fileDest}.xz`);
@@ -111,7 +136,7 @@ export const installFirefox = async (version: string): Promise<void> => {
 
   if (!potentialArchivePath) {
     console.log(`Downloading firefox ${version}`);
-    const downloadUrl = `https://archive.mozilla.org/pub/firefox/releases/${version}/linux-x86_64/en-US/firefox-${version}.tar.xz`;
+    const downloadUrl = `https://archive.mozilla.org/pub/firefox/releases/${version}/${getPlatform()}-${getArchitecture()}/en-US/firefox-${version}.tar.xz`;
     try {
       potentialArchivePath = await downloadFile(downloadUrl, tar);
     } catch (error) {

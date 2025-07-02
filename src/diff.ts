@@ -23,7 +23,7 @@ type PrintDiff = {
 };
 
 const formatValue = (val: string | number | boolean) =>
-  val === "" ? '""' : val;
+  val === "" ? " " : val;
 
 type Value = string | number | boolean;
 

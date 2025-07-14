@@ -30,12 +30,12 @@
     "lint": "oxlint"
   },
   "devDependencies": {
-    "@types/node": "24.0.11",
+    "@types/node": "24.0.13",
     "@types/selenium-webdriver": "4.1.28",
     "oxlint": "1.6.0",
     "prettier": "3.6.2",
     "typescript": "5.8.3",
-    "vite": "7.0.3"
+    "vite": "7.0.4"
   },
   "dependencies": {
     "selenium-webdriver": "4.34.0"

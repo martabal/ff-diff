@@ -1,6 +1,6 @@
 import { defineConfig } from "vite";
 
-const minify = process.env.MINIFY ? "esbuild" : false;
+const minify = !!process.env.MINIFY;
 
 export default defineConfig({
   build: {

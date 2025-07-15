@@ -23,9 +23,6 @@ type PrintDiff = {
   formatter: (key: FirefoxChangedPref | FirefoxPref, format: Format) => string;
 };
 
-const formatValue = (val: string | number | boolean) =>
-  val === "" ? " " : val;
-
 type Value = string | number | boolean;
 
 enum Format {
@@ -42,6 +39,9 @@ interface Ticks {
 interface AllFormated extends Ticks {
   tickSymbol: string;
 }
+
+const formatValue = (val: string | number | boolean) =>
+  val === "" ? " " : val;
 
 const formatTicks: Record<Format, Ticks> = {
   [Format.Markdown]: {
@@ -60,7 +60,7 @@ const handlePref = async (
   version: string,
   installPath: string,
 ): Promise<Map<string, Pref>> => {
-  await installFirefox(version);
+  await installFirefox({ version, retry: false });
   return getPrefs(installPath);
 };
 

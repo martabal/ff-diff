@@ -22,6 +22,11 @@ type PrintOptions = {
   saveDiffsInFile: boolean;
 };
 
+type InstallFirefoxOptions = {
+  version: string;
+  retry: boolean;
+};
+
 export const cleanOptions: SourcesOptions = {
   archives: process.argv.includes("--remove-archives"),
   sources: process.argv.includes("--remove-sources"),
@@ -128,7 +133,10 @@ const getFilePathWithPrefix = (filePrefix: string): string | null => {
   return match ? path.join(installDir, match) : null;
 };
 
-export const installFirefox = async (version: string): Promise<void> => {
+export const installFirefox = async ({
+  version,
+  retry,
+}: InstallFirefoxOptions): Promise<void> => {
   const tar = `firefox-${version}.tar`;
   let potentialArchivePath = getFilePathWithPrefix(tar);
   const destPath = path.join(installDir, version);
@@ -151,7 +159,23 @@ export const installFirefox = async (version: string): Promise<void> => {
 
   if (!existsSync(executablePath)) {
     mkdirSync(destPath, { recursive: true });
-    execSync(`tar -xvf ${potentialArchivePath} -C ${destPath}`);
+    try {
+      execSync(`tar -xvf ${potentialArchivePath} -C ${destPath}`, {
+        stdio: "ignore",
+      });
+    } catch (error) {
+      if (!retry) {
+        console.error(
+          "Error when extracting the archive, removing the archive and downloading the archive",
+        );
+        if (potentialArchivePath) {
+          await rmSync(potentialArchivePath);
+        }
+        await installFirefox({ version, retry: true });
+      } else {
+        console.error("Error when extracting the archive: ", error);
+      }
+    }
   }
 
   if (cleanOptions.archives) {

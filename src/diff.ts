@@ -14,6 +14,7 @@ import {
   comparePrefs,
   type FirefoxPref,
   getPrefs,
+  type Pref,
 } from "./firefox";
 
 type PrintDiff = {
@@ -55,6 +56,14 @@ const formatTicks: Record<Format, Ticks> = {
   },
 };
 
+const handlePref = async (
+  version: string,
+  installPath: string,
+): Promise<Map<string, Pref>> => {
+  await installFirefox(version);
+  return getPrefs(installPath);
+};
+
 const handleFormatTicks = (format: Format, symbol: string): AllFormated => {
   const { tickStart, tickSymbol, tickKeyValue } = formatTicks[format];
 
@@ -81,24 +90,29 @@ export const diff = async (version1: string, version2: string) => {
   }
 
   const versions = [version1, version2];
-  await Promise.all(versions.map((version) => installFirefox(version)));
 
-  const dirs = versions.map((version) =>
-    path.join(installDir, version, "firefox"),
+  const firefoxDirs = versions.map((version) => ({
+    version,
+    dir: path.join(installDir, version, "firefox"),
+    installPath: path.join(installDir, version, "firefox", "firefox"),
+  }));
+
+  const [prefsMapV1, prefsMapV2] = await Promise.all(
+    firefoxDirs.map(({ version, installPath }) =>
+      handlePref(version, installPath),
+    ),
   );
-  const paths = dirs.map((dir) => path.join(dir, "firefox"));
-
-  const prefs = await Promise.all(paths.map(getPrefs));
-
-  for (const version of versions) {
-    console.log(`Removing sources for Firefox ${version}`);
-  }
 
   if (cleanOptions.sources) {
-    await Promise.all(dirs.map((dir) => rm(dir, { recursive: true })));
+    await Promise.all(
+      firefoxDirs.map(({ dir, version }) => {
+        console.log(`Removing sources for Firefox ${version}`);
+        rm(dir, { recursive: true });
+      }),
+    );
   }
 
-  const configDiff = comparePrefs(prefs[0], prefs[1]);
+  const configDiff = comparePrefs(prefsMapV1, prefsMapV2);
 
   const sections: PrintDiff[] = [
     {

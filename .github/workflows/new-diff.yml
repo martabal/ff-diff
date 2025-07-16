@@ -34,7 +34,7 @@ jobs:
         run: npm ci
 
       - name: Run ff-diff
-        run: npm run ff-diff -- ${{ github.event.inputs.version1 }} ${{ github.event.inputs.version2 }} --save-diffs-in-file
+        run: npm run ff-diff -- diff ${{ github.event.inputs.version1 }} ${{ github.event.inputs.version2 }} --save-diffs-in-file
 
       - name: Create a new GitHub Discussion
         uses: abirismyname/create-discussion@c2b7c825241769dda523865ae444a879f6bbd0e0 #v2.1.1

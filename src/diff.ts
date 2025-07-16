@@ -8,6 +8,7 @@ import {
   getArgumentValue,
   installDir,
   diffsDir,
+  compareUserjsArg,
 } from "./helpers";
 import {
   type FirefoxChangedPref,
@@ -74,12 +75,48 @@ const handleFormatTicks = (format: Format, symbol: string): AllFormated => {
   };
 };
 
-export const diff = async (version1: string, version2: string) => {
+interface PrefInfo {
+  key: string;
+  versionAdded?: string;
+  versionRemoved?: string;
+  custom: boolean;
+  hidden: boolean;
+}
+
+export const parseUserPrefs = (content: string): PrefInfo[] => {
+  const result: PrefInfo[] = [];
+
+  const regex = /user_pref\("([^"]+)"[^)]*\)(?:;\s*\/\/\s*(.*))?/gm;
+
+  for (const match of content.matchAll(regex)) {
+    const key = match[1];
+    const comment = match[2] || "";
+
+    const custom = /\[CUSTOM PREF\]/i.test(comment);
+    const hidden = /\[HIDDEN PREF\]/i.test(comment);
+
+    const versionAddedMatch = comment.match(/\[FF(\d+)\+\]/);
+    const versionRemovedMatch = comment.match(/\[FF(\d+)-\]/);
+
+    const versionAdded = versionAddedMatch ? versionAddedMatch[1] : undefined;
+    const versionRemoved = versionRemovedMatch
+      ? versionRemovedMatch[1]
+      : undefined;
+
+    result.push({ key, versionAdded, versionRemoved, custom, hidden });
+  }
+
+  return result;
+};
+
+export const diff = async () => {
+  const version1 = process.argv[3];
+  const version2 = process.argv[4];
   const removedSymbol = "❌";
   const addedSymbol = "✅";
   const changedSymbol = "🔁";
 
-  const compareUserjs = getArgumentValue("--compare-userjs");
+  const compareUserjs = getArgumentValue(compareUserjsArg);
 
   console.log(
     `Installing Firefox ${version1} and ${version2} in "${installDir}" directory`,
@@ -209,13 +246,10 @@ export const diff = async (version1: string, version2: string) => {
 
     const userJsContent = readFileSync(compareUserjs, "utf-8");
 
-    const userKeys = new Set(
-      [...userJsContent.matchAll(/user_pref\("([^"]+)"/g)].map(
-        (match) => match[1],
-      ),
-    );
+    const userKeys = parseUserPrefs(userJsContent);
 
-    const isUserKey = (k: { key: string }) => userKeys.has(k.key);
+    const isUserKey = (k: { key: string }) =>
+      userKeys.some((pref) => pref.key === k.key);
 
     const changed = configDiff.changedKeys.filter(isUserKey);
     const removed = configDiff.removedKeys.filter(isUserKey);

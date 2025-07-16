@@ -26,7 +26,8 @@ npm i -g ff-diff
 $ ff-diff
 Usage:
   ff-diff clean [--keep <version1>,<version2>] [--keep-archives] [--keep-sources]
-  ff-diff <version1> <version2> [--clean-archives] [--clean-sources] [--do-not-print-diffs-in-console] [--save-diffs-in-file] [--compare-userjs <path>]
+  ff-diff diff <version1> <version2> [--clean-archives] [--clean-sources] [--do-not-print-diffs-in-console] [--save-diffs-in-file] [--compare-userjs <path>]
+  ff-diff unused-prefs --compare-userjs <path> [--firefox-path <path>]
 ```
 
 Example:
@@ -48,7 +49,7 @@ npm ci
 Run the comparison script:
 
 ```bash
-npm run ff-diff <version1> <version2>
+npm run ff-diff diff <version1> <version2>
 ```
 
 for example:
@@ -71,6 +72,10 @@ npm run ff-diff clean -- --keep <version1>,<version2>
 ```
 
 If you want to only keep archives you can use `npm run clean -- --keep <version1>,<version2> --keep-archives` or `npm run clean -- --keep <version1>,<version2> --keep-sources` if you want to keep the sources
+
+## Compare user.js
+
+If you want to check if some of your prefs from a `user.js` file are unused, you can use `npm run ff-diff -- unused-prefs --compare-userjs <path>`
 
 > [!NOTE]  
 > The script may take some time to run depending on your connection speed.

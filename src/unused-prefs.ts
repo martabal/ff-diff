@@ -1,0 +1,91 @@
+import { compareUserjsArg, firefoxPathArg, getArgumentValue } from "./helpers";
+import { readFileSync, existsSync } from "fs";
+import { join } from "path";
+import os from "os";
+import { getPrefs } from "./firefox";
+import { parseUserPrefs } from "./diff";
+
+const installedMozilla = ".mozilla/firefox";
+
+function getFirefoxReleaseProfilePath(): string | null {
+  const mozillaPath = join(os.homedir(), `${installedMozilla}`);
+  const iniPath = join(mozillaPath, "profiles.ini");
+
+  if (!existsSync(iniPath)) {
+    return null;
+  }
+
+  const iniContent = readFileSync(iniPath, "utf-8");
+  const lines = iniContent.split("\n");
+
+  let currentSection: Record<string, string> = {};
+  for (const line of lines) {
+    if (line.startsWith("[") && line.endsWith("]")) {
+      if (
+        currentSection["Name"]?.includes("release") &&
+        currentSection["Path"]
+      ) {
+        return `${mozillaPath}/${currentSection["Path"]}`;
+      }
+      currentSection = {};
+    } else if (line.includes("=")) {
+      const [key, value] = line.split("=", 2);
+      currentSection[key.trim()] = value.trim();
+    }
+  }
+
+  if (currentSection["Name"]?.includes("release") && currentSection["Path"]) {
+    return `${mozillaPath}/${currentSection["Path"]}`;
+  }
+
+  return null;
+}
+
+const getInstalledFirefoxPath = (): string => {
+  let firefoxPath = getArgumentValue(firefoxPathArg);
+  if (firefoxPath === undefined) {
+    const firefoxPath = getFirefoxReleaseProfilePath();
+
+    if (firefoxPath === null || !existsSync(firefoxPath)) {
+      console.error("Can't find installed firefox version");
+      process.exit(1);
+    }
+    return firefoxPath;
+  }
+  return firefoxPath;
+};
+
+export const unusedPrefs = async () => {
+  const compareUserjs = getArgumentValue(compareUserjsArg);
+  if (compareUserjs === undefined) {
+    console.error("missing argument ");
+    process.exit(1);
+  }
+  const userJsContent = readFileSync(compareUserjs, "utf-8");
+
+  const firefoxPath = getInstalledFirefoxPath();
+  const prefsFirefox = await getPrefs(firefoxPath);
+
+  const userKeys = parseUserPrefs(userJsContent);
+
+  const missing: string[] = [];
+
+  for (const pref of userKeys) {
+    if (
+      !prefsFirefox.has(pref.key) &&
+      pref.versionRemoved === undefined &&
+      !pref.custom &&
+      !pref.hidden
+    ) {
+      missing.push(pref.key);
+    }
+  }
+  if (missing.length === 0) {
+    console.log(`No unused prefs in ${compareUserjs}`);
+  } else {
+    console.log(`Unused pref${missing.length === 1 ? "" : "s"}:`);
+    for (const pref of missing) {
+      console.log(`- ${pref}`);
+    }
+  }
+};

@@ -27,25 +27,55 @@ type InstallFirefoxOptions = {
   retry: boolean;
 };
 
+type DownloadArchiveOptions = {
+  url: string;
+  fileDest: string;
+  retry: boolean;
+};
+
+export const cleanArg = "clean";
+export const diffArg = "diff";
+export const unusedPrefsArg = "unused-prefs";
+
+export const compareUserjsArg = "--compare-userjs";
+export const keepArg = "--keep";
+export const firefoxPathArg = "--firefox-path";
+export const keepArchivesArg = "--keep-archives";
+export const keepSourcesArg = "--keep-sources";
+export const cleanSourcesArg = "--clean-sources";
+export const cleanArchivesArg = "--clean-archives";
+export const saveDiffsArg = "--save-diffs-in-file";
+export const doNotPrintInConsole = "--do-not-print-diffs-in-console";
+
 export const cleanOptions: SourcesOptions = {
-  archives: process.argv.includes("--remove-archives"),
-  sources: process.argv.includes("--remove-sources"),
+  archives: process.argv.includes(cleanArchivesArg),
+  sources: process.argv.includes(cleanSourcesArg),
 };
 
 export const keepOptions: SourcesOptions = {
-  archives: process.argv.includes("--keep-archives"),
-  sources: process.argv.includes("--keep-sources"),
+  archives: process.argv.includes(keepArchivesArg),
+  sources: process.argv.includes(keepSourcesArg),
 };
 
 export const printOptions: PrintOptions = {
-  doNotPrintConsole: process.argv.includes("--do-not-print-diffs-in-console"),
-  saveDiffsInFile: process.argv.includes("--save-diffs-in-file"),
+  doNotPrintConsole: process.argv.includes(doNotPrintInConsole),
+  saveDiffsInFile: process.argv.includes(saveDiffsArg),
 };
+
+const pathUsageValue = "<path>";
+const version1Value = "<version1>";
+const version2Value = "<version2>";
+const binaryName = "ff-diff";
+
+export const usage = `Usage:
+  ${binaryName} ${cleanArg} [${keepArg} ${version1Value},${version2Value}] [${keepArchivesArg}] [${keepSourcesArg}]
+  ${binaryName} ${diffArg} ${version1Value} ${version2Value} [${cleanArchivesArg}] [${cleanSourcesArg}] [${doNotPrintInConsole}] [${saveDiffsArg}] [${compareUserjsArg} ${pathUsageValue}]
+  ${binaryName} ${unusedPrefsArg} ${compareUserjsArg} ${pathUsageValue} [${firefoxPathArg} ${pathUsageValue}]`;
 
 const __dirname =
   process.env.USE_CURRENT_DIR === "true"
     ? process.cwd()
-    : path.join(homedir(), ".ff-diff");
+    : path.join(homedir(), `.${binaryName}`);
 
 export const getArgumentValue = (argument: string): string | undefined => {
   const args = process.argv;
@@ -99,20 +129,18 @@ const getPlatform = () => {
   }
 };
 
-const downloadFile = async (url: string, fileDest: string): Promise<string> => {
+const downloadArchive = async ({
+  url,
+  fileDest,
+  retry,
+}: DownloadArchiveOptions): Promise<string> => {
   let response = await fetch(url);
-  fileDest = path.join(installDir, `${fileDest}.xz`);
-  if (response.status === 404 && url.endsWith(".tar.xz")) {
-    const fallbackUrl = url.replace(".tar.xz", ".tar.bz2");
+
+  if (response.status === 404 && url.endsWith(".tar.xz") && !retry) {
+    url = url.replace(".tar.xz", ".tar.bz2");
     fileDest = fileDest.replace(".tar.xz", ".tar.bz2");
-    console.warn(`${url} it not found, trying ${fallbackUrl} instead`);
-    response = await fetch(fallbackUrl);
-    if (!response.ok || !response.body) {
-      throw new Error(
-        `Failed to download file (fallback), status code: ${response.status}`,
-      );
-    }
-    url = fallbackUrl;
+    console.warn(`${url} it not found, trying ${url} instead`);
+    return await downloadArchive({ url, fileDest, retry: true });
   } else if (!response.ok || !response.body) {
     throw new Error(`Failed to download file, status code: ${response.status}`);
   }
@@ -137,16 +165,21 @@ export const installFirefox = async ({
   version,
   retry,
 }: InstallFirefoxOptions): Promise<void> => {
-  const tar = `firefox-${version}.tar`;
-  let potentialArchivePath = getFilePathWithPrefix(tar);
+  const fileName = `firefox-${version}.tar`;
+  let potentialArchivePath = getFilePathWithPrefix(fileName);
   const destPath = path.join(installDir, version);
+  const fileDest = path.join(installDir, `${fileName}.xz`);
   const executablePath = path.join(destPath, "firefox");
 
   if (!potentialArchivePath) {
     console.log(`Downloading firefox ${version}`);
-    const downloadUrl = `https://archive.mozilla.org/pub/firefox/releases/${version}/${getPlatform()}-${getArchitecture()}/en-US/firefox-${version}.tar.xz`;
+    const url = `https://archive.mozilla.org/pub/firefox/releases/${version}/${getPlatform()}-${getArchitecture()}/en-US/firefox-${version}.tar.xz`;
     try {
-      potentialArchivePath = await downloadFile(downloadUrl, tar);
+      potentialArchivePath = await downloadArchive({
+        url,
+        fileDest,
+        retry: false,
+      });
     } catch (error) {
       console.error(`Can't download firefox ${version}: ${error}`);
       process.exit(1);

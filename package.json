@@ -27,7 +27,9 @@
     "ff-diff": "vite build -l warn && USE_CURRENT_DIR=true node dist/index.js",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
-    "lint": "oxlint"
+    "lint": "oxlint",
+    "test": "vitest --run",
+    "test:watch": "vitest"
   },
   "devDependencies": {
     "@types/node": "24.0.14",
@@ -35,7 +37,8 @@
     "oxlint": "1.6.0",
     "prettier": "3.6.2",
     "typescript": "5.8.3",
-    "vite": "7.0.4"
+    "vite": "7.0.4",
+    "vitest": "3.2.4"
   },
   "dependencies": {
     "selenium-webdriver": "4.34.0"

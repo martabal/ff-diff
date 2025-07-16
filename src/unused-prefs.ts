@@ -67,6 +67,7 @@ export const unusedPrefs = async () => {
   const prefsFirefox = await getPrefs(firefoxPath);
 
   const userKeys = parseUserPrefs(userJsContent);
+  userKeys.sort((a, b) => a.key.localeCompare(b.key));
 
   const missing: string[] = [];
 

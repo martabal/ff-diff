@@ -110,9 +110,9 @@ export const parseUserPrefs = (content: string): PrefInfo[] => {
 };
 
 export const diff = async () => {
-  const version1 = process.argv[3];
-  const version2 = process.argv[4];
-  if (version1 === undefined || version2 === undefined) {
+  const oldVersion = process.argv[3];
+  const newVersion = process.argv[4];
+  if (oldVersion === undefined || newVersion === undefined) {
     new Diff().usage();
   }
 
@@ -122,15 +122,15 @@ export const diff = async () => {
 
   const compareUserjs = getArgumentValue(compareUserjsArg);
 
-  console.log(
-    `Installing Firefox ${version1} and ${version2} in "${installDir}" directory`,
+  console.info(
+    `Installing Firefox ${oldVersion} and ${newVersion} in "${installDir}"`,
   );
 
   if (!existsSync(installDir)) {
     mkdirSync(installDir, { recursive: true });
   }
 
-  const versions = [version1, version2];
+  const versions = [oldVersion, newVersion];
 
   const firefoxDirs = versions.map((version) => {
     const dir = path.join(installDir, version, "firefox");
@@ -211,8 +211,8 @@ export const diff = async () => {
 
       const header =
         format === Format.Markdown
-          ? `<details open><summary>\n\n## ${label} in ${version2}\n</summary>\n`
-          : `${label} in ${version2}:`;
+          ? `<details open><summary>\n\n## ${label} in ${newVersion}\n</summary>\n`
+          : `${label} in ${newVersion}:`;
       const content =
         0 < keys.length
           ? `${keys.map((key) => formatter(key, format)).join("\n")}${format === Format.Markdown ? "\n\n</details>" : ""}`
@@ -230,12 +230,12 @@ export const diff = async () => {
 
   if (printOptions.saveDiffsInFile) {
     const outputMD = generateOutput(Format.Markdown);
-    const title = `# Diffs Firefox ${version1}-${version2}\n\n`;
+    const title = `# Diffs Firefox ${oldVersion}-${newVersion}\n\n`;
     if (!existsSync(diffsDir)) {
       console.log("creating diffs directory");
       mkdirSync(diffsDir);
     }
-    const diffsPath = path.join(diffsDir, `${version1}-${version2}.md`);
+    const diffsPath = path.join(diffsDir, `${oldVersion}-${newVersion}.md`);
     console.log(`writing diffs to ${diffsPath}`);
     writeFileSync(diffsPath, title + outputMD.join("\n") + "\n");
   }

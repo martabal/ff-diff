@@ -13,4 +13,8 @@ export default defineConfig({
     minify,
     ssr: true,
   },
+  define: {
+    APP_NAME: JSON.stringify(process.env.npm_package_name),
+    APP_VERSION: JSON.stringify(process.env.npm_package_version),
+  },
 });

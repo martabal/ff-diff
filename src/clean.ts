@@ -1,5 +1,5 @@
-import { readdir, rm } from "fs/promises";
-import { join } from "path";
+import { readdir, rm } from "node:fs/promises";
+import { join } from "node:path";
 import { getArgumentValue, installDir, keepOptions } from "./helpers";
 
 const parseKeepArgument = (): number[] => {
@@ -8,7 +8,7 @@ const parseKeepArgument = (): number[] => {
     return [];
   }
   const versions = args.split(",").map((value) => {
-    const version = parseInt(value, 10);
+    const version = Number.parseInt(value, 10);
     if (isNaN(version)) {
       console.error(`Error: Invalid version '${value}' provided.`);
       process.exit(1);
@@ -36,7 +36,7 @@ async function removeFolders(keptVersions: number[]) {
 
       if (
         entry.isDirectory() &&
-        !keptVersions.includes(parseInt(entry.name)) &&
+        !keptVersions.includes(Number.parseInt(entry.name)) &&
         !keepOptions.sources
       ) {
         shouldRemove = true;
@@ -48,7 +48,10 @@ async function removeFolders(keptVersions: number[]) {
         entry.name.startsWith("firefox-") &&
         !keepOptions.archives
       ) {
-        const version = parseInt(entry.name.slice("firefox-".length), 10);
+        const version = Number.parseInt(
+          entry.name.slice("firefox-".length),
+          10,
+        );
         if (!keptVersions.includes(version)) {
           shouldRemove = true;
           logMessage = `Remove archive: ${entry.name}`;

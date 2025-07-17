@@ -1,7 +1,7 @@
-import { compareUserjsArg, firefoxPathArg, getArgumentValue } from "./helpers";
-import { readFileSync, existsSync } from "fs";
-import { join } from "path";
-import os from "os";
+import { firefoxPathArg, getArgumentValue } from "./helpers";
+import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
+import os from "node:os";
 import { getPrefs } from "./firefox";
 import { parseUserPrefs } from "./diff";
 
@@ -15,7 +15,7 @@ function getFirefoxReleaseProfilePath(): string | null {
     return null;
   }
 
-  const iniContent = readFileSync(iniPath, "utf-8");
+  const iniContent = readFileSync(iniPath, "utf8");
   const lines = iniContent.split("\n");
 
   let currentSection: Record<string, string> = {};
@@ -43,7 +43,7 @@ function getFirefoxReleaseProfilePath(): string | null {
 
 const getInstalledFirefoxPath = (): string => {
   let firefoxPath = getArgumentValue(firefoxPathArg);
-  if (firefoxPath === undefined) {
+  if (firefoxPath === null) {
     const firefoxPath = getFirefoxReleaseProfilePath();
 
     if (firefoxPath === null || !existsSync(firefoxPath)) {
@@ -56,12 +56,9 @@ const getInstalledFirefoxPath = (): string => {
 };
 
 export const unusedPrefs = async () => {
-  const compareUserjs = getArgumentValue(compareUserjsArg);
-  if (compareUserjs === undefined) {
-    console.error("missing argument ");
-    process.exit(1);
-  }
-  const userJsContent = readFileSync(compareUserjs, "utf-8");
+  const compareUserjs = process.argv[3];
+
+  const userJsContent = readFileSync(compareUserjs, "utf8");
 
   const firefoxPath = getInstalledFirefoxPath();
   const prefsFirefox = await getPrefs(firefoxPath);

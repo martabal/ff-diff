@@ -1,11 +1,12 @@
-import { exit } from "process";
-import { Builder, Browser, WebDriver } from "selenium-webdriver";
+import { exit } from "node:process";
+import type { WebDriver } from "selenium-webdriver";
+import { Browser, Builder } from "selenium-webdriver";
 import firefox from "selenium-webdriver/firefox.js";
 
-export type FirefoxPref = {
+export interface FirefoxPref {
   key: string;
   value: Pref;
-};
+}
 
 export interface FirefoxChangedPref extends FirefoxPref {
   newValue: Pref;
@@ -13,11 +14,11 @@ export interface FirefoxChangedPref extends FirefoxPref {
 
 export type Pref = string | number | boolean;
 
-type PrefsDiff = {
+interface PrefsDiff {
   addedKeys: FirefoxPref[];
   removedKeys: FirefoxPref[];
   changedKeys: FirefoxChangedPref[];
-};
+}
 
 interface FirefoxGlobal {
   Services: {
@@ -80,7 +81,7 @@ export const getPrefs = async (
     }
     return prefs;
   });
-  if (prefsArray.length === 0) {
+  if (0 === prefsArray.length) {
     console.error("no preferences detected");
     exit(1);
   }

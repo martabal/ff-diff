@@ -28,6 +28,7 @@
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
     "lint": "oxlint",
+    "lint:fix": "oxlint --fix --fix-suggestions",
     "test": "vitest --run",
     "test:watch": "vitest"
   },

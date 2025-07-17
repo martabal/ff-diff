@@ -81,7 +81,7 @@ export const getPrefs = async (
     }
     return prefs;
   });
-  if (0 === prefsArray.length) {
+  if (prefsArray.length === 0) {
     console.error("no preferences detected");
     exit(1);
   }

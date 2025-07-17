@@ -11,16 +11,7 @@ import path from "path";
 import { exit } from "process";
 import { pipeline, Readable } from "stream";
 import { promisify } from "util";
-
-type SourcesOptions = {
-  archives: boolean;
-  sources: boolean;
-};
-
-type PrintOptions = {
-  doNotPrintConsole: boolean;
-  saveDiffsInFile: boolean;
-};
+import { cleanOptions } from "./cli";
 
 type InstallFirefoxOptions = {
   version: string;
@@ -32,53 +23,6 @@ type DownloadArchiveOptions = {
   fileDest: string;
   retry: boolean;
 };
-
-export const cleanArg = "clean";
-export const diffArg = "diff";
-export const unusedPrefsArg = "unused-prefs";
-
-export const versionArgs = ["-v", "--version"];
-export const helpArgs = ["-h", "--help"];
-
-export const compareUserjsArg = "--compare-userjs";
-export const keepArg = "--keep";
-export const firefoxPathArg = "--firefox-path";
-export const keepArchivesArg = "--keep-archives";
-export const keepSourcesArg = "--keep-sources";
-export const cleanSourcesArg = "--clean-sources";
-export const cleanArchivesArg = "--clean-archives";
-export const saveDiffsArg = "--save-diffs-in-file";
-export const doNotPrintInConsole = "--do-not-print-diffs-in-console";
-
-export const cleanOptions: SourcesOptions = {
-  archives: process.argv.includes(cleanArchivesArg),
-  sources: process.argv.includes(cleanSourcesArg),
-};
-
-export const keepOptions: SourcesOptions = {
-  archives: process.argv.includes(keepArchivesArg),
-  sources: process.argv.includes(keepSourcesArg),
-};
-
-export const printOptions: PrintOptions = {
-  doNotPrintConsole: process.argv.includes(doNotPrintInConsole),
-  saveDiffsInFile: process.argv.includes(saveDiffsArg),
-};
-
-const pathUsageValue = "path";
-const version1Value = "version1";
-const version2Value = "version2";
-const oldVersionValue = "<old-version>";
-const newVersionValue = "<new-version>";
-
-export const usage = `Usage:
-  ${APP_NAME} ${cleanArg} [${keepArg} ${version1Value},${version2Value}] [${keepArchivesArg}] [${keepSourcesArg}]
-  ${APP_NAME} ${diffArg} ${oldVersionValue} ${newVersionValue} [${cleanArchivesArg}] [${cleanSourcesArg}] [${doNotPrintInConsole}] [${saveDiffsArg}] [${compareUserjsArg} ${pathUsageValue}]
-  ${APP_NAME} ${unusedPrefsArg} <${pathUsageValue}> [${firefoxPathArg} ${pathUsageValue}]
-
-Options:
-  -v, --version        Print version info and exit
-  -h, --help           Print help`;
 
 const __dirname =
   process.env.USE_CURRENT_DIR === "true"
@@ -94,7 +38,7 @@ export const getArgumentValue = (argument: string): string | null => {
     );
     process.exit(1);
   }
-  if (versionIndex !== -1 && versionIndex + 1 < args.length) {
+  if (versionIndex !== -1 && args.length > versionIndex + 1) {
     const versionValue = args[versionIndex + 1];
     if (versionValue.startsWith("--")) {
       console.error(

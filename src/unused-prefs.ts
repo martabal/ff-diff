@@ -1,9 +1,10 @@
-import { firefoxPathArg, getArgumentValue } from "./helpers";
+import { getArgumentValue } from "./helpers";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import os from "node:os";
 import { getPrefs } from "./firefox";
 import { parseUserPrefs } from "./diff";
+import { firefoxPathArg } from "./cli";
 
 const installedMozilla = ".mozilla/firefox";
 

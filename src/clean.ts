@@ -1,6 +1,7 @@
 import { readdir, rm } from "node:fs/promises";
 import { join } from "node:path";
-import { getArgumentValue, installDir, keepOptions } from "./helpers";
+import { getArgumentValue, installDir } from "./helpers";
+import { keepOptions } from "./cli";
 
 const parseKeepArgument = (): number[] => {
   const args = getArgumentValue("--keep");
@@ -19,10 +20,10 @@ const parseKeepArgument = (): number[] => {
   return versions;
 };
 
-export const clean = () => {
+export const clean = async () => {
   const keptVersions = parseKeepArgument();
   console.log("Versions kept:", keptVersions.join(", "));
-  removeFolders(keptVersions);
+  await removeFolders(keptVersions);
 };
 
 async function removeFolders(keptVersions: number[]) {

@@ -2,13 +2,10 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { rm } from "node:fs/promises";
 import path from "node:path";
 import {
-  cleanOptions,
-  compareUserjsArg,
   diffsDir,
   getArgumentValue,
   installDir,
   installFirefox,
-  printOptions,
 } from "./helpers";
 import {
   type FirefoxChangedPref,
@@ -17,6 +14,7 @@ import {
   comparePrefs,
   getPrefs,
 } from "./firefox";
+import { cleanOptions, compareUserjsArg, Diff, printOptions } from "./cli";
 
 interface PrintDiff {
   label: string;
@@ -114,6 +112,10 @@ export const parseUserPrefs = (content: string): PrefInfo[] => {
 export const diff = async () => {
   const version1 = process.argv[3];
   const version2 = process.argv[4];
+  if (version1 === undefined || version2 === undefined) {
+    new Diff().usage();
+  }
+
   const removedSymbol = "❌";
   const addedSymbol = "✅";
   const changedSymbol = "🔁";

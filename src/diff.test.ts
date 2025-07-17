@@ -1,12 +1,12 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { parseUserPrefs } from "./diff";
 
-describe("parseUserPrefs", () => {
+describe("parseuserprefs", () => {
   it("should parse a simple boolean preference", () => {
     const input = `user_pref("security.OCSP.require", true);`;
     const result = parseUserPrefs(input);
 
-    expect(result).toEqual([
+    expect(result).toStrictEqual([
       {
         key: "security.OCSP.require",
         value: "true",
@@ -60,7 +60,7 @@ describe("parseUserPrefs", () => {
     });
   });
 
-  it("should extract versionAdded and versionRemoved", () => {
+  it("should extract versionadded and versionremoved", () => {
     const input = `user_pref("test.pref", false); // [FF91+] [FF100-]`;
     const result = parseUserPrefs(input);
 
@@ -77,7 +77,7 @@ describe("parseUserPrefs", () => {
     `;
     const result = parseUserPrefs(input);
 
-    expect(result.length).toBe(2);
+    expect(result).toHaveLength(2);
     expect(result[0].key).toBe("first.pref");
     expect(result[1].key).toBe("second.pref");
   });
@@ -86,6 +86,6 @@ describe("parseUserPrefs", () => {
     const input = `console.log("no prefs here");`;
     const result = parseUserPrefs(input);
 
-    expect(result).toEqual([]);
+    expect(result).toStrictEqual([]);
   });
 });

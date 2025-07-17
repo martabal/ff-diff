@@ -2,7 +2,14 @@
 
 import { clean } from "./clean";
 import { diff } from "./diff";
-import { cleanArg, diffArg, unusedPrefsArg, usage } from "./helpers";
+import {
+  cleanArg,
+  diffArg,
+  helpArgs,
+  unusedPrefsArg,
+  usage,
+  versionArgs,
+} from "./helpers";
 import { unusedPrefs } from "./unused-prefs";
 
 (async () => {
@@ -23,8 +30,12 @@ import { unusedPrefs } from "./unused-prefs";
     return;
   }
 
-  if (process.argv.includes("-h") || process.argv.includes("--help")) {
+  if (process.argv.some((arg) => helpArgs.includes(arg))) {
     console.log(usage);
+    return;
+  }
+  if (process.argv.some((arg) => versionArgs.includes(arg))) {
+    console.log(`${APP_NAME} ${APP_VERSION}`);
     return;
   }
 

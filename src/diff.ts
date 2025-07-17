@@ -1,39 +1,39 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
-import { rm } from "fs/promises";
-import path from "path";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { rm } from "node:fs/promises";
+import path from "node:path";
 import {
-  installFirefox,
   cleanOptions,
-  printOptions,
+  compareUserjsArg,
+  diffsDir,
   getArgumentValue,
   installDir,
-  diffsDir,
-  compareUserjsArg,
+  installFirefox,
+  printOptions,
 } from "./helpers";
 import {
   type FirefoxChangedPref,
-  comparePrefs,
   type FirefoxPref,
-  getPrefs,
   type Pref,
+  comparePrefs,
+  getPrefs,
 } from "./firefox";
 
-type PrintDiff = {
+interface PrintDiff {
   label: string;
   keys: (FirefoxChangedPref | FirefoxPref)[];
   formatter: (key: FirefoxChangedPref | FirefoxPref, format: Format) => string;
-};
+}
 
 type Value = string | number | boolean;
 
 enum Format {
-  Markdown,
-  Text,
+  Markdown = "md",
+  Text = "txt",
 }
 
 interface Ticks {
   tickStart: string;
-  tickSymbol: string | undefined;
+  tickSymbol?: string;
   tickKeyValue: Value;
 }
 
@@ -41,8 +41,7 @@ interface AllFormated extends Ticks {
   tickSymbol: string;
 }
 
-const formatValue = (val: string | number | boolean) =>
-  val === "" ? " " : val;
+const formatValue = (val: Pref): Pref => ("" === val ? " " : val);
 
 const formatTicks: Record<Format, Ticks> = {
   [Format.Markdown]: {
@@ -131,11 +130,14 @@ export const diff = async () => {
 
   const versions = [version1, version2];
 
-  const firefoxDirs = versions.map((version) => ({
-    version,
-    dir: path.join(installDir, version, "firefox"),
-    installPath: path.join(installDir, version, "firefox", "firefox"),
-  }));
+  const firefoxDirs = versions.map((version) => {
+    const dir = path.join(installDir, version, "firefox");
+    return {
+      version,
+      dir,
+      installPath: path.join(dir, "firefox"),
+    };
+  });
 
   const [prefsMapV1, prefsMapV2] = await Promise.all(
     firefoxDirs.map(({ version, installPath }) =>
@@ -202,16 +204,17 @@ export const diff = async () => {
   const generateOutput = (format: Format) => {
     const lines: string[] = [];
 
-    for (let index = 0; index < sections.length; index++) {
+    for (let index = 0; index < sections.length; index += 1) {
       const { label, keys, formatter } = sections[index];
 
       const header =
         format === Format.Markdown
           ? `<details open><summary>\n\n## ${label} in ${version2}\n</summary>\n`
           : `${label} in ${version2}:`;
-      const content = keys.length
-        ? `${keys.map((key) => formatter(key, format)).join("\n")}${format === Format.Markdown ? "\n\n</details>" : ""}`
-        : "(none)";
+      const content =
+        0 < keys.length
+          ? `${keys.map((key) => formatter(key, format)).join("\n")}${format === Format.Markdown ? "\n\n</details>" : ""}`
+          : "(none)";
 
       lines.push(header, content);
 
@@ -247,7 +250,7 @@ export const diff = async () => {
 
     console.log("Comparing prefs with the ones from your user.js\n");
 
-    const userJsContent = readFileSync(compareUserjs, "utf-8");
+    const userJsContent = readFileSync(compareUserjs, "utf8");
 
     const userKeys = parseUserPrefs(userJsContent);
 
@@ -257,8 +260,8 @@ export const diff = async () => {
     const changed = configDiff.changedKeys.filter(isUserKey);
     const removed = configDiff.removedKeys.filter(isUserKey);
 
-    if (changed.length || removed.length) {
-      if (changed.length) {
+    if (0 < changed.length || 0 < removed.length) {
+      if (0 < changed.length) {
         console.log(
           `${changedSymbol} The following user.js prefs were changed:\n` +
             changed
@@ -272,11 +275,11 @@ export const diff = async () => {
         console.log("No prefs from your user.js settings were changed.\n");
       }
 
-      if (changed.length && removed.length) {
+      if (0 < changed.length && 0 < removed.length) {
         console.log();
       }
 
-      if (removed.length) {
+      if (0 < removed.length) {
         console.log(
           `${removedSymbol} The following prefs were removed:\n` +
             removed.map((pref) => `- ${pref.key}`).join("\n"),

@@ -5,5 +5,14 @@
     "suspicious": "error"
   },
   "ignorePatterns": ["dist"],
-  "plugins": ["promise", "import", "eslint", "oxc", "typescript", "unicorn"]
+  "plugins": [
+    "eslint",
+    "import",
+    "node",
+    "oxc",
+    "promise",
+    "typescript",
+    "unicorn",
+    "vitest"
+  ]
 }

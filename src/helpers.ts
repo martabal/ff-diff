@@ -37,6 +37,9 @@ export const cleanArg = "clean";
 export const diffArg = "diff";
 export const unusedPrefsArg = "unused-prefs";
 
+export const versionArgs = ["-v", "--version"];
+export const helpArgs = ["-h", "--help"];
+
 export const compareUserjsArg = "--compare-userjs";
 export const keepArg = "--keep";
 export const firefoxPathArg = "--firefox-path";
@@ -62,22 +65,27 @@ export const printOptions: PrintOptions = {
   saveDiffsInFile: process.argv.includes(saveDiffsArg),
 };
 
-const pathUsageValue = "<path>";
-const version1Value = "<version1>";
-const version2Value = "<version2>";
-const binaryName = "ff-diff";
+const pathUsageValue = "path";
+const version1Value = "version1";
+const version2Value = "version2";
+const oldVersionValue = "<old-version>";
+const newVersionValue = "<new-version>";
 
 export const usage = `Usage:
-  ${binaryName} ${cleanArg} [${keepArg} ${version1Value},${version2Value}] [${keepArchivesArg}] [${keepSourcesArg}]
-  ${binaryName} ${diffArg} ${version1Value} ${version2Value} [${cleanArchivesArg}] [${cleanSourcesArg}] [${doNotPrintInConsole}] [${saveDiffsArg}] [${compareUserjsArg} ${pathUsageValue}]
-  ${binaryName} ${unusedPrefsArg} ${compareUserjsArg} ${pathUsageValue} [${firefoxPathArg} ${pathUsageValue}]`;
+  ${APP_NAME} ${cleanArg} [${keepArg} ${version1Value},${version2Value}] [${keepArchivesArg}] [${keepSourcesArg}]
+  ${APP_NAME} ${diffArg} ${oldVersionValue} ${newVersionValue} [${cleanArchivesArg}] [${cleanSourcesArg}] [${doNotPrintInConsole}] [${saveDiffsArg}] [${compareUserjsArg} ${pathUsageValue}]
+  ${APP_NAME} ${unusedPrefsArg} <${pathUsageValue}> [${firefoxPathArg} ${pathUsageValue}]
+
+Options:
+  -v, --version        Print version info and exit
+  -h, --help           Print help`;
 
 const __dirname =
   process.env.USE_CURRENT_DIR === "true"
     ? process.cwd()
-    : path.join(homedir(), `.${binaryName}`);
+    : path.join(homedir(), `.${APP_NAME}`);
 
-export const getArgumentValue = (argument: string): string | undefined => {
+export const getArgumentValue = (argument: string): string | null => {
   const args = process.argv;
   const versionIndex = args.indexOf(argument);
   if (versionIndex + 1 >= args.length) {
@@ -96,7 +104,7 @@ export const getArgumentValue = (argument: string): string | undefined => {
     }
     return versionValue;
   } else {
-    return undefined;
+    return null;
   }
 };
 

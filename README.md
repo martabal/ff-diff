@@ -25,15 +25,19 @@ npm i -g ff-diff
 ```bash
 $ ff-diff
 Usage:
-  ff-diff clean [--keep <version1>,<version2>] [--keep-archives] [--keep-sources]
-  ff-diff diff <version1> <version2> [--clean-archives] [--clean-sources] [--do-not-print-diffs-in-console] [--save-diffs-in-file] [--compare-userjs <path>]
-  ff-diff unused-prefs --compare-userjs <path> [--firefox-path <path>]
+  ff-diff clean [--keep version1,version2] [--keep-archives] [--keep-sources]
+  ff-diff diff <old-version> <new-version> [--clean-archives] [--clean-sources] [--do-not-print-diffs-in-console] [--save-diffs-in-file] [--compare-userjs path]
+  ff-diff unused-prefs <path> [--firefox-path path]
+
+Options:
+  -v, --version        Print version info and exit
+  -h, --help           Print help
 ```
 
 Example:
 
 ```bash
-ff-diff 137.0 138.0
+ff-diff diff 137.0 138.0
 ```
 
 ## Develop
@@ -55,7 +59,7 @@ npm run ff-diff diff <version1> <version2>
 for example:
 
 ```bash
-npm run ff-diff 137.0 138.0
+npm run ff-diff diff 137.0 138.0
 ```
 
 If you use a custom `user.js`. You can check if some of the keys are removed/changed with the argument `--compare-userjs <path_to_your_userjs>`.

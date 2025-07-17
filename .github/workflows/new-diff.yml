@@ -6,10 +6,10 @@ on:
       ff-diff-version:
         description: "ff-diff version"
         required: false
-      version1:
+      old-version:
         description: "Old version"
         required: true
-      version2:
+      new-version:
         description: "New version"
         required: true
 
@@ -34,12 +34,12 @@ jobs:
         run: npm ci
 
       - name: Run ff-diff
-        run: npm run ff-diff -- diff ${{ github.event.inputs.version1 }} ${{ github.event.inputs.version2 }} --save-diffs-in-file
+        run: npm run ff-diff -- diff ${{ github.event.inputs.old-version }} ${{ github.event.inputs.new-version }} --save-diffs-in-file
 
       - name: Create a new GitHub Discussion
         uses: abirismyname/create-discussion@c2b7c825241769dda523865ae444a879f6bbd0e0 #v2.1.1
         with:
-          title: Diffs ${{ github.event.inputs.version1 }}-${{ github.event.inputs.version2 }}
-          body-filepath: diffs/${{ github.event.inputs.version1 }}-${{ github.event.inputs.version2 }}.md
+          title: Diffs ${{ github.event.inputs.old-version }}-${{ github.event.inputs.new-version }}
+          body-filepath: diffs/${{ github.event.inputs.old-version }}-${{ github.event.inputs.new-version }}.md
           category-name: Diffs
           github-token: ${{ secrets.GITHUB_TOKEN }}

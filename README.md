@@ -53,7 +53,7 @@ npm ci
 Run the comparison script:
 
 ```bash
-npm run ff-diff diff <version1> <version2>
+npm run ff-diff diff <old-version> <new-version>
 ```
 
 for example:

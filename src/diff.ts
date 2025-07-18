@@ -11,11 +11,11 @@ import {
   type FirefoxChangedPref,
   type FirefoxPref,
   type Pref,
-  PrefsDiff,
+  type PrefsDiff,
   comparePrefs,
   getPrefs,
 } from "./firefox";
-import { cleanOptions, CliArg, Diff, printOptions } from "./cli";
+import { cleanOptions, CLI_ARGS, DiffCommand, printOptions } from "./cli";
 import { parseUserPrefs } from "./prefs";
 
 interface PrintDiff {
@@ -231,10 +231,10 @@ export const diff = async () => {
   const oldVersion = process.argv[3];
   const newVersion = process.argv[4];
   if (oldVersion === undefined || newVersion === undefined) {
-    new Diff().usage();
+    new DiffCommand().usage();
   }
 
-  const compareUserjs = getArgumentValue(CliArg.compareUserjs);
+  const compareUserjs = getArgumentValue(CLI_ARGS.COMPARE_USERJS);
 
   console.info(
     `Installing Firefox ${oldVersion} and ${newVersion} in "${installDir}"`,

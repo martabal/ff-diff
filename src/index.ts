@@ -1,39 +1,92 @@
 #!/usr/bin/env node
-
 import {
-  Clean,
+  type BaseCli,
   Cli,
-  CliCommand,
-  Diff,
-  helpArgs,
-  UnusedPref,
-  versionArgs,
+  HELP_ARGS,
+  VERSION_ARGS,
+  createCommand,
+  isValidCommand,
 } from "./cli";
 
-const matchFirstArg = (firstArg: string) => {
-  switch (firstArg) {
-    case CliCommand.unusedPrefsArg:
-      return new UnusedPref(false);
-    case CliCommand.diffArg:
-      return new Diff(false);
-    case CliCommand.cleanArg:
-      return new Clean(false);
-    default:
-      return new Cli(true);
+const matchCommand = (command: string): BaseCli => {
+  if (!command) {
+    return new Cli(true);
+  }
+
+  if (isValidCommand(command)) {
+    return createCommand(command, false);
+  }
+
+  console.error(`Unknown command: ${command}`);
+  return new Cli(true);
+};
+
+const hasAnyArg = (args: readonly string[]): boolean => {
+  return process.argv.some((arg) => args.includes(arg));
+};
+
+const showVersion = (): void => {
+  console.log(`${APP_NAME} ${APP_VERSION}`);
+  process.exit(0);
+};
+
+const main = async (): Promise<void> => {
+  try {
+    const [, , firstArgument, secondArgument] = process.argv;
+
+    if (hasAnyArg(VERSION_ARGS)) {
+      showVersion();
+      return;
+    }
+
+    if (HELP_ARGS.includes(firstArgument)) {
+      const cli = new Cli(false);
+      cli.usage();
+      return;
+    }
+
+    if (HELP_ARGS.includes(secondArgument)) {
+      const cli = matchCommand(firstArgument);
+      cli.usage();
+      return;
+    }
+
+    const cliInstance = matchCommand(firstArgument);
+    await cliInstance.run();
+  } catch (error) {
+    console.error(
+      "Fatal error:",
+      error instanceof Error ? error.message : String(error),
+    );
+    process.exit(1);
   }
 };
 
-(() => {
-  const firstArg = process.argv[2];
-  const secondArg = process.argv[3];
+const mainWithErrorHandling = async (): Promise<void> => {
+  process.on("uncaughtException", (error) => {
+    console.error("Uncaught Exception:", error);
+    process.exit(1);
+  });
 
-  if (helpArgs.includes(firstArg) && secondArg === undefined) {
-    new Cli(false).usage();
-  } else if (process.argv.some((arg) => versionArgs.includes(arg))) {
-    console.log(`${APP_NAME} ${APP_VERSION}`);
-  } else if (helpArgs.includes(secondArg)) {
-    matchFirstArg(firstArg).usage();
-  } else {
-    matchFirstArg(firstArg).entrypoint();
-  }
-})();
+  process.on("unhandledRejection", (reason, promise) => {
+    console.error("Unhandled Rejection at:", promise, "reason:", reason);
+    process.exit(1);
+  });
+
+  process.on("SIGINT", () => {
+    console.log("\nReceived SIGINT. Gracefully shutting down...");
+    process.exit(0);
+  });
+
+  process.on("SIGTERM", () => {
+    console.log("\nReceived SIGTERM. Gracefully shutting down...");
+    process.exit(0);
+  });
+
+  await main();
+};
+
+mainWithErrorHandling().catch((error) => {
+  console.error("Application failed to start:", error);
+  process.exit(1);
+});

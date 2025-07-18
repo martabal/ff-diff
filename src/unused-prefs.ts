@@ -3,8 +3,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import os from "node:os";
 import { getPrefs } from "./firefox";
-
-import { CliArg, UnusedPref } from "./cli";
+import { CLI_ARGS, UnusedPrefCommand } from "./cli";
 import { parseUserPrefs } from "./prefs";
 
 const installedMozilla = ".mozilla/firefox";
@@ -44,7 +43,7 @@ const getFirefoxReleaseProfilePath = (): string | null => {
 };
 
 const getInstalledFirefoxPath = (): string => {
-  let firefoxPath = getArgumentValue(CliArg.firefoxPath);
+  let firefoxPath = getArgumentValue(CLI_ARGS.FIREFOX_PATH);
   if (firefoxPath === null) {
     const firefoxPath = getFirefoxReleaseProfilePath();
 
@@ -60,7 +59,7 @@ const getInstalledFirefoxPath = (): string => {
 export const unusedPrefs = async () => {
   const compareUserjs = process.argv[3];
   if (compareUserjs === undefined) {
-    new UnusedPref().usage();
+    new UnusedPrefCommand().usage();
   }
 
   const userJsContent = readFileSync(compareUserjs, "utf8");

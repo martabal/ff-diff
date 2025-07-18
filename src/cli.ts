@@ -43,8 +43,8 @@ enum CliValue {
   pathUsage = "path",
   version1 = "version1",
   version2 = "version2",
-  oldVersion = "<old-version>",
-  newVersion = "<new-version>",
+  oldVersion = "old-version",
+  newVersion = "new-version",
 }
 
 export const cleanOptions: SourcesOptions = {
@@ -161,7 +161,7 @@ export class Diff extends Cli {
   static description = "Perform a comparison between preference files";
   static commands?: Option[] = [
     {
-      arguments: [`${CliValue.oldVersion} ${CliValue.newVersion}`],
+      arguments: [`<${CliValue.oldVersion}> <${CliValue.newVersion}>`],
       help: "First arg is the old version, second arg is the new version",
     },
   ];

@@ -1,6 +1,7 @@
 {
   "categories": {
     "correctness": "error",
+    "pedantic": "error",
     "perf": "error",
     "suspicious": "error"
   },
@@ -14,5 +15,15 @@
     "typescript",
     "unicorn",
     "vitest"
-  ]
+  ],
+  "rules": {
+    "max-classes-per-file": "off",
+    "max-dependencies": "off",
+    "eslint/max-lines-per-function": [
+      "error",
+      {
+        "max": 75
+      }
+    ]
+  }
 }

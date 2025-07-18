@@ -3,9 +3,9 @@ import { diff } from "./diff";
 import { unusedPrefs } from "./unused-prefs";
 
 enum ConsoleColors {
-  Green = "\x1b[32m",
-  Reset = "\x1b[0m",
-  Cyan = "\x1b[36m",
+  Green = "\u001B[32m",
+  Reset = "\u001B[0m",
+  Cyan = "\u001B[36m",
 }
 
 type SourcesOptions = {
@@ -106,7 +106,7 @@ export class Cli {
       },
     ];
   }
-  async entrypoint() {
+  entrypoint() {
     this.fail = true;
     this.usage();
   }

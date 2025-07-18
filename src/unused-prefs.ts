@@ -3,8 +3,9 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import os from "node:os";
 import { getPrefs } from "./firefox";
-import { parseUserPrefs } from "./diff";
+
 import { CliArg, UnusedPref } from "./cli";
+import { parseUserPrefs } from "./prefs";
 
 const installedMozilla = ".mozilla/firefox";
 

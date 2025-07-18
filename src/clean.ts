@@ -32,7 +32,7 @@ export const clean = async () => {
 
       if (
         entry.isDirectory() &&
-        !keptVersions.includes(Number.parseInt(entry.name)) &&
+        !keptVersions.includes(Number.parseInt(entry.name, 10)) &&
         !keepOptions.sources
       ) {
         shouldRemove = true;
@@ -64,11 +64,11 @@ export const clean = async () => {
     });
 
     const results = await Promise.all(removalPromises);
-    const hasChanged = results.some((changed) => changed);
-    if (!hasChanged) {
-      console.log("No archives/sources has been removed");
-    } else {
+    const hasChanged = results.some(Boolean);
+    if (hasChanged) {
       console.log("Cleanup complete.");
+    } else {
+      console.log("No archives/sources has been removed");
     }
   } catch (error) {
     console.error("Error reading dist/ directory:", error);

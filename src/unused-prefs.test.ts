@@ -1,0 +1,178 @@
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { join } from "path";
+import os from "os";
+import { existsSync, readFileSync } from "fs";
+import { getFirefoxReleaseProfilePath } from "./unused-prefs";
+
+vi.mock("fs");
+vi.mock("os");
+vi.mock("path");
+
+const mockInstalledMozilla = ".mozilla/firefox";
+
+describe("getFirefoxReleaseProfilePath", () => {
+  const mockHomeDir = "/home/user";
+  const mockMozillaPath = `${mockHomeDir}/${mockInstalledMozilla}`;
+  const mockIniPath = `${mockMozillaPath}/profiles.ini`;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+
+    vi.mocked(os.homedir).mockReturnValue(mockHomeDir);
+    vi.mocked(join).mockImplementation((...paths) => paths.join("/"));
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("should return null when profiles.ini does not exist", () => {
+    vi.mocked(existsSync).mockReturnValue(false);
+
+    const result = getFirefoxReleaseProfilePath();
+
+    expect(result).toBeNull();
+    expect(existsSync).toHaveBeenCalledWith(mockIniPath);
+    expect(readFileSync).not.toHaveBeenCalled();
+  });
+
+  it("should return the correct path when release profile exists", () => {
+    const mockIniContent = `[Install7OQB4VLD66BGRBRQ]
+Default=def456.default-release
+Locked=1
+    
+[Profile1]
+Name=default
+IsRelative=1
+Path=abc123.default
+Default=1
+
+[Profile0]
+Name=default-release
+IsRelative=1
+Path=def456.default-release
+
+[General]
+StartWithLastProfile=1
+Version=2`;
+
+    vi.mocked(existsSync).mockReturnValue(true);
+    vi.mocked(readFileSync).mockReturnValue(mockIniContent);
+
+    const result = getFirefoxReleaseProfilePath();
+
+    expect(result).toBe(`${mockMozillaPath}/def456.default-release`);
+    expect(existsSync).toHaveBeenCalledWith(mockIniPath);
+    expect(readFileSync).toHaveBeenCalledWith(mockIniPath, "utf8");
+  });
+
+  it("should return null when no release profile exists", () => {
+    const mockIniContent = `[Profile0]
+Name=default
+IsRelative=1
+Path=abc123.default
+
+[Profile1]
+Name=dev
+IsRelative=1
+Path=def456.dev
+
+[General]
+StartWithLastProfile=1
+Version=2`;
+
+    vi.mocked(existsSync).mockReturnValue(true);
+    vi.mocked(readFileSync).mockReturnValue(mockIniContent);
+
+    const result = getFirefoxReleaseProfilePath();
+
+    expect(result).toBeNull();
+  });
+
+  it("should return null when release profile has no Path", () => {
+    const mockIniContent = `[Profile0]
+Name=release
+IsRelative=1
+
+[General]
+StartWithLastProfile=1
+Version=2
+`;
+
+    vi.mocked(existsSync).mockReturnValue(true);
+    vi.mocked(readFileSync).mockReturnValue(mockIniContent);
+
+    const result = getFirefoxReleaseProfilePath();
+
+    expect(result).toBeNull();
+  });
+
+  it("should handle empty profiles.ini file", () => {
+    vi.mocked(existsSync).mockReturnValue(true);
+    vi.mocked(readFileSync).mockReturnValue("");
+
+    const result = getFirefoxReleaseProfilePath();
+
+    expect(result).toBeNull();
+  });
+
+  it("should handle ini content with extra whitespace", () => {
+    const mockIniContent = `[Profile0]
+Name = release  
+IsRelative = 1
+Path = abc123.release
+
+[General]
+StartWithLastProfile=1
+Version=2`;
+
+    vi.mocked(existsSync).mockReturnValue(true);
+    vi.mocked(readFileSync).mockReturnValue(mockIniContent);
+
+    const result = getFirefoxReleaseProfilePath();
+
+    expect(result).toBe(`${mockMozillaPath}/abc123.release`);
+  });
+
+  it("should return the first matching release profile when multiple exist", () => {
+    const mockIniContent = `[Profile0]
+Name=first-release
+IsRelative=1
+Path=first.release
+
+[Profile1]
+Name=second-release
+IsRelative=1
+Path=second.release
+
+[General]
+StartWithLastProfile=1
+Version=2`;
+
+    vi.mocked(existsSync).mockReturnValue(true);
+    vi.mocked(readFileSync).mockReturnValue(mockIniContent);
+
+    const result = getFirefoxReleaseProfilePath();
+
+    expect(result).toBe(`${mockMozillaPath}/first.release`);
+  });
+
+  it("should handle case sensitivity in profile names", () => {
+    const mockIniContent = `
+[Profile0]
+Name=Release
+IsRelative=1
+Path=abc123.Release
+
+[General]
+StartWithLastProfile=1
+Version=2`;
+
+    vi.mocked(existsSync).mockReturnValue(true);
+    vi.mocked(readFileSync).mockReturnValue(mockIniContent);
+
+    const result = getFirefoxReleaseProfilePath();
+
+    expect(result).toBeNull();
+  });
+});

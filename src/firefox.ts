@@ -52,7 +52,7 @@ export const getPrefs = async (
 
   await driver.get("about:config");
 
-  const prefsArray = await driver.executeScript<FirefoxPref[]>(function () {
+  const prefsArray = await driver.executeScript<FirefoxPref[]>(() => {
     const services = (globalThis as unknown as FirefoxGlobal).Services;
     const defaultBranch = services.prefs.getDefaultBranch("");
     const prefs: FirefoxPref[] = [];

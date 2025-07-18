@@ -8,7 +8,7 @@ import { CliArg, UnusedPref } from "./cli";
 
 const installedMozilla = ".mozilla/firefox";
 
-function getFirefoxReleaseProfilePath(): string | null {
+const getFirefoxReleaseProfilePath = (): string | null => {
   const mozillaPath = join(os.homedir(), `${installedMozilla}`);
   const iniPath = join(mozillaPath, "profiles.ini");
 
@@ -40,7 +40,7 @@ function getFirefoxReleaseProfilePath(): string | null {
   }
 
   return null;
-}
+};
 
 const getInstalledFirefoxPath = (): string => {
   let firefoxPath = getArgumentValue(CliArg.firefoxPath);

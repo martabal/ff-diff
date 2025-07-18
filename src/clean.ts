@@ -16,17 +16,12 @@ const parseKeepArgument = (): number[] => {
     }
     return version;
   });
-
+  console.log("Versions kept:", versions.join(", "));
   return versions;
 };
 
 export const clean = async () => {
   const keptVersions = parseKeepArgument();
-  console.log("Versions kept:", keptVersions.join(", "));
-  await removeFolders(keptVersions);
-};
-
-async function removeFolders(keptVersions: number[]) {
   try {
     const entries = await readdir(installDir, { withFileTypes: true });
 
@@ -79,4 +74,4 @@ async function removeFolders(keptVersions: number[]) {
     console.error("Error reading dist/ directory:", error);
     process.exit(1);
   }
-}
+};

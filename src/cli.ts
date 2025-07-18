@@ -110,11 +110,7 @@ export class Cli {
     this.fail = true;
     this.usage();
   }
-  usage(fail?: boolean): void {
-    if (fail !== undefined) {
-      this.fail = fail;
-    }
-
+  usage(): void {
     const maxCmdLen = Math.max(
       ...this.commands.map((cmd) => cmd.arguments.join(" ").length),
     );

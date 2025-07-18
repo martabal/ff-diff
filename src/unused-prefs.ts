@@ -8,7 +8,7 @@ import { parseUserPrefs } from "./prefs";
 
 const installedMozilla = ".mozilla/firefox";
 
-const getFirefoxReleaseProfilePath = (): string | null => {
+export const getFirefoxReleaseProfilePath = (): string | null => {
   const mozillaPath = join(os.homedir(), `${installedMozilla}`);
   const iniPath = join(mozillaPath, "profiles.ini");
 
@@ -46,6 +46,7 @@ const getInstalledFirefoxPath = (): string => {
   let firefoxPath = getArgumentValue(CLI_ARGS.FIREFOX_PATH);
   if (firefoxPath === null) {
     const firefoxPath = getFirefoxReleaseProfilePath();
+    console.log(firefoxPath);
 
     if (firefoxPath === null || !existsSync(firefoxPath)) {
       console.error("Can't find installed firefox version");

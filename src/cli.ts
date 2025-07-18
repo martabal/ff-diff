@@ -156,18 +156,13 @@ export abstract class BaseCli {
           : `${CONSOLE_COLORS.CYAN}${args}${CONSOLE_COLORS.RESET}`;
 
       const helpLines = item.help.split("\n");
-      const padding =
-        separator === ", "
-          ? " ".repeat(maxLen - args.length)
-          : args.padEnd(maxLen);
+      const padding = " ".repeat(Math.max(0, maxLen - args.length + 4));
 
-      console.log(
-        `  ${separator === ", " ? coloredArgs + padding : coloredArgs.padEnd(maxLen + 10)}  ${helpLines[0]}`,
-      );
+      console.log(`  ${coloredArgs}${padding}${helpLines[0]}`);
 
       // Print additional help lines with proper indentation
       for (let i = 1; i < helpLines.length; i++) {
-        console.log(" ".repeat(maxLen + 4) + helpLines[i]);
+        console.log(" ".repeat(maxLen + 6) + helpLines[i]);
       }
     }
   }

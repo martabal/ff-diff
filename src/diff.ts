@@ -227,10 +227,35 @@ const handleOutputDiff = (
   }
 };
 
+const startsWithNumberDotNumber = (str: string): boolean => {
+  const parts = str.split(".");
+
+  if (parts.length < 2) {
+    return false;
+  }
+
+  const first = parts[0];
+  const second = parts[1];
+
+  if (!first || isNaN(Number(first)) || !/^\d+$/.test(first)) {
+    return false;
+  }
+  if (!second || isNaN(Number(second[0]))) {
+    return false;
+  }
+
+  return true;
+};
+
 export const diff = async () => {
-  const oldVersion = process.argv[3];
-  const newVersion = process.argv[4];
-  if (oldVersion === undefined || newVersion === undefined) {
+  const [, , , oldVersion, newVersion] = process.argv;
+
+  if (
+    !oldVersion ||
+    !newVersion ||
+    !startsWithNumberDotNumber(oldVersion) ||
+    !startsWithNumberDotNumber(newVersion)
+  ) {
     new DiffCommand().usage();
   }
 

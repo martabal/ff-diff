@@ -1,5 +1,6 @@
+// oxlint-disable max-lines-per-function
 import { describe, expect, it } from "vitest";
-import { parseUserPrefs } from "./diff";
+import { parseUserPrefs } from "./prefs";
 
 describe("parseuserprefs", () => {
   it("should parse a simple boolean preference", () => {

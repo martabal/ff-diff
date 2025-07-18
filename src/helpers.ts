@@ -29,7 +29,7 @@ const __dirname =
     ? process.cwd()
     : path.join(homedir(), `.${APP_NAME}`);
 
-export const getArgumentValue = (argument: string): string | null => {
+export const getArgumentValue = (argument: string) => {
   const args = process.argv;
   const versionIndex = args.indexOf(argument);
   if (versionIndex + 1 >= args.length) {
@@ -38,8 +38,9 @@ export const getArgumentValue = (argument: string): string | null => {
     );
     process.exit(1);
   }
+  let versionValue = null;
   if (versionIndex !== -1 && args.length > versionIndex + 1) {
-    const versionValue = args[versionIndex + 1];
+    versionValue = args[versionIndex + 1];
     if (versionValue.startsWith("--")) {
       console.error(
         `Error: Argument "${argument}" is provided but has no value.`,
@@ -47,9 +48,8 @@ export const getArgumentValue = (argument: string): string | null => {
       process.exit(1);
     }
     return versionValue;
-  } else {
-    return null;
   }
+  return versionValue;
 };
 
 const streamPipeline = promisify(pipeline);
@@ -93,7 +93,8 @@ const downloadArchive = async ({
     fileDest = fileDest.replace(".tar.xz", ".tar.bz2");
     console.warn(`${url} it not found, trying ${url} instead`);
     return await downloadArchive({ url, fileDest, retry: true });
-  } else if (!response.ok || !response.body) {
+  }
+  if (!response.ok || !response.body) {
     throw new Error(`Failed to download file, status code: ${response.status}`);
   }
 
@@ -123,7 +124,11 @@ export const installFirefox = async ({
   const fileDest = path.join(installDir, `${fileName}.xz`);
   const executablePath = path.join(destPath, "firefox");
 
-  if (!potentialArchivePath) {
+  if (potentialArchivePath) {
+    console.log(
+      `Archive already exists at ${potentialArchivePath}. Skipping download.`,
+    );
+  } else {
     console.log(`Downloading firefox ${version}`);
     const url = `https://archive.mozilla.org/pub/firefox/releases/${version}/${getPlatform()}-${getArchitecture()}/en-US/firefox-${version}.tar.xz`;
     try {
@@ -136,35 +141,40 @@ export const installFirefox = async ({
       console.error(`Can't download firefox ${version}: ${error}`);
       process.exit(1);
     }
-  } else {
-    console.log(
-      `Archive already exists at ${potentialArchivePath}. Skipping download.`,
-    );
   }
 
   if (!existsSync(executablePath)) {
-    mkdirSync(destPath, { recursive: true });
-    try {
-      execSync(`tar -xvf ${potentialArchivePath} -C ${destPath}`, {
-        stdio: "ignore",
-      });
-    } catch (error) {
-      if (!retry) {
-        console.error(
-          "Error when extracting the archive, removing the archive and downloading the archive",
-        );
-        if (potentialArchivePath) {
-          await rmSync(potentialArchivePath);
-        }
-        await installFirefox({ version, retry: true });
-      } else {
-        console.error("Error when extracting the archive: ", error);
-      }
-    }
+    await extractArchive(destPath, potentialArchivePath, version, retry);
   }
 
   if (cleanOptions.archives) {
     console.log(`Removing archive for Firefox ${version}`);
     await rmSync(potentialArchivePath);
+  }
+};
+
+const extractArchive = async (
+  destPath: string,
+  potentialArchivePath: string,
+  version: string,
+  retry: boolean,
+) => {
+  mkdirSync(destPath, { recursive: true });
+  try {
+    execSync(`tar -xvf ${potentialArchivePath} -C ${destPath}`, {
+      stdio: "ignore",
+    });
+  } catch (error) {
+    if (retry) {
+      console.error("Error when extracting the archive: ", error);
+    } else {
+      console.error(
+        "Error when extracting the archive, removing the archive and downloading the archive",
+      );
+      if (potentialArchivePath) {
+        await rmSync(potentialArchivePath);
+      }
+      await installFirefox({ version, retry: true });
+    }
   }
 };

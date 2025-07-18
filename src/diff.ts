@@ -11,10 +11,12 @@ import {
   type FirefoxChangedPref,
   type FirefoxPref,
   type Pref,
+  PrefsDiff,
   comparePrefs,
   getPrefs,
 } from "./firefox";
 import { cleanOptions, CliArg, Diff, printOptions } from "./cli";
+import { parseUserPrefs } from "./prefs";
 
 interface PrintDiff {
   label: string;
@@ -72,93 +74,12 @@ const handleFormatTicks = (format: Format, symbol: string): AllFormated => {
   };
 };
 
-interface PrefInfo {
-  key: string;
-  value: string;
-  versionAdded?: string;
-  versionRemoved?: string;
-  custom: boolean;
-  hidden: boolean;
-}
+const removedSymbol = "❌";
+const addedSymbol = "✅";
+const changedSymbol = "🔁";
 
-export const parseUserPrefs = (content: string): PrefInfo[] => {
-  const result: PrefInfo[] = [];
-
-  const regex =
-    /user_pref\(\s*['"]([^'"]+)['"]\s*,\s*([\s\S]*?)\s*\)(?:;\s*\/\/\s*(.*))?/gm;
-
-  for (const match of content.matchAll(regex)) {
-    const key = match[1];
-    const value = match[2];
-    const comment = match[3] || "";
-
-    const custom = /\[CUSTOM PREF\]/i.test(comment);
-    const hidden = /\[HIDDEN PREF\]/i.test(comment);
-
-    const versionAddedMatch = comment.match(/\[FF(\d+)\+\]/);
-    const versionRemovedMatch = comment.match(/\[FF(\d+)-\]/);
-
-    const versionAdded = versionAddedMatch ? versionAddedMatch[1] : undefined;
-    const versionRemoved = versionRemovedMatch
-      ? versionRemovedMatch[1]
-      : undefined;
-
-    result.push({ key, value, versionAdded, versionRemoved, custom, hidden });
-  }
-
-  return result;
-};
-
-export const diff = async () => {
-  const oldVersion = process.argv[3];
-  const newVersion = process.argv[4];
-  if (oldVersion === undefined || newVersion === undefined) {
-    new Diff().usage();
-  }
-
-  const removedSymbol = "❌";
-  const addedSymbol = "✅";
-  const changedSymbol = "🔁";
-
-  const compareUserjs = getArgumentValue(CliArg.compareUserjs);
-
-  console.info(
-    `Installing Firefox ${oldVersion} and ${newVersion} in "${installDir}"`,
-  );
-
-  if (!existsSync(installDir)) {
-    mkdirSync(installDir, { recursive: true });
-  }
-
-  const versions = [oldVersion, newVersion];
-
-  const firefoxDirs = versions.map((version) => {
-    const dir = path.join(installDir, version, "firefox");
-    return {
-      version,
-      dir,
-      installPath: path.join(dir, "firefox"),
-    };
-  });
-
-  const [prefsMapV1, prefsMapV2] = await Promise.all(
-    firefoxDirs.map(({ version, installPath }) =>
-      handlePref(version, installPath),
-    ),
-  );
-
-  if (cleanOptions.sources) {
-    await Promise.all(
-      firefoxDirs.map(({ dir, version }) => {
-        console.log(`Removing sources for Firefox ${version}`);
-        rm(dir, { recursive: true });
-      }),
-    );
-  }
-
-  const configDiff = comparePrefs(prefsMapV1, prefsMapV2);
-
-  const sections: PrintDiff[] = [
+const getSections = (configDiff: PrefsDiff): PrintDiff[] => {
+  return [
     {
       label: `${addedSymbol} New keys`,
       keys: configDiff.addedKeys,
@@ -202,34 +123,94 @@ export const diff = async () => {
       },
     },
   ];
+};
 
-  const generateOutput = (format: Format) => {
-    const lines: string[] = [];
+const handleCompareUsersJS = (
+  compareUsersJS: string,
+  configDiff: PrefsDiff,
+) => {
+  if (!printOptions.doNotPrintConsole) {
+    console.log("\n");
+  }
+  console.log("Comparing prefs with the ones from your user.js\n");
 
-    for (let index = 0; index < sections.length; index += 1) {
-      const { label, keys, formatter } = sections[index];
+  const userJsContent = readFileSync(compareUsersJS, "utf8");
+  const userKeys = parseUserPrefs(userJsContent);
 
-      const header =
-        format === Format.Markdown
-          ? `<details open><summary>\n\n## ${label} in ${newVersion}\n</summary>\n`
-          : `${label} in ${newVersion}:`;
-      const content =
-        0 < keys.length
-          ? `${keys.map((key) => formatter(key, format)).join("\n")}${format === Format.Markdown ? "\n\n</details>" : ""}`
-          : "(none)";
+  const isUserKey = (k: { key: string }) =>
+    userKeys.some((pref) => pref.key === k.key);
 
-      lines.push(header, content);
+  const changed = configDiff.changedKeys.filter(isUserKey);
+  const removed = configDiff.removedKeys.filter(isUserKey);
 
-      if (index < sections.length - 1) {
-        lines.push("");
-      }
+  if (changed.length > 0 || removed.length > 0) {
+    if (changed.length > 0) {
+      console.log(
+        `${changedSymbol} The following user.js prefs were changed:\n` +
+          changed
+            .map(
+              (pref) =>
+                `~ ${pref.key}: ${formatValue(pref.value)} -> ${formatValue(pref.newValue)}`,
+            )
+            .join("\n"),
+      );
+    } else {
+      console.log("No prefs from your user.js settings were changed.\n");
     }
 
-    return lines;
-  };
+    if (changed.length > 0 && removed.length > 0) {
+      console.log();
+    }
 
+    if (removed.length > 0) {
+      console.log(
+        `${removedSymbol} The following prefs were removed:\n` +
+          removed.map((pref) => `- ${pref.key}`).join("\n"),
+      );
+    } else {
+      console.log("No prefs from your user.js settings were removed.");
+    }
+  } else {
+    console.log("No prefs from your user.js settings were changed or removed.");
+  }
+};
+
+const generateOutput = (
+  format: Format,
+  sections: PrintDiff[],
+  newVersion: string,
+) => {
+  const lines: string[] = [];
+
+  for (let index = 0; index < sections.length; index += 1) {
+    const { label, keys, formatter } = sections[index];
+
+    const header =
+      format === Format.Markdown
+        ? `<details open><summary>\n\n## ${label} in ${newVersion}\n</summary>\n`
+        : `${label} in ${newVersion}:`;
+    const content =
+      keys.length > 0
+        ? `${keys.map((key) => formatter(key, format)).join("\n")}${format === Format.Markdown ? "\n\n</details>" : ""}`
+        : "(none)";
+
+    lines.push(header, content);
+
+    if (index < sections.length - 1) {
+      lines.push("");
+    }
+  }
+
+  return lines;
+};
+
+const handleOutputDiff = (
+  sections: PrintDiff[],
+  newVersion: string,
+  oldVersion: string,
+) => {
   if (printOptions.saveDiffsInFile) {
-    const outputMD = generateOutput(Format.Markdown);
+    const outputMD = generateOutput(Format.Markdown, sections, newVersion);
     const title = `# Diffs Firefox ${oldVersion}-${newVersion}\n\n`;
     if (!existsSync(diffsDir)) {
       console.log("creating diffs directory");
@@ -241,58 +222,60 @@ export const diff = async () => {
   }
 
   if (!printOptions.doNotPrintConsole) {
-    const outputTXT = generateOutput(Format.Text);
+    const outputTXT = generateOutput(Format.Text, sections, newVersion);
     console.log(outputTXT.join("\n"));
   }
+};
+
+export const diff = async () => {
+  const oldVersion = process.argv[3];
+  const newVersion = process.argv[4];
+  if (oldVersion === undefined || newVersion === undefined) {
+    new Diff().usage();
+  }
+
+  const compareUserjs = getArgumentValue(CliArg.compareUserjs);
+
+  console.info(
+    `Installing Firefox ${oldVersion} and ${newVersion} in "${installDir}"`,
+  );
+
+  if (!existsSync(installDir)) {
+    mkdirSync(installDir, { recursive: true });
+  }
+
+  const versions = [oldVersion, newVersion];
+
+  const firefoxDirs = versions.map((version) => {
+    const dir = path.join(installDir, version, "firefox");
+    return {
+      version,
+      dir,
+      installPath: path.join(dir, "firefox"),
+    };
+  });
+
+  const [prefsMapV1, prefsMapV2] = await Promise.all(
+    firefoxDirs.map(({ version, installPath }) =>
+      handlePref(version, installPath),
+    ),
+  );
+
+  if (cleanOptions.sources) {
+    await Promise.all(
+      firefoxDirs.map(async ({ dir, version }) => {
+        console.log(`Removing sources for Firefox ${version}`);
+        await rm(dir, { recursive: true, force: true });
+      }),
+    );
+  }
+
+  const configDiff = comparePrefs(prefsMapV1, prefsMapV2);
+  const sections = getSections(configDiff);
+
+  handleOutputDiff(sections, newVersion, oldVersion);
 
   if (compareUserjs) {
-    if (!printOptions.doNotPrintConsole) {
-      console.log("\n");
-    }
-
-    console.log("Comparing prefs with the ones from your user.js\n");
-
-    const userJsContent = readFileSync(compareUserjs, "utf8");
-
-    const userKeys = parseUserPrefs(userJsContent);
-
-    const isUserKey = (k: { key: string }) =>
-      userKeys.some((pref) => pref.key === k.key);
-
-    const changed = configDiff.changedKeys.filter(isUserKey);
-    const removed = configDiff.removedKeys.filter(isUserKey);
-
-    if (0 < changed.length || 0 < removed.length) {
-      if (0 < changed.length) {
-        console.log(
-          `${changedSymbol} The following user.js prefs were changed:\n` +
-            changed
-              .map(
-                (pref) =>
-                  `~ ${pref.key}: ${formatValue(pref.value)} -> ${formatValue(pref.newValue)}`,
-              )
-              .join("\n"),
-        );
-      } else {
-        console.log("No prefs from your user.js settings were changed.\n");
-      }
-
-      if (0 < changed.length && 0 < removed.length) {
-        console.log();
-      }
-
-      if (0 < removed.length) {
-        console.log(
-          `${removedSymbol} The following prefs were removed:\n` +
-            removed.map((pref) => `- ${pref.key}`).join("\n"),
-        );
-      } else {
-        console.log("No prefs from your user.js settings were removed.");
-      }
-    } else {
-      console.log(
-        "No prefs from your user.js settings were changed or removed.",
-      );
-    }
+    handleCompareUsersJS(compareUserjs, configDiff);
   }
 };

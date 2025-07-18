@@ -14,7 +14,7 @@ export interface FirefoxChangedPref extends FirefoxPref {
 
 export type Pref = string | number | boolean;
 
-interface PrefsDiff {
+export interface PrefsDiff {
   addedKeys: FirefoxPref[];
   removedKeys: FirefoxPref[];
   changedKeys: FirefoxChangedPref[];
@@ -69,7 +69,6 @@ export const getPrefs = async (
           case defaultBranch.PREF_STRING:
             value = defaultBranch.getStringPref(key);
             break;
-          case defaultBranch.PREF_INVALID:
           default:
             continue;
         }

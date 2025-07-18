@@ -23,7 +23,7 @@ const matchFirstArg = (firstArg: string) => {
   }
 };
 
-(async () => {
+(() => {
   const firstArg = process.argv[2];
   const secondArg = process.argv[3];
 

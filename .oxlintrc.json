@@ -18,12 +18,8 @@
   ],
   "rules": {
     "max-classes-per-file": "off",
+    "max-lines": "off",
     "max-dependencies": "off",
-    "eslint/max-lines-per-function": [
-      "error",
-      {
-        "max": 75
-      }
-    ]
+    "eslint/max-lines-per-function": "off"
   }
 }

@@ -57,7 +57,7 @@ const getInstalledFirefoxPath = (): string => {
 };
 
 export const unusedPrefs = async () => {
-  const compareUserjs = process.argv[3];
+  const [, , , compareUserjs] = process.argv;
   if (compareUserjs === undefined) {
     new UnusedPrefCommand().usage();
   }

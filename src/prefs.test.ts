@@ -1,4 +1,3 @@
-// oxlint-disable max-lines-per-function
 import { describe, expect, it } from "vitest";
 import { parseUserPrefs } from "./prefs";
 

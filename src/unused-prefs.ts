@@ -4,7 +4,7 @@ import { join } from "node:path";
 import os from "node:os";
 import { getPrefs } from "./firefox";
 import { parseUserPrefs } from "./diff";
-import { firefoxPathArg } from "./cli";
+import { CliArg, UnusedPref } from "./cli";
 
 const installedMozilla = ".mozilla/firefox";
 
@@ -43,7 +43,7 @@ function getFirefoxReleaseProfilePath(): string | null {
 }
 
 const getInstalledFirefoxPath = (): string => {
-  let firefoxPath = getArgumentValue(firefoxPathArg);
+  let firefoxPath = getArgumentValue(CliArg.firefoxPath);
   if (firefoxPath === null) {
     const firefoxPath = getFirefoxReleaseProfilePath();
 
@@ -58,6 +58,9 @@ const getInstalledFirefoxPath = (): string => {
 
 export const unusedPrefs = async () => {
   const compareUserjs = process.argv[3];
+  if (compareUserjs === undefined) {
+    new UnusedPref().usage();
+  }
 
   const userJsContent = readFileSync(compareUserjs, "utf8");
 

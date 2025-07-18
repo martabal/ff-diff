@@ -14,7 +14,7 @@ import {
   comparePrefs,
   getPrefs,
 } from "./firefox";
-import { cleanOptions, compareUserjsArg, Diff, printOptions } from "./cli";
+import { cleanOptions, CliArg, Diff, printOptions } from "./cli";
 
 interface PrintDiff {
   label: string;
@@ -120,7 +120,7 @@ export const diff = async () => {
   const addedSymbol = "✅";
   const changedSymbol = "🔁";
 
-  const compareUserjs = getArgumentValue(compareUserjsArg);
+  const compareUserjs = getArgumentValue(CliArg.compareUserjs);
 
   console.info(
     `Installing Firefox ${oldVersion} and ${newVersion} in "${installDir}"`,

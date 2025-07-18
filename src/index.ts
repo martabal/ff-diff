@@ -2,30 +2,31 @@
 
 import {
   Clean,
-  cleanArg,
   Cli,
+  CliCommand,
   Diff,
-  diffArg,
   helpArgs,
   UnusedPref,
-  unusedPrefsArg,
   versionArgs,
 } from "./cli";
 
 const matchFirstArg = (firstArg: string) => {
   switch (firstArg) {
-    case unusedPrefsArg:
+    case CliCommand.unusedPrefsArg:
       return new UnusedPref(false);
-    case diffArg:
+    case CliCommand.diffArg:
       return new Diff(false);
-    case cleanArg:
+    case CliCommand.cleanArg:
       return new Clean(false);
     default:
       return new Cli(true);
   }
 };
 
-const handletest = (firstArg: string, secondArg: string) => {
+(async () => {
+  const firstArg = process.argv[2];
+  const secondArg = process.argv[3];
+
   if (helpArgs.includes(firstArg) && secondArg === undefined) {
     new Cli(false).usage();
   } else if (process.argv.some((arg) => versionArgs.includes(arg))) {
@@ -35,11 +36,4 @@ const handletest = (firstArg: string, secondArg: string) => {
   } else {
     matchFirstArg(firstArg).entrypoint();
   }
-};
-
-(async () => {
-  const firstArg = process.argv[2];
-  const secondArg = process.argv[3];
-
-  handletest(firstArg, secondArg);
 })();

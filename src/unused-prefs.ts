@@ -46,7 +46,6 @@ const getInstalledFirefoxPath = (): string => {
   let firefoxPath = getArgumentValue(CLI_ARGS.FIREFOX_PATH);
   if (firefoxPath === null) {
     const firefoxPath = getFirefoxReleaseProfilePath();
-    console.log(firefoxPath);
 
     if (firefoxPath === null || !existsSync(firefoxPath)) {
       console.error("Can't find installed firefox version");

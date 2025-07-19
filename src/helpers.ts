@@ -29,23 +29,22 @@ const __dirname =
     ? process.cwd()
     : path.join(homedir(), `.${APP_NAME}`);
 
+const argumentWithoutValue = (argument: string) => {
+  console.error(`Error: Argument "${argument}" is provided but has no value.`);
+  process.exit(1);
+};
+
 export const getArgumentValue = (argument: string) => {
   const args = process.argv;
   const versionIndex = args.indexOf(argument);
   if (versionIndex + 1 >= args.length) {
-    console.error(
-      `Error: Argument "${argument}" is provided but has no value.`,
-    );
-    process.exit(1);
+    argumentWithoutValue(argument);
   }
   let versionValue = null;
   if (versionIndex !== -1 && args.length > versionIndex + 1) {
     versionValue = args[versionIndex + 1];
     if (versionValue.startsWith("--")) {
-      console.error(
-        `Error: Argument "${argument}" is provided but has no value.`,
-      );
-      process.exit(1);
+      argumentWithoutValue(argument);
     }
     return versionValue;
   }
@@ -59,10 +58,7 @@ export const getArgumentValues = (argument: string): string[] => {
   let index = args.indexOf(argument);
   while (index !== -1) {
     if (index + 1 >= args.length || args[index + 1].startsWith("--")) {
-      console.error(
-        `Error: Argument "${argument}" is provided but has no value.`,
-      );
-      process.exit(1);
+      argumentWithoutValue(argument);
     }
 
     const rawValue = args[index + 1];

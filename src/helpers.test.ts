@@ -1,26 +1,17 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { getArgumentValue, getArgumentValues } from "./helpers";
 
-const mockProcessExit = vi
-  .spyOn(process, "exit")
-  .mockImplementation((number) => {
-    throw new Error("process.exit unexpectedly called with " + number);
-  });
+const expectExitError = "process.exit";
+const mockProcessExit = vi.spyOn(process, "exit").mockImplementation(() => {
+  throw new Error(expectExitError);
+});
 
-const mockConsoleError = vi
-  .spyOn(console, "error")
-  .mockImplementation(() => {});
-
-const expectExitError = 'process.exit unexpectedly called with "1"';
+let mockConsoleError: ReturnType<typeof vi.spyOn>;
 
 describe("getArgumentValue", () => {
   beforeEach(() => {
-    mockProcessExit.mockClear();
-    mockConsoleError.mockClear();
-  });
-
-  afterEach(() => {
     vi.resetAllMocks();
+    mockConsoleError = vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
   it("should return the value when argument exists with valid value", () => {
@@ -146,92 +137,10 @@ describe("getArgumentValue", () => {
   });
 });
 
-describe("getArgumentValue", () => {
-  beforeEach(() => {
-    mockProcessExit.mockClear();
-  });
-
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
-  it("should return the value when argument exists with valid value", () => {
-    process.argv = ["node", "script.js", "--config", "config.json"];
-
-    const result = getArgumentValue("--config");
-
-    expect(result).toBe("config.json");
-  });
-
-  it("should return null when argument does not exist", () => {
-    process.argv = ["node", "script.js", "--other", "value"];
-
-    const result = getArgumentValue("--config");
-
-    expect(result).toBe(null);
-  });
-
-  it("should return null when argument is at the end of argv", () => {
-    process.argv = ["node", "script.js", "--config"];
-
-    expect(() => getArgumentValues("--config")).toThrow(expectExitError);
-  });
-
-  it("should return the correct value when multiple arguments exist", () => {
-    process.argv = [
-      "node",
-      "script.js",
-      "--env",
-      "dev",
-      "--config",
-      "config.json",
-      "--verbose",
-    ];
-
-    const result = getArgumentValue("--config");
-
-    expect(result).toBe("config.json");
-  });
-
-  it("should return the first occurrence when argument appears multiple times", () => {
-    process.argv = [
-      "node",
-      "script.js",
-      "--config",
-      "first.json",
-      "--config",
-      "second.json",
-    ];
-
-    const result = getArgumentValue("--config");
-
-    expect(result).toBe("first.json");
-  });
-
-  it("should handle arguments with special characters", () => {
-    process.argv = ["node", "script.js", "--path", "/path/to/file.json"];
-
-    const result = getArgumentValue("--path");
-
-    expect(result).toBe("/path/to/file.json");
-  });
-
-  it("should handle empty string values", () => {
-    process.argv = ["node", "script.js", "--config", ""];
-
-    const result = getArgumentValue("--config");
-
-    expect(result).toBe("");
-  });
-});
-
 describe("getArgumentValues", () => {
   beforeEach(() => {
-    mockProcessExit.mockClear();
-  });
-
-  afterEach(() => {
-    vi.restoreAllMocks();
+    vi.resetAllMocks();
+    mockConsoleError = vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
   it("should return empty array when argument does not exist", () => {

@@ -1,6 +1,6 @@
 {
   "name": "ff-diff",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "license": "MIT",
   "description": "Compare changes in user.js preference files between two versions of Firefox",
   "author": "martabal",
@@ -33,7 +33,7 @@
     "test:watch": "vitest"
   },
   "devDependencies": {
-    "@types/node": "24.0.14",
+    "@types/node": "24.0.15",
     "@types/selenium-webdriver": "4.1.28",
     "oxlint": "1.7.0",
     "prettier": "3.6.2",

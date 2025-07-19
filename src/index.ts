@@ -1,25 +1,5 @@
 #!/usr/bin/env node
-import {
-  type BaseCli,
-  Cli,
-  HELP_ARGS,
-  VERSION_ARGS,
-  createCommand,
-  isValidCommand,
-} from "./cli";
-
-const matchCommand = (command: string): BaseCli => {
-  if (!command) {
-    return new Cli(true);
-  }
-
-  if (isValidCommand(command)) {
-    return createCommand(command, false);
-  }
-
-  console.error(`Unknown command: ${command}`);
-  return new Cli(true);
-};
+import { Cli, HELP_ARGS, VERSION_ARGS, createCommand } from "./cli";
 
 const hasAnyArg = (args: readonly string[]): boolean => {
   return process.argv.some((arg) => args.includes(arg));
@@ -46,12 +26,12 @@ const main = async (): Promise<void> => {
     }
 
     if (HELP_ARGS.includes(secondArgument)) {
-      const cli = matchCommand(firstArgument);
+      const cli = createCommand(firstArgument);
       cli.usage();
       return;
     }
 
-    const cliInstance = matchCommand(firstArgument);
+    const cliInstance = createCommand(firstArgument);
     await cliInstance.run();
   } catch (error) {
     console.error(

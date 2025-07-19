@@ -1,14 +1,14 @@
 import { readdir, rm } from "node:fs/promises";
 import { join } from "node:path";
-import { getArgumentValue, installDir } from "./helpers";
-import { keepOptions } from "./cli";
+import { getArgumentValues, installDir } from "./helpers";
+import { CLI_ARGS, keepOptions } from "./cli";
 
 const parseKeepArgument = (): number[] => {
-  const args = getArgumentValue("--keep");
+  const args = getArgumentValues(CLI_ARGS.KEEP);
   if (!args) {
     return [];
   }
-  const versions = args.split(",").map((value) => {
+  const versions = args.map((value) => {
     const version = Number.parseInt(value, 10);
     if (isNaN(version)) {
       console.error(`Error: Invalid version '${value}' provided.`);
@@ -16,7 +16,9 @@ const parseKeepArgument = (): number[] => {
     }
     return version;
   });
-  console.log("Versions kept:", versions.join(", "));
+  if (versions.length > 0) {
+    console.log("Versions kept:", versions.join(", "));
+  }
   return versions;
 };
 

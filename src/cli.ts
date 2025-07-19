@@ -40,6 +40,11 @@ export const CLI_ARGS = {
   DO_NOT_PRINT_IN_CONSOLE: "--do-not-print-diffs-in-console",
 } as const;
 
+const EXAMPLE_VERSION = {
+  OLD_VERSION: "139",
+  NEW_VERSION: "140",
+} as const;
+
 const CLI_VALUES = {
   PATH_USAGE: "path",
   VERSION1: "version1",
@@ -212,7 +217,11 @@ export class DiffCommand extends BaseCli {
   private static readonly COMMANDS: readonly CliOption[] = [
     {
       arguments: [`${CLI_VALUES.OLD_VERSION} ${CLI_VALUES.NEW_VERSION}`],
-      help: "First arg is the old version, second arg is the new version",
+
+      help: [
+        "First arg is the old version, second arg is the new version",
+        `  Example: diff ${EXAMPLE_VERSION.OLD_VERSION} ${EXAMPLE_VERSION.NEW_VERSION}`,
+      ].join("\n"),
     },
   ];
 
@@ -298,7 +307,7 @@ export class CleanCommand extends BaseCli {
       help: [
         "Specify one or more versions whose archives and binaries should be preserved during cleanup",
         "Provide a comma-separated list of versions to keep",
-        "   Example: --keep 139.0,140.0",
+        `   Example: ${CLI_ARGS.KEEP} ${EXAMPLE_VERSION.OLD_VERSION},${EXAMPLE_VERSION.NEW_VERSION}`,
       ].join("\n"),
     },
   ];
@@ -331,10 +340,4 @@ export const createCommand = (
     default:
       return new Cli(fail);
   }
-};
-
-export const isValidCommand = (
-  command: string,
-): command is (typeof CLI_COMMANDS)[keyof typeof CLI_COMMANDS] => {
-  return Object.values(CLI_COMMANDS).includes(command as any);
 };

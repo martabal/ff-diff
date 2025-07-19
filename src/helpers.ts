@@ -52,6 +52,34 @@ export const getArgumentValue = (argument: string) => {
   return versionValue;
 };
 
+export const getArgumentValues = (argument: string): string[] => {
+  const args = process.argv;
+  const values: string[] = [];
+
+  let index = args.indexOf(argument);
+  while (index !== -1) {
+    if (index + 1 >= args.length || args[index + 1].startsWith("--")) {
+      console.error(
+        `Error: Argument "${argument}" is provided but has no value.`,
+      );
+      process.exit(1);
+    }
+
+    const rawValue = args[index + 1];
+
+    values.push(
+      ...rawValue
+        .split(",")
+        .map((v) => v.trim())
+        .filter((v) => v !== ""),
+    );
+
+    index = args.indexOf(argument, index + 2);
+  }
+
+  return values;
+};
+
 const streamPipeline = promisify(pipeline);
 
 export const installDir = path.join(__dirname, "firefox");

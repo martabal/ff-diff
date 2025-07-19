@@ -326,18 +326,12 @@ export class CleanCommand extends BaseCli {
   }
 }
 
-export const createCommand = (
-  command: string,
-  fail: boolean = true,
-): BaseCli => {
-  switch (command) {
-    case CLI_COMMANDS.CLEAN:
-      return new CleanCommand(fail);
-    case CLI_COMMANDS.DIFF:
-      return new DiffCommand(fail);
-    case CLI_COMMANDS.UNUSED_PREFS:
-      return new UnusedPrefCommand(fail);
-    default:
-      return new Cli(fail);
-  }
+export const createCommand = (command: string, fail = true): BaseCli => {
+  const commands: Record<string, () => BaseCli> = {
+    [CLI_COMMANDS.CLEAN]: () => new CleanCommand(fail),
+    [CLI_COMMANDS.DIFF]: () => new DiffCommand(fail),
+    [CLI_COMMANDS.UNUSED_PREFS]: () => new UnusedPrefCommand(fail),
+  };
+
+  return commands[command]?.() ?? new Cli(fail);
 };

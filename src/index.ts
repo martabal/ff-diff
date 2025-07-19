@@ -26,7 +26,7 @@ const main = async (): Promise<void> => {
     }
 
     if (HELP_ARGS.includes(secondArgument)) {
-      const cli = createCommand(firstArgument);
+      const cli = createCommand(firstArgument, false);
       cli.usage();
       return;
     }

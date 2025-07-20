@@ -1,9 +1,5 @@
 #!/usr/bin/env node
-import { Cli, HELP_ARGS, VERSION_ARGS, createCommand } from "./cli";
-
-const hasAnyArg = (args: readonly string[]): boolean => {
-  return process.argv.some((arg) => args.includes(arg));
-};
+import { Cli, HELP_ARGS, VERSION_ARGS, createCommand, hasAnyArg } from "./cli";
 
 const showVersion = (): void => {
   console.log(`${APP_NAME} ${APP_VERSION}`);

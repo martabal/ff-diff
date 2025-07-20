@@ -1,5 +1,6 @@
 // oxlint-disable max-lines
 import { clean } from "./clean";
+import { getDefaultPrefs } from "./default-prefs";
 import { diff } from "./diff";
 import { unusedPrefs } from "./unused-prefs";
 
@@ -14,38 +15,61 @@ interface SourceCleanupOptions {
   sources: boolean;
 }
 
-interface OutputOptions {
+export interface OutputOptions {
   doNotPrintConsole: boolean;
-  saveDiffsInFile: boolean;
+  saveOutput: boolean;
 }
 
 export const VERSION_ARGS = ["-v", "--version"];
 export const HELP_ARGS = ["-h", "--help"];
+export const OUTPUT_ARGS = ["-o", "--output"];
 
 export const CLI_ARGS = {
+  CLEAN_ARCHIVES: "--clean-archives",
+  CLEAN_SOURCES: "--clean-sources",
   COMPARE_USERJS: "--compare-userjs",
-  KEEP: "--keep",
+  DO_NOT_PRINT_IN_CONSOLE: "--do-not-print-diffs-in-console",
   FIREFOX_PATH: "--firefox-path",
+  KEEP: "--keep",
   KEEP_ARCHIVES: "--keep-archives",
   KEEP_SOURCES: "--keep-sources",
-  CLEAN_SOURCES: "--clean-sources",
-  CLEAN_ARCHIVES: "--clean-archives",
-  SAVE_DIFFS: "--save-diffs-in-file",
-  DO_NOT_PRINT_IN_CONSOLE: "--do-not-print-diffs-in-console",
+  SAVE_OUTPUT_LONG: "--output",
+  SAVE_OUTPUT_SHORT: "-o",
+  PATH: "--path",
 } as const;
 
 const EXAMPLE_VERSION = {
-  OLD_VERSION: "139",
   NEW_VERSION: "140",
+  OLD_VERSION: "139",
 } as const;
 
 const CLI_VALUES = {
   PATH_USAGE: "path",
+
   VERSION1: "version1",
   VERSION2: "version2",
-  OLD_VERSION: "<old-version>",
-  NEW_VERSION: "<new-version>",
+
+  OLD_VERSION: "old-version",
+  NEW_VERSION: "new-version",
 } as const;
+
+const printAndSave = [
+  {
+    arguments: [CLI_ARGS.DO_NOT_PRINT_IN_CONSOLE],
+    help: "Suppress diff output in the console",
+  },
+  {
+    arguments: OUTPUT_ARGS,
+    help: "Save output to a file",
+  },
+];
+
+const pathToFirefox = [
+  {
+    arguments: [`${CLI_ARGS.FIREFOX_PATH} ${CLI_VALUES.PATH_USAGE}`],
+    help: "Path to the firefox binary",
+  },
+];
 
 const createCleanOptions = (): SourceCleanupOptions => ({
   archives: process.argv.includes(CLI_ARGS.CLEAN_ARCHIVES),
@@ -57,9 +81,13 @@ const createKeepOptions = (): SourceCleanupOptions => ({
   sources: process.argv.includes(CLI_ARGS.KEEP_SOURCES),
 });
 
-const createPrintOptions = (): OutputOptions => ({
+export const hasAnyArg = (args: readonly string[]): boolean => {
+  return process.argv.some((arg) => args.includes(arg));
+};
+
+export const createPrintOptions = (): OutputOptions => ({
   doNotPrintConsole: process.argv.includes(CLI_ARGS.DO_NOT_PRINT_IN_CONSOLE),
-  saveDiffsInFile: process.argv.includes(CLI_ARGS.SAVE_DIFFS),
+  saveOutput: hasAnyArg(OUTPUT_ARGS),
 });
 
 export const cleanOptions: SourceCleanupOptions = createCleanOptions();
@@ -72,10 +100,10 @@ interface CliOption {
 }
 
 export abstract class BaseCli {
-  protected readonly command?: string;
-  protected readonly description: string;
-  protected readonly commands: readonly CliOption[];
-  protected readonly options: readonly CliOption[];
+  public readonly command?: string;
+  public readonly description: string;
+  public readonly commands: readonly CliOption[];
+  public readonly options: readonly CliOption[];
   protected fail: boolean;
 
   constructor(
@@ -155,36 +183,14 @@ export abstract class BaseCli {
   }
 }
 
-export class Cli extends BaseCli {
-  constructor(fail = true) {
-    super(
-      fail,
-      APP_DESCRIPTION,
-      COMMANDS.map((cmd) => ({
-        arguments: [cmd.COMMAND],
-        help: cmd.DESCRIPTION,
-      })),
-      [
-        { arguments: VERSION_ARGS, help: "Print version info and exit" },
-        { arguments: HELP_ARGS, help: "Print help" },
-      ],
-    );
-  }
-
-  public async entrypoint(): Promise<void> {
-    this.fail = true;
-    await this.usage();
-  }
-}
-
 export class DiffCommand extends BaseCli {
   public static readonly COMMAND = "diff";
   public static readonly DESCRIPTION =
     "Compare the default preferences of two firefox versions and highlight differences";
 
-  private static readonly COMMANDS: readonly CliOption[] = [
+  public static readonly COMMANDS: readonly CliOption[] = [
     {
-      arguments: [`${CLI_VALUES.OLD_VERSION} ${CLI_VALUES.NEW_VERSION}`],
+      arguments: [`<${CLI_VALUES.OLD_VERSION}> <${CLI_VALUES.NEW_VERSION}>`],
 
       help: [
         "First arg is the old version, second arg is the new version",
@@ -193,7 +199,7 @@ export class DiffCommand extends BaseCli {
     },
   ];
 
-  private static readonly OPTIONS: readonly CliOption[] = [
+  public static readonly OPTIONS: readonly CliOption[] = [
     {
       arguments: [CLI_ARGS.CLEAN_ARCHIVES],
       help: "Remove archives after retrieving preferences",
@@ -202,14 +208,7 @@ export class DiffCommand extends BaseCli {
       arguments: [CLI_ARGS.CLEAN_SOURCES],
       help: "Remove binaries after retrieving preferences",
     },
-    {
-      arguments: [CLI_ARGS.DO_NOT_PRINT_IN_CONSOLE],
-      help: "Suppress diff output in the console",
-    },
-    {
-      arguments: [CLI_ARGS.SAVE_DIFFS],
-      help: "Save diffs to a Markdown file",
-    },
+    ...printAndSave,
     {
       arguments: [`${CLI_ARGS.COMPARE_USERJS} ${CLI_VALUES.PATH_USAGE}`],
       help: "Check for removed or changed keys in the specified user.js file",
@@ -234,18 +233,13 @@ export class UnusedPrefCommand extends BaseCli {
   public static readonly COMMAND = "unused-prefs";
   public static readonly DESCRIPTION =
     "Identify unused preferences from your user.js file";
-  private static readonly COMMANDS: readonly CliOption[] = [
+  public static readonly COMMANDS: readonly CliOption[] = [
     {
       arguments: [CLI_VALUES.PATH_USAGE],
       help: "Path to your user.js file",
     },
   ];
-  private static readonly OPTIONS: readonly CliOption[] = [
-    {
-      arguments: [`${CLI_ARGS.FIREFOX_PATH} ${CLI_VALUES.PATH_USAGE}`],
-      help: "Path to the firefox binary",
-    },
-  ];
+  public static readonly OPTIONS: readonly CliOption[] = pathToFirefox;
 
   constructor(fail: boolean = true) {
     super(
@@ -264,8 +258,8 @@ export class UnusedPrefCommand extends BaseCli {
 export class CleanCommand extends BaseCli {
   public static readonly COMMAND = "clean";
   public static readonly DESCRIPTION = `Remove files generated by ${APP_NAME}`;
-  private static readonly COMMANDS: readonly CliOption[] = [];
-  private static readonly OPTIONS: readonly CliOption[] = [
+  public static readonly COMMANDS: readonly CliOption[] = [];
+  public static readonly OPTIONS: readonly CliOption[] = [
     {
       arguments: [
         `${CLI_ARGS.KEEP} ${CLI_VALUES.VERSION1},${CLI_VALUES.VERSION2}`,
@@ -292,11 +286,61 @@ export class CleanCommand extends BaseCli {
   }
 }
 
-const COMMANDS = [CleanCommand, DiffCommand, UnusedPrefCommand];
+export class DefaultPrefsCommand extends BaseCli {
+  public static readonly COMMAND = "default-prefs";
+  public static readonly DESCRIPTION = `Get a list of all default prefs`;
+  public static readonly COMMANDS: readonly CliOption[] = [];
+  public static readonly OPTIONS: readonly CliOption[] = [
+    ...printAndSave,
+    ...pathToFirefox,
+  ];
+
+  constructor(fail: boolean = true) {
+    super(
+      fail,
+      DefaultPrefsCommand.DESCRIPTION,
+      DefaultPrefsCommand.COMMANDS,
+      DefaultPrefsCommand.OPTIONS,
+    );
+  }
+
+  public async entrypoint(): Promise<void> {
+    await getDefaultPrefs();
+  }
+}
+
+export const ALL_COMMANDS = [
+  CleanCommand,
+  DiffCommand,
+  UnusedPrefCommand,
+  DefaultPrefsCommand,
+];
+export class Cli extends BaseCli {
+  public static readonly COMMANDS: readonly CliOption[] = ALL_COMMANDS.map(
+    (cmd) => ({
+      arguments: [cmd.COMMAND],
+      help: cmd.DESCRIPTION,
+    }),
+  );
+
+  public static readonly OPTIONS: readonly CliOption[] = [
+    { arguments: VERSION_ARGS, help: "Print version info and exit" },
+    { arguments: HELP_ARGS, help: "Print help" },
+  ];
+
+  constructor(fail = true) {
+    super(fail, APP_DESCRIPTION, Cli.COMMANDS, Cli.OPTIONS);
+  }
+
+  public async entrypoint(): Promise<void> {
+    this.fail = true;
+    await this.usage();
+  }
+}
 
 export const createCommand = (command: string, fail = true): BaseCli => {
   const commands = Object.fromEntries(
-    COMMANDS.map((cmd) => [cmd.COMMAND, (fail = true) => new cmd(fail)]),
+    ALL_COMMANDS.map((cmd) => [cmd.COMMAND, (fail = true) => new cmd(fail)]),
   );
   return commands[command]?.(fail) ?? new Cli(fail);
 };

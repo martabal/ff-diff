@@ -109,6 +109,7 @@ const ARCHITECTURE = getArchitecture();
 
 export const installDir = path.join(__dirname, "firefox", PLATFORM);
 export const diffsDir = path.join(__dirname, "diffs");
+export const defaultsDir = path.join(__dirname, "default");
 
 const downloadArchive = async ({
   url,

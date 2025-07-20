@@ -2,10 +2,20 @@ import { exit } from "node:process";
 import type { WebDriver } from "selenium-webdriver";
 import { Browser, Builder } from "selenium-webdriver";
 import firefox from "selenium-webdriver/firefox.js";
+import { getArgumentValue } from "./helpers";
+import { CLI_ARGS } from "./cli";
+import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
+import os from "node:os";
 
 export interface FirefoxPref {
   key: string;
   value: Pref;
+}
+
+export interface InstallFirefox {
+  hash?: string;
+  path: string;
 }
 
 export interface FirefoxChangedPref extends FirefoxPref {
@@ -120,4 +130,79 @@ export const comparePrefs = (
   }
 
   return { addedKeys, removedKeys, changedKeys };
+};
+
+export const getFirefoxVersion = async (
+  executablePath: string,
+): Promise<string> => {
+  const options = new firefox.Options()
+    .addArguments("-headless")
+    .setBinary(executablePath);
+  const driver: WebDriver = await new Builder()
+    .forBrowser(Browser.FIREFOX)
+    .setFirefoxOptions(options)
+    .build();
+
+  const capabilities = await driver.getCapabilities();
+  const browserVersion =
+    capabilities.get("browserVersion") || capabilities.get("version");
+  await driver.quit();
+  return browserVersion;
+};
+
+const installedMozilla = ".mozilla/firefox";
+
+export const getFirefoxReleaseProfilePath = (): InstallFirefox | null => {
+  const getPath = (): InstallFirefox | null => {
+    return {
+      path: `${mozillaPath}/${currentSection["Path"]}`,
+      hash: currentSection["Path"].split(".")[0],
+    };
+  };
+
+  const mozillaPath = join(os.homedir(), `${installedMozilla}`);
+  const iniPath = join(mozillaPath, "profiles.ini");
+
+  if (!existsSync(iniPath)) {
+    return null;
+  }
+
+  const iniContent = readFileSync(iniPath, "utf8");
+  const lines = iniContent.split("\n");
+
+  let currentSection: Record<string, string> = {};
+  for (const line of lines) {
+    if (line.startsWith("[") && line.endsWith("]")) {
+      if (
+        currentSection["Name"]?.includes("release") &&
+        currentSection["Path"]
+      ) {
+        return getPath();
+      }
+      currentSection = {};
+    } else if (line.includes("=")) {
+      const [key, value] = line.split("=", 2);
+      currentSection[key.trim()] = value.trim();
+    }
+  }
+
+  if (currentSection["Name"]?.includes("release") && currentSection["Path"]) {
+    return getPath();
+  }
+
+  return null;
+};
+
+export const getInstalledFirefoxPath = (): InstallFirefox => {
+  let firefoxPath = getArgumentValue(CLI_ARGS.FIREFOX_PATH);
+  if (firefoxPath === null) {
+    const firefoxPath = getFirefoxReleaseProfilePath();
+
+    if (firefoxPath === null || !existsSync(firefoxPath.path)) {
+      console.error("Can't find installed firefox version");
+      process.exit(1);
+    }
+    return firefoxPath;
+  }
+  return { path: firefoxPath };
 };

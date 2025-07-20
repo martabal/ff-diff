@@ -24,17 +24,21 @@
   ],
   "scripts": {
     "build": "MINIFY=true vite build",
+    "check:typescript": "tsc --noEmit",
+    "check:all": "npm run check:typescript && npm run test && npm run format && npm run lint",
     "ff-diff": "vite build -l warn && USE_CURRENT_DIR=true node dist/index.js",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix --fix-suggestions",
     "test": "vitest --run",
+    "test:cov": "vitest --coverage",
     "test:watch": "vitest"
   },
   "devDependencies": {
     "@types/node": "24.0.15",
     "@types/selenium-webdriver": "4.1.28",
+    "@vitest/coverage-v8": "^3.2.4",
     "oxlint": "1.7.0",
     "prettier": "3.6.2",
     "typescript": "5.8.3",

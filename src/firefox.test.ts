@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { join } from "path";
 import os from "os";
 import { existsSync, readFileSync } from "fs";
-import { getFirefoxReleaseProfilePath } from "./unused-prefs";
+import { getFirefoxReleaseProfilePath } from "./firefox";
 
 vi.mock("fs");
 vi.mock("os");
@@ -66,7 +66,10 @@ Version=2`;
 
     const result = getFirefoxReleaseProfilePath();
 
-    expect(result).toBe(`${mockMozillaPath}/def456.default-release`);
+    expect(result).toStrictEqual({
+      path: `${mockMozillaPath}/def456.default-release`,
+      hash: "def456",
+    });
     expect(existsSync).toHaveBeenCalledWith(mockIniPath);
     expect(readFileSync).toHaveBeenCalledWith(mockIniPath, "utf8");
   });
@@ -136,7 +139,10 @@ Version=2`;
 
     const result = getFirefoxReleaseProfilePath();
 
-    expect(result).toBe(`${mockMozillaPath}/abc123.release`);
+    expect(result).toStrictEqual({
+      path: `${mockMozillaPath}/abc123.release`,
+      hash: "abc123",
+    });
   });
 
   it("should return the first matching release profile when multiple exist", () => {
@@ -159,7 +165,10 @@ Version=2`;
 
     const result = getFirefoxReleaseProfilePath();
 
-    expect(result).toBe(`${mockMozillaPath}/first.release`);
+    expect(result).toStrictEqual({
+      path: `${mockMozillaPath}/first.release`,
+      hash: "first",
+    });
   });
 
   it("should handle case sensitivity in profile names", () => {

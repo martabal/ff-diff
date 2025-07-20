@@ -1,60 +1,7 @@
-import { getArgumentValue } from "./helpers";
-import { existsSync, readFileSync } from "node:fs";
-import { join } from "node:path";
-import os from "node:os";
-import { getPrefs } from "./firefox";
-import { CLI_ARGS, UnusedPrefCommand } from "./cli";
+import { getInstalledFirefoxPath, getPrefs } from "./firefox";
+import { UnusedPrefCommand } from "./cli";
 import { parseUserPrefs } from "./prefs";
-
-const installedMozilla = ".mozilla/firefox";
-
-export const getFirefoxReleaseProfilePath = (): string | null => {
-  const mozillaPath = join(os.homedir(), `${installedMozilla}`);
-  const iniPath = join(mozillaPath, "profiles.ini");
-
-  if (!existsSync(iniPath)) {
-    return null;
-  }
-
-  const iniContent = readFileSync(iniPath, "utf8");
-  const lines = iniContent.split("\n");
-
-  let currentSection: Record<string, string> = {};
-  for (const line of lines) {
-    if (line.startsWith("[") && line.endsWith("]")) {
-      if (
-        currentSection["Name"]?.includes("release") &&
-        currentSection["Path"]
-      ) {
-        return `${mozillaPath}/${currentSection["Path"]}`;
-      }
-      currentSection = {};
-    } else if (line.includes("=")) {
-      const [key, value] = line.split("=", 2);
-      currentSection[key.trim()] = value.trim();
-    }
-  }
-
-  if (currentSection["Name"]?.includes("release") && currentSection["Path"]) {
-    return `${mozillaPath}/${currentSection["Path"]}`;
-  }
-
-  return null;
-};
-
-const getInstalledFirefoxPath = (): string => {
-  let firefoxPath = getArgumentValue(CLI_ARGS.FIREFOX_PATH);
-  if (firefoxPath === null) {
-    const firefoxPath = getFirefoxReleaseProfilePath();
-
-    if (firefoxPath === null || !existsSync(firefoxPath)) {
-      console.error("Can't find installed firefox version");
-      process.exit(1);
-    }
-    return firefoxPath;
-  }
-  return firefoxPath;
-};
+import { readFileSync } from "fs";
 
 export const unusedPrefs = async () => {
   const [, , , compareUserjs] = process.argv;
@@ -64,7 +11,7 @@ export const unusedPrefs = async () => {
 
   const userJsContent = readFileSync(compareUserjs, "utf8");
 
-  const firefoxPath = getInstalledFirefoxPath();
+  const { path: firefoxPath } = getInstalledFirefoxPath();
   const prefsFirefox = await getPrefs(firefoxPath);
 
   const userKeys = parseUserPrefs(userJsContent);

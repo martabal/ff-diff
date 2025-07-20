@@ -1,3 +1,5 @@
+.ff-diff/
+coverage/
 dist/
 diffs/
 firefox/

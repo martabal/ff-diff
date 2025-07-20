@@ -209,7 +209,7 @@ const handleOutputDiff = (
   newVersion: string,
   oldVersion: string,
 ) => {
-  if (printOptions.saveDiffsInFile) {
+  if (printOptions.saveOutput) {
     const outputMD = generateOutput(Format.Markdown, sections, newVersion);
     const title = `# Diffs Firefox ${oldVersion}-${newVersion}\n\n`;
     if (!existsSync(diffsDir)) {

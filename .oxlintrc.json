@@ -5,7 +5,7 @@
     "perf": "error",
     "suspicious": "error"
   },
-  "ignorePatterns": ["dist"],
+  "ignorePatterns": [".ff-diff", "dist", "coverage"],
   "plugins": [
     "eslint",
     "import",

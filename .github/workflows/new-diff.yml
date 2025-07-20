@@ -34,12 +34,12 @@ jobs:
         run: npm ci
 
       - name: Run ff-diff
-        run: npm run ff-diff -- diff ${{ github.event.inputs.old-version }} ${{ github.event.inputs.new-version }} --save-diffs-in-file
+        run: npm run ff-diff -- diff ${{ github.event.inputs.old-version }} ${{ github.event.inputs.new-version }} --do-not-print-diffs-in-console --output
 
       - name: Create a new GitHub Discussion
         uses: abirismyname/create-discussion@c2b7c825241769dda523865ae444a879f6bbd0e0 #v2.1.1
         with:
           title: Diffs ${{ github.event.inputs.old-version }}-${{ github.event.inputs.new-version }}
-          body-filepath: diffs/${{ github.event.inputs.old-version }}-${{ github.event.inputs.new-version }}.md
+          body-filepath: .ff-diff/diffs/${{ github.event.inputs.old-version }}-${{ github.event.inputs.new-version }}.md
           category-name: Diffs
           github-token: ${{ secrets.GITHUB_TOKEN }}

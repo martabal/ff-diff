@@ -24,10 +24,12 @@ type DownloadArchiveOptions = {
   retry: boolean;
 };
 
+const RELATIVE_INSTALL_DIR = `.${APP_NAME}`;
+
 const __dirname =
   process.env.USE_CURRENT_DIR === "true"
-    ? process.cwd()
-    : path.join(homedir(), `.${APP_NAME}`);
+    ? path.join(process.cwd(), RELATIVE_INSTALL_DIR)
+    : path.join(homedir(), RELATIVE_INSTALL_DIR);
 
 const argumentWithoutValue = (argument: string) => {
   console.error(`Error: Argument "${argument}" is provided but has no value.`);
@@ -78,9 +80,6 @@ export const getArgumentValues = (argument: string): string[] => {
 
 const streamPipeline = promisify(pipeline);
 
-export const installDir = path.join(__dirname, "firefox");
-export const diffsDir = path.join(__dirname, "diffs");
-
 const getArchitecture = () => {
   const architecture = arch();
   switch (architecture) {
@@ -104,6 +103,12 @@ const getPlatform = () => {
       exit(1);
   }
 };
+
+const PLATFORM = getPlatform();
+const ARCHITECTURE = getArchitecture();
+
+export const installDir = path.join(__dirname, "firefox", PLATFORM);
+export const diffsDir = path.join(__dirname, "diffs");
 
 const downloadArchive = async ({
   url,
@@ -154,7 +159,7 @@ export const installFirefox = async ({
     );
   } else {
     console.log(`Downloading firefox ${version}`);
-    const url = `https://archive.mozilla.org/pub/firefox/releases/${version}/${getPlatform()}-${getArchitecture()}/en-US/firefox-${version}.tar.xz`;
+    const url = `https://archive.mozilla.org/pub/firefox/releases/${version}/${PLATFORM}-${ARCHITECTURE}/en-US/firefox-${version}.tar.xz`;
     try {
       potentialArchivePath = await downloadArchive({
         url,

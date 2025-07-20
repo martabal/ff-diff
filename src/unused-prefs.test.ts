@@ -8,6 +8,11 @@ vi.mock("fs");
 vi.mock("os");
 vi.mock("path");
 
+vi.mock("./helpers", () => ({
+  getPlatform: () => "linux",
+  getArchitecture: () => "x86_64",
+}));
+
 const mockInstalledMozilla = ".mozilla/firefox";
 
 describe("getFirefoxReleaseProfilePath", () => {

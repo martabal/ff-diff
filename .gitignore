@@ -1,5 +1,5 @@
 dist/
-node_modules/
-firefox/
 diffs/
+firefox/
+node_modules/
 .npmrc

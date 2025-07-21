@@ -19,6 +19,14 @@ const handleOutput = (
   version: string,
   hash?: string,
 ) => {
+  if (!printOptions.doNotPrintConsole) {
+    const consoleContent = formatPrefs(
+      sortedEntries,
+      (k, v) => `- ${k}: ${JSON.stringify(v)}`,
+    );
+    console.log(consoleContent);
+  }
+
   if (printOptions.saveOutput) {
     if (!existsSync(defaultsDir)) mkdirSync(defaultsDir, { recursive: true });
     const filename = (hash ? `${hash}-` : "") + `${version}-user.js`;
@@ -30,14 +38,6 @@ const handleOutput = (
       (k, v) => `user_pref("${k}",${JSON.stringify(v)})`,
     );
     writeFileSync(diffsPath, fileContent, "utf-8");
-  }
-
-  if (!printOptions.doNotPrintConsole) {
-    const consoleContent = formatPrefs(
-      sortedEntries,
-      (k, v) => `- ${k}: ${JSON.stringify(v)}`,
-    );
-    console.log(consoleContent);
   }
 };
 

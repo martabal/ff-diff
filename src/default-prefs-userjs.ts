@@ -56,6 +56,11 @@ export const defaultPrefsUserJS = async () => {
     }
   }
 
+  if (!printOptions.doNotPrintConsole) {
+    const outputTXT = generateOutput(Format.Text, defaults, compareUserjs);
+    console.log(outputTXT.join("\n"));
+  }
+
   if (printOptions.saveOutput) {
     const outputMD = generateOutput(Format.Markdown, defaults, compareUserjs);
     const title = `# Default in your user.js and in Firefox ${version}\n\n`;
@@ -69,10 +74,5 @@ export const defaultPrefsUserJS = async () => {
     );
     console.log(`writing diffs to ${diffsPath}`);
     writeFileSync(diffsPath, title + outputMD.join("\n") + "\n");
-  }
-
-  if (!printOptions.doNotPrintConsole) {
-    const outputTXT = generateOutput(Format.Text, defaults, compareUserjs);
-    console.log(outputTXT.join("\n"));
   }
 };

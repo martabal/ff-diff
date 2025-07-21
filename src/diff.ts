@@ -154,7 +154,7 @@ const generateOutput = (
 
     const header =
       format === Format.Markdown
-        ? `<details open><summary>\n\n## ${label} in ${newVersion}\n</summary>\n`
+        ? `<details open><summary>\n\n## ${label} in ${newVersion}\n\n</summary>\n`
         : `${label} in ${newVersion}:`;
     const content =
       keys.length > 0
@@ -176,6 +176,10 @@ const handleOutputDiff = (
   newVersion: string,
   oldVersion: string,
 ) => {
+  if (!printOptions.doNotPrintConsole) {
+    const outputTXT = generateOutput(Format.Text, sections, newVersion);
+    console.log(outputTXT.join("\n"));
+  }
   if (printOptions.saveOutput) {
     const outputMD = generateOutput(Format.Markdown, sections, newVersion);
     const title = `# Diffs Firefox ${oldVersion}-${newVersion}\n\n`;
@@ -186,11 +190,6 @@ const handleOutputDiff = (
     const diffsPath = path.join(diffsDir, `${oldVersion}-${newVersion}.md`);
     console.log(`writing diffs to ${diffsPath}`);
     writeFileSync(diffsPath, title + outputMD.join("\n") + "\n");
-  }
-
-  if (!printOptions.doNotPrintConsole) {
-    const outputTXT = generateOutput(Format.Text, sections, newVersion);
-    console.log(outputTXT.join("\n"));
   }
 };
 

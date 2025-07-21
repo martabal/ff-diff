@@ -1,6 +1,6 @@
 {
   "name": "ff-diff",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "license": "MIT",
   "description": "Compare changes in user.js preference files between two versions of Firefox",
   "author": "martabal",

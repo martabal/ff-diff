@@ -9,7 +9,7 @@ describe("parseuserprefs", () => {
     expect(result).toStrictEqual([
       {
         key: "security.OCSP.require",
-        value: "true",
+        value: true,
         versionAdded: undefined,
         versionRemoved: undefined,
         custom: false,
@@ -24,7 +24,7 @@ describe("parseuserprefs", () => {
 
     expect(result[0]).toMatchObject({
       key: "security.OCSP.enabled",
-      value: "1",
+      value: 1,
     });
   });
 
@@ -34,7 +34,7 @@ describe("parseuserprefs", () => {
 
     expect(result[0]).toMatchObject({
       key: "app.normandy.api_url",
-      value: `""`,
+      value: "",
     });
   });
 
@@ -44,7 +44,7 @@ describe("parseuserprefs", () => {
 
     expect(result[0]).toMatchObject({
       key: "breakpad.reportURL",
-      value: `''`,
+      value: "",
     });
   });
 
@@ -54,7 +54,7 @@ describe("parseuserprefs", () => {
 
     expect(result[0]).toMatchObject({
       key: "test.pref",
-      value: "true",
+      value: true,
       custom: true,
       hidden: true,
     });
@@ -67,6 +67,26 @@ describe("parseuserprefs", () => {
     expect(result[0]).toMatchObject({
       versionAdded: "91",
       versionRemoved: "100",
+    });
+  });
+
+  it("should extract value stored as int", () => {
+    const input = `user_pref("test.pref", 123);`;
+    const result = parseUserPrefs(input);
+
+    expect(result[0]).toMatchObject({
+      key: "test.pref",
+      value: 123,
+    });
+  });
+
+  it("should extract value stored as float", () => {
+    const input = `user_pref("test.pref", 123.0);`;
+    const result = parseUserPrefs(input);
+
+    expect(result[0]).toMatchObject({
+      key: "test.pref",
+      value: 123.0,
     });
   });
 

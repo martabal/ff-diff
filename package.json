@@ -29,6 +29,7 @@
     "ff-diff": "vite build -l warn && USE_CURRENT_DIR=true node dist/index.js",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
+    "generate:usage": "USAGE=true vite build && node dist/usage.js",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix --fix-suggestions",
     "test": "vitest --run",

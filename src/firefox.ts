@@ -52,13 +52,7 @@ interface FirefoxGlobal {
 export const getPrefs = async (
   executablePath: string,
 ): Promise<Map<string, Pref>> => {
-  const options = new firefox.Options()
-    .addArguments("-headless")
-    .setBinary(executablePath);
-  const driver: WebDriver = await new Builder()
-    .forBrowser(Browser.FIREFOX)
-    .setFirefoxOptions(options)
-    .build();
+  const driver: WebDriver = await createDriver(executablePath);
 
   await driver.get("about:config");
 
@@ -132,16 +126,21 @@ export const comparePrefs = (
   return { addedKeys, removedKeys, changedKeys };
 };
 
-export const getFirefoxVersion = async (
-  executablePath: string,
-): Promise<string> => {
+const createDriver = async (executablePath: string): Promise<WebDriver> => {
   const options = new firefox.Options()
     .addArguments("-headless")
     .setBinary(executablePath);
-  const driver: WebDriver = await new Builder()
+
+  return await new Builder()
     .forBrowser(Browser.FIREFOX)
     .setFirefoxOptions(options)
     .build();
+};
+
+export const getFirefoxVersion = async (
+  executablePath: string,
+): Promise<string> => {
+  const driver: WebDriver = await createDriver(executablePath);
 
   const capabilities = await driver.getCapabilities();
   const browserVersion =

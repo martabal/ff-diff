@@ -12,6 +12,43 @@ import { exit } from "process";
 import { pipeline, Readable } from "stream";
 import { promisify } from "util";
 import { cleanOptions } from "./cli";
+import { FirefoxChangedPref, FirefoxPref, Pref } from "./firefox";
+
+export interface PrintDiff {
+  label: string;
+  keys: (FirefoxChangedPref | FirefoxPref)[];
+  formatter: (key: FirefoxChangedPref | FirefoxPref, format: Format) => string;
+}
+
+export const formatValue = (val: Pref): Pref => ("" === val ? " " : val);
+
+export enum Format {
+  Markdown = "md",
+  Text = "txt",
+}
+
+export interface Ticks {
+  tickStart: string;
+  tickSymbol?: string;
+  tickKeyValue: Pref;
+}
+
+export interface AllFormated extends Ticks {
+  tickSymbol: string;
+}
+
+export const formatTicks: Record<Format, Ticks> = {
+  [Format.Markdown]: {
+    tickStart: "",
+    tickSymbol: "-",
+    tickKeyValue: "`",
+  },
+  [Format.Text]: {
+    tickStart: " ",
+    tickSymbol: undefined,
+    tickKeyValue: "",
+  },
+};
 
 type InstallFirefoxOptions = {
   version: string;
@@ -110,6 +147,7 @@ const ARCHITECTURE = getArchitecture();
 export const installDir = path.join(__dirname, "firefox", PLATFORM);
 export const diffsDir = path.join(__dirname, "diffs");
 export const defaultsDir = path.join(__dirname, "default");
+export const defaultsUserJSDir = path.join(__dirname, "default-userjs");
 
 const downloadArchive = async ({
   url,

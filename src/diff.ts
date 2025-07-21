@@ -2,10 +2,15 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { rm } from "node:fs/promises";
 import path from "node:path";
 import {
+  AllFormated,
   diffsDir,
+  Format,
+  formatTicks,
+  formatValue,
   getArgumentValue,
   installDir,
   installFirefox,
+  PrintDiff,
 } from "./helpers";
 import {
   type FirefoxChangedPref,
@@ -17,44 +22,6 @@ import {
 } from "./firefox";
 import { cleanOptions, CLI_ARGS, DiffCommand, printOptions } from "./cli";
 import { parseUserPrefs } from "./prefs";
-
-interface PrintDiff {
-  label: string;
-  keys: (FirefoxChangedPref | FirefoxPref)[];
-  formatter: (key: FirefoxChangedPref | FirefoxPref, format: Format) => string;
-}
-
-type Value = string | number | boolean;
-
-enum Format {
-  Markdown = "md",
-  Text = "txt",
-}
-
-interface Ticks {
-  tickStart: string;
-  tickSymbol?: string;
-  tickKeyValue: Value;
-}
-
-interface AllFormated extends Ticks {
-  tickSymbol: string;
-}
-
-const formatValue = (val: Pref): Pref => ("" === val ? " " : val);
-
-const formatTicks: Record<Format, Ticks> = {
-  [Format.Markdown]: {
-    tickStart: "",
-    tickSymbol: "-",
-    tickKeyValue: "`",
-  },
-  [Format.Text]: {
-    tickStart: " ",
-    tickSymbol: undefined,
-    tickKeyValue: "",
-  },
-};
 
 const handlePref = async (
   version: string,

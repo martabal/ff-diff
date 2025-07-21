@@ -1,6 +1,7 @@
 // oxlint-disable max-lines
 import { clean } from "./clean";
 import { getDefaultPrefs } from "./default-prefs";
+import { defaultPrefsUserJS } from "./default-prefs-userjs";
 import { diff } from "./diff";
 import { unusedPrefs } from "./unused-prefs";
 
@@ -22,7 +23,6 @@ export interface OutputOptions {
 
 export const VERSION_ARGS = ["-v", "--version"];
 export const HELP_ARGS = ["-h", "--help"];
-export const OUTPUT_ARGS = ["-o", "--output"];
 
 export const CLI_ARGS = {
   CLEAN_ARCHIVES: "--clean-archives",
@@ -33,8 +33,7 @@ export const CLI_ARGS = {
   KEEP: "--keep",
   KEEP_ARCHIVES: "--keep-archives",
   KEEP_SOURCES: "--keep-sources",
-  SAVE_OUTPUT_LONG: "--output",
-  SAVE_OUTPUT_SHORT: "-o",
+  SAVE_OUTPUT: "--save-output-in-file",
   PATH: "--path",
 } as const;
 
@@ -56,21 +55,18 @@ const CLI_VALUES = {
 const printAndSave = [
   {
     arguments: [CLI_ARGS.DO_NOT_PRINT_IN_CONSOLE],
-    help: "Suppress diff output in the console",
+    help: "Do not output in the console",
   },
   {
-    arguments: OUTPUT_ARGS,
+    arguments: [CLI_ARGS.SAVE_OUTPUT],
     help: "Save output to a file",
   },
 ];
 
-const pathToFirefox = [
-  {
-    arguments: [`${CLI_ARGS.FIREFOX_PATH} ${CLI_VALUES.PATH_USAGE}`],
-    help: "Path to the firefox binary",
-  },
-];
-
+const pathToFirefox = {
+  arguments: [`${CLI_ARGS.FIREFOX_PATH} ${CLI_VALUES.PATH_USAGE}`],
+  help: "Path to the firefox binary",
+};
 const createCleanOptions = (): SourceCleanupOptions => ({
   archives: process.argv.includes(CLI_ARGS.CLEAN_ARCHIVES),
   sources: process.argv.includes(CLI_ARGS.CLEAN_SOURCES),
@@ -87,7 +83,7 @@ export const hasAnyArg = (args: readonly string[]): boolean => {
 
 export const createPrintOptions = (): OutputOptions => ({
   doNotPrintConsole: process.argv.includes(CLI_ARGS.DO_NOT_PRINT_IN_CONSOLE),
-  saveOutput: hasAnyArg(OUTPUT_ARGS),
+  saveOutput: process.argv.includes(CLI_ARGS.SAVE_OUTPUT),
 });
 
 export const cleanOptions: SourceCleanupOptions = createCleanOptions();
@@ -239,7 +235,7 @@ export class UnusedPrefCommand extends BaseCli {
       help: "Path to your user.js file",
     },
   ];
-  public static readonly OPTIONS: readonly CliOption[] = pathToFirefox;
+  public static readonly OPTIONS: readonly CliOption[] = [pathToFirefox];
 
   constructor(fail: boolean = true) {
     super(
@@ -270,6 +266,14 @@ export class CleanCommand extends BaseCli {
         `   Example: ${CLI_ARGS.KEEP} ${EXAMPLE_VERSION.OLD_VERSION},${EXAMPLE_VERSION.NEW_VERSION}`,
       ].join("\n"),
     },
+    {
+      arguments: [CLI_ARGS.KEEP_ARCHIVES],
+      help: "Keep all archives",
+    },
+    {
+      arguments: [CLI_ARGS.KEEP_SOURCES],
+      help: "Keep all binaries",
+    },
   ];
 
   constructor(fail: boolean = true) {
@@ -292,7 +296,7 @@ export class DefaultPrefsCommand extends BaseCli {
   public static readonly COMMANDS: readonly CliOption[] = [];
   public static readonly OPTIONS: readonly CliOption[] = [
     ...printAndSave,
-    ...pathToFirefox,
+    pathToFirefox,
   ];
 
   constructor(fail: boolean = true) {
@@ -309,11 +313,41 @@ export class DefaultPrefsCommand extends BaseCli {
   }
 }
 
+export class DefaultPrefsUserJSCommand extends BaseCli {
+  public static readonly COMMAND = "default-prefs-userjs";
+  public static readonly DESCRIPTION =
+    "Identify default preferences from your user.js file";
+  public static readonly COMMANDS: readonly CliOption[] = [
+    {
+      arguments: [CLI_VALUES.PATH_USAGE],
+      help: "Path to your user.js file",
+    },
+  ];
+  public static readonly OPTIONS: readonly CliOption[] = [
+    pathToFirefox,
+    ...printAndSave,
+  ];
+
+  constructor(fail: boolean = true) {
+    super(
+      fail,
+      DefaultPrefsUserJSCommand.DESCRIPTION,
+      DefaultPrefsUserJSCommand.COMMANDS,
+      DefaultPrefsUserJSCommand.OPTIONS,
+    );
+  }
+
+  public async entrypoint(): Promise<void> {
+    await defaultPrefsUserJS();
+  }
+}
+
 export const ALL_COMMANDS = [
   CleanCommand,
   DiffCommand,
   UnusedPrefCommand,
   DefaultPrefsCommand,
+  DefaultPrefsUserJSCommand,
 ];
 export class Cli extends BaseCli {
   public static readonly COMMANDS: readonly CliOption[] = ALL_COMMANDS.map(

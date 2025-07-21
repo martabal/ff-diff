@@ -123,6 +123,10 @@ export const comparePrefs = (
     }
   }
 
+  addedKeys.sort((a, b) => b.key.localeCompare(a.key));
+  changedKeys.sort((a, b) => b.key.localeCompare(a.key));
+  removedKeys.sort((a, b) => b.key.localeCompare(a.key));
+
   return { addedKeys, removedKeys, changedKeys };
 };
 

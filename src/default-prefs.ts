@@ -35,7 +35,7 @@ const handleOutput = (
 
     const fileContent = formatPrefs(
       sortedEntries,
-      (k, v) => `user_pref("${k}",${JSON.stringify(v)})`,
+      (k, v) => `user_pref("${k}", ${JSON.stringify(v)})`,
     );
     writeFileSync(diffsPath, fileContent, "utf-8");
   }

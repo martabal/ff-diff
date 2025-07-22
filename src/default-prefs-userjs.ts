@@ -48,11 +48,23 @@ export const defaultPrefsUserJS = async () => {
   userKeys.sort((a, b) => a.key.localeCompare(b.key));
   const defaults: UserPref[] = [];
   for (const pref of userKeys) {
+    const prefsValue = prefsFirefox.get(pref.key);
+
+    if (prefsValue === undefined) continue;
+
+    const isDefaultUndefinedAndMatches =
+      pref.default === undefined && pref.value === prefsValue;
+
+    const isDefaultDefinedAndDifferent = pref.default?.value !== prefsValue;
+
+    const isDefaultValueVersionInferior =
+      (pref?.default?.version ?? Infinity) <= parseInt(version, 10);
+
     if (
-      prefsFirefox.has(pref.key) &&
-      prefsFirefox.get(pref.key) === pref.value
+      isDefaultUndefinedAndMatches ||
+      (isDefaultDefinedAndDifferent && isDefaultValueVersionInferior)
     ) {
-      defaults.push({ key: pref.key, value: pref.value });
+      defaults.push({ key: pref.key, value: prefsValue });
     }
   }
 

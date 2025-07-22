@@ -108,4 +108,93 @@ describe("parseuserprefs", () => {
 
     expect(result).toStrictEqual([]);
   });
+
+  it("should detect a default boolean set to true with version", () => {
+    const input = `user_pref("test.pref", 123.0); // [DEFAULT: true FF138+]`;
+    const result = parseUserPrefs(input);
+
+    expect(result[0]).toMatchObject({
+      key: "test.pref",
+      default: {
+        version: 138,
+        value: true,
+      },
+    });
+  });
+
+  it("should detect a default boolean set to false with version", () => {
+    const input = `user_pref("test.pref", 123.0); // [DEFAULT: false FF138+]`;
+    const result = parseUserPrefs(input);
+
+    expect(result[0]).toMatchObject({
+      key: "test.pref",
+      default: {
+        version: 138,
+        value: false,
+      },
+    });
+  });
+
+  it("should detect a default string inside double quotes with version", () => {
+    const input = `user_pref("test.pref", 123.0); // [DEFAULT: "hello world" FF138+]`;
+    const result = parseUserPrefs(input);
+
+    expect(result[0]).toMatchObject({
+      key: "test.pref",
+      default: {
+        version: 138,
+        value: "hello world",
+      },
+    });
+  });
+
+  it("should detect a default string inside single quotes with version", () => {
+    const input = `user_pref("test.pref", 123.0); // [DEFAULT: 'hello world' FF138+]`;
+    const result = parseUserPrefs(input);
+
+    expect(result[0]).toMatchObject({
+      key: "test.pref",
+      default: {
+        version: 138,
+        value: "hello world",
+      },
+    });
+  });
+
+  it("should detect a default number with version", () => {
+    const input = `user_pref("test.pref", 123.0); // [DEFAULT: 123 FF138+]`;
+    const result = parseUserPrefs(input);
+
+    expect(result[0]).toMatchObject({
+      key: "test.pref",
+      default: {
+        version: 138,
+        value: 123,
+      },
+    });
+  });
+
+  it("should detect a default boolean set to true without version", () => {
+    const input = `user_pref("test.pref", 123.0); // [DEFAULT: true]`;
+    const result = parseUserPrefs(input);
+
+    expect(result[0]).toMatchObject({
+      key: "test.pref",
+      default: {
+        value: true,
+      },
+    });
+  });
+
+  it("should detect a default boolean set to false without version", () => {
+    const input = `user_pref("test.pref", 123.0); // [DEFAULT: false]`;
+    const result = parseUserPrefs(input);
+
+    expect(result[0]).toMatchObject({
+      key: "test.pref",
+      default: {
+        value: false,
+      },
+    });
+  });
 });

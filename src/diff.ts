@@ -95,6 +95,7 @@ const getSections = (configDiff: PrefsDiff): PrintDiff[] => {
 const handleCompareUsersJS = (
   compareUsersJS: string,
   configDiff: PrefsDiff,
+  newVersion: string,
 ) => {
   if (!printOptions.doNotPrintConsole) {
     console.log("\n");
@@ -104,11 +105,21 @@ const handleCompareUsersJS = (
   const userJsContent = readFileSync(compareUsersJS, "utf8");
   const userKeys = parseUserPrefs(userJsContent);
 
-  const isUserKey = (k: { key: string }) =>
-    userKeys.some((pref) => pref.key === k.key);
+  const isUserKeyChanged = (k: { key: string; value: Pref }) =>
+    userKeys.some(
+      (pref) =>
+        pref.key === k.key &&
+        pref.default?.version === parseInt(newVersion, 10) &&
+        pref.default.value === k.value,
+    );
 
-  const changed = configDiff.changedKeys.filter(isUserKey);
-  const removed = configDiff.removedKeys.filter(isUserKey);
+  const isUserKeyRemoved = (k: { key: string }) =>
+    userKeys.some(
+      (pref) => pref.key === k.key && pref.versionRemoved === undefined,
+    );
+
+  const changed = configDiff.changedKeys.filter(isUserKeyChanged);
+  const removed = configDiff.removedKeys.filter(isUserKeyRemoved);
 
   if (changed.length > 0 || removed.length > 0) {
     if (changed.length > 0) {
@@ -121,6 +132,7 @@ const handleCompareUsersJS = (
             )
             .join("\n"),
       );
+      console.log();
     } else {
       console.log("No prefs from your user.js settings were changed.\n");
     }
@@ -267,6 +279,6 @@ export const diff = async () => {
   handleOutputDiff(sections, newVersion, oldVersion);
 
   if (compareUserjs) {
-    handleCompareUsersJS(compareUserjs, configDiff);
+    handleCompareUsersJS(compareUserjs, configDiff, newVersion);
   }
 };

@@ -123,9 +123,9 @@ export const comparePrefs = (
     }
   }
 
-addedKeys.sort((a, b) => a.key.localeCompare(b.key));
-changedKeys.sort((a, b) => a.key.localeCompare(b.key));
-removedKeys.sort((a, b) => a.key.localeCompare(b.key));
+  addedKeys.sort((a, b) => a.key.localeCompare(b.key));
+  changedKeys.sort((a, b) => a.key.localeCompare(b.key));
+  removedKeys.sort((a, b) => a.key.localeCompare(b.key));
 
   return { addedKeys, removedKeys, changedKeys };
 };

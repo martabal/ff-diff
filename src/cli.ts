@@ -28,7 +28,7 @@ export const CLI_ARGS = {
   CLEAN_ARCHIVES: "--clean-archives",
   CLEAN_SOURCES: "--clean-sources",
   COMPARE_USERJS: "--compare-userjs",
-  DO_NOT_PRINT_IN_CONSOLE: "--do-not-print-diffs-in-console",
+  DO_NOT_PRINT_IN_CONSOLE: "--do-not-print-in-console",
   FIREFOX_PATH: "--firefox-path",
   KEEP: "--keep",
   KEEP_ARCHIVES: "--keep-archives",
@@ -226,7 +226,7 @@ export class DiffCommand extends BaseCli {
 }
 
 export class UnusedPrefCommand extends BaseCli {
-  public static readonly COMMAND = "unused-prefs";
+  public static readonly COMMAND = "unused-prefs-userjs";
   public static readonly DESCRIPTION =
     "Identify unused preferences from your user.js file";
   public static readonly COMMANDS: readonly CliOption[] = [
@@ -345,8 +345,8 @@ export class DefaultPrefsUserJSCommand extends BaseCli {
 export const ALL_COMMANDS = [
   CleanCommand,
   DiffCommand,
-  UnusedPrefCommand,
   DefaultPrefsCommand,
+  UnusedPrefCommand,
   DefaultPrefsUserJSCommand,
 ];
 export class Cli extends BaseCli {

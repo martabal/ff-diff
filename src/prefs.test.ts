@@ -65,8 +65,8 @@ describe("parseuserprefs", () => {
     const result = parseUserPrefs(input);
 
     expect(result[0]).toMatchObject({
-      versionAdded: "91",
-      versionRemoved: "100",
+      versionAdded: 91,
+      versionRemoved: 100,
     });
   });
 

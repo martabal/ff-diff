@@ -1,17 +1,18 @@
 import {
+  type FirefoxPref,
   getFirefoxVersion,
   getInstalledFirefoxPath,
   getPrefs,
 } from "./firefox";
 import { DefaultPrefsUserJSCommand, printOptions } from "./cli";
-import { parseUserPrefs, type UserPref } from "./prefs";
+import { parseUserPrefs } from "./prefs";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { defaultsUserJSDir, Format, formatTicks, formatValue } from "./helpers";
 
 const generateOutput = (
   format: Format,
-  defaults: UserPref[],
+  defaults: FirefoxPref[],
   compareUserjs: string,
 ) => {
   const { tickStart, tickKeyValue: tick } = formatTicks[format];
@@ -46,7 +47,7 @@ export const defaultPrefsUserJS = async () => {
 
   const userKeys = parseUserPrefs(userJsContent);
   userKeys.sort((a, b) => a.key.localeCompare(b.key));
-  const defaults: UserPref[] = [];
+  const defaults: FirefoxPref[] = [];
   for (const pref of userKeys) {
     const prefsValue = prefsFirefox.get(pref.key);
 

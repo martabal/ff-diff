@@ -2,7 +2,7 @@
   "name": "ff-diff",
   "version": "0.2.7",
   "license": "MIT",
-  "description": "Compare changes in user.js preference files between two versions of Firefox",
+  "description": "Compare changes in user preference files between two versions of Firefox",
   "author": "martabal",
   "bin": {
     "ff-diff": "./dist/index.js"

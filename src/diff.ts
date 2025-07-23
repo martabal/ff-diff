@@ -102,56 +102,95 @@ const handleCompareUsersJS = (
   }
   console.log("Comparing prefs with the ones from your user.js\n");
 
+  const version = Number(newVersion);
   const userJsContent = readFileSync(compareUsersJS, "utf8");
   const userKeys = parseUserPrefs(userJsContent);
 
-  const isUserKeyChanged = (k: { key: string; value: Pref }) =>
+  const { addedKeys, removedKeys, changedKeys } = configDiff;
+
+  const isUserKeyChanged = ({ key, value }: { key: string; value: Pref }) =>
     userKeys.some(
       (pref) =>
-        pref.key === k.key &&
-        pref.default?.version === parseInt(newVersion, 10) &&
-        pref.default.value === k.value,
+        pref.key === key &&
+        pref.default?.version === version &&
+        pref.default.value === value,
     );
 
-  const isUserKeyRemoved = (k: { key: string }) =>
+  const isUserKeyRemoved = ({ key }: { key: string }) =>
     userKeys.some(
-      (pref) => pref.key === k.key && pref.versionRemoved === undefined,
+      (pref) => pref.key === key && pref.versionRemoved === undefined,
     );
 
-  const changed = configDiff.changedKeys.filter(isUserKeyChanged);
-  const removed = configDiff.removedKeys.filter(isUserKeyRemoved);
+  const wrongDefaultAdded = userKeys.filter(
+    (pref) =>
+      pref.versionAdded === version &&
+      !addedKeys.some((added) => added.key === pref.key),
+  );
 
-  if (changed.length > 0 || removed.length > 0) {
-    if (changed.length > 0) {
-      console.log(
-        `${changedSymbol} The following user.js prefs were changed:\n` +
-          changed
-            .map(
-              (pref) =>
-                `~ ${pref.key}: ${formatValue(pref.value)} -> ${formatValue(pref.newValue)}`,
-            )
-            .join("\n"),
-      );
-      console.log();
-    } else {
-      console.log("No prefs from your user.js settings were changed.\n");
-    }
+  const wrongDefaultRemoved = userKeys.filter(
+    (pref) =>
+      pref.versionRemoved === version &&
+      !removedKeys.some((removed) => removed.key === pref.key),
+  );
 
-    if (changed.length > 0 && removed.length > 0) {
-      console.log();
-    }
+  const changed = changedKeys.filter(isUserKeyChanged);
+  const removed = removedKeys.filter(isUserKeyRemoved);
 
-    if (removed.length > 0) {
-      console.log(
-        `${removedSymbol} The following prefs were removed:\n` +
-          removed.map((pref) => `- ${pref.key}`).join("\n"),
-      );
-    } else {
-      console.log("No prefs from your user.js settings were removed.");
-    }
-  } else {
+  if (
+    wrongDefaultAdded.length === 0 &&
+    wrongDefaultRemoved.length === 0 &&
+    changed.length === 0 &&
+    removed.length === 0
+  ) {
     console.log("No prefs from your user.js settings were changed or removed.");
+    return;
   }
+
+  const output: string[] = [];
+
+  const addWrongDefaultsMessage = (
+    prefs: typeof userKeys,
+    type: "added" | "removed",
+  ) => {
+    if (prefs.length === 0) return null;
+
+    const messageTitle = `${removedSymbol} Some prefs are marked as ${type} on version ${newVersion} but that's incorrect:\n`;
+
+    const messageBody = prefs.map((pref) => `~ ${pref.key}`).join("\n");
+
+    return messageTitle + messageBody + "\n";
+  };
+
+  const wrongAddedMsg = addWrongDefaultsMessage(wrongDefaultAdded, "removed");
+  const wrongRemovedMsg = addWrongDefaultsMessage(wrongDefaultRemoved, "added");
+
+  if (wrongAddedMsg) output.push(wrongAddedMsg);
+  if (wrongRemovedMsg) output.push(wrongRemovedMsg);
+
+  if (changed.length > 0) {
+    output.push(
+      `${changedSymbol} The following user.js prefs were changed:\n` +
+        changed
+          .map(
+            (pref) =>
+              `~ ${pref.key}: ${formatValue(pref.value)} -> ${formatValue(pref.newValue)}`,
+          )
+          .join("\n"),
+    );
+  } else {
+    output.push("No prefs from your user.js settings were changed.");
+  }
+
+  if (removed.length > 0) {
+    output.push(
+      `${removedSymbol} The following prefs were removed:\n` +
+        removed.map((pref) => `- ${pref.key}`).join("\n"),
+    );
+  } else {
+    output.push("No prefs from your user.js settings were removed.");
+  }
+
+  console.log(output.join("\n"));
 };
 
 const generateOutput = (

@@ -1,18 +1,13 @@
-import { Pref } from "./firefox";
-
-export interface UserPref {
-  key: string;
-  value: Pref;
-}
+import { FirefoxPref, Pref } from "./firefox";
 
 interface Default {
   version?: number;
   value: Pref;
 }
 
-interface PrefInfo extends UserPref {
-  versionAdded?: string;
-  versionRemoved?: string;
+interface PrefInfo extends FirefoxPref {
+  versionAdded?: number;
+  versionRemoved?: number;
   custom: boolean;
   hidden: boolean;
   default?: Default;
@@ -47,6 +42,15 @@ const parseDefaultValue = (comment: string): Default | undefined => {
   };
 };
 
+const getVersionValue = (
+  comment: string,
+  regex: RegExp,
+): number | undefined => {
+  return comment.match(regex)?.[1]
+    ? Number(comment.match(regex)![1])
+    : undefined;
+};
+
 export const parseUserPrefs = (content: string): PrefInfo[] => {
   const regex =
     /user_pref\(\s*['"]([^'"]+)['"]\s*,\s*([\s\S]*?)\s*\)(?:;\s*\/\/\s*(.*))?/gm;
@@ -59,8 +63,8 @@ export const parseUserPrefs = (content: string): PrefInfo[] => {
     const pref: PrefInfo = {
       key,
       value: parseValue(rawValue),
-      versionAdded: comment.match(/\[FF(\d+)\+\]/)?.[1],
-      versionRemoved: comment.match(/\[FF(\d+)-\]/)?.[1],
+      versionAdded: getVersionValue(comment, /\[FF(\d+)\+\]/),
+      versionRemoved: getVersionValue(comment, /\[FF(\d+)-\]/),
       custom: comment.includes("[CUSTOM PREF]"),
       hidden: comment.includes("[HIDDEN PREF]"),
     };

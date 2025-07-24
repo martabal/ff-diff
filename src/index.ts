@@ -1,5 +1,11 @@
 #!/usr/bin/env node
-import { Cli, HELP_ARGS, VERSION_ARGS, createCommand, hasAnyArg } from "./cli";
+import {
+  Cli,
+  VERSION_ARGS_VALUES,
+  HELP_ARGS_VALUES,
+  createCommand,
+  hasAnyArg,
+} from "./cli";
 
 const showVersion = (): void => {
   console.log(`${APP_NAME} ${APP_VERSION}`);
@@ -9,18 +15,18 @@ const showVersion = (): void => {
 const main = async (): Promise<void> => {
   const [, , firstArgument, secondArgument] = process.argv;
 
-  if (hasAnyArg(VERSION_ARGS)) {
+  if (hasAnyArg(VERSION_ARGS_VALUES)) {
     showVersion();
     return;
   }
 
-  if (HELP_ARGS.includes(firstArgument)) {
+  if (HELP_ARGS_VALUES.includes(firstArgument)) {
     const cli = new Cli(false);
     cli.usage();
     return;
   }
 
-  if (HELP_ARGS.includes(secondArgument)) {
+  if (HELP_ARGS_VALUES.includes(secondArgument)) {
     const cli = createCommand(firstArgument, false);
     cli.usage();
     return;

@@ -25,13 +25,15 @@
   "scripts": {
     "build": "MINIFY=true vite build",
     "check:typescript": "tsc --noEmit",
-    "check:all": "npm run check:typescript && npm run test && npm run format && npm run lint",
+    "check:all": "npm run generate:completion && npm run shellcheck && npm run check:typescript && npm run test && npm run format && npm run lint",
     "ff-diff": "vite build -l warn && USE_CURRENT_DIR=true node dist/index.js",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
+    "generate:completion": "COMPLETION=true vite build && node dist/completion.js --path ./completions",
     "generate:usage": "USAGE=true vite build && node dist/usage.js",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix --fix-suggestions",
+    "shellcheck": "find completions -type f -exec shellcheck -e SC2148 {} +",
     "test": "vitest --run",
     "test:cov": "vitest --coverage",
     "test:watch": "vitest"

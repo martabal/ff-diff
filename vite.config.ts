@@ -3,7 +3,11 @@ import pkg from "./package.json";
 
 const minify = !!process.env.MINIFY;
 
-const input = process.env.USAGE ? "src/usage.ts" : "src/index.ts";
+const input = process.env.USAGE
+  ? "src/usage.ts"
+  : process.env.COMPLETION
+    ? "src/completion.ts"
+    : "src/index.ts";
 
 export default defineConfig({
   build: {

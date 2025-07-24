@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import { isUnitDifferenceOne } from "./diff";
 
 const startsWithNumberDotNumber = (str: string): boolean => {
   const parts = str.split(".");
@@ -52,5 +53,30 @@ describe("startsWithNumberDotNumber", () => {
 
   it('should return false for ".1"', () => {
     expect(startsWithNumberDotNumber(".1")).toBe(false);
+  });
+});
+
+describe("isUnitDifferenceOne", () => {
+  it("should return true when difference of units is 1", () => {
+    expect(isUnitDifferenceOne("139.3", "140.0")).toBe(true);
+    expect(isUnitDifferenceOne("140.0", "139.9")).toBe(true);
+  });
+
+  it("should return false when difference of units is 0", () => {
+    expect(isUnitDifferenceOne("139.3", "139.8")).toBe(false);
+  });
+
+  it("should return false when difference of units is more than 1", () => {
+    expect(isUnitDifferenceOne("139.3", "141.0")).toBe(false);
+  });
+
+  it("should handle integer values correctly", () => {
+    expect(isUnitDifferenceOne("100", "101")).toBe(true);
+    expect(isUnitDifferenceOne("101", "100")).toBe(true);
+  });
+
+  it("should handle negative numbers correctly", () => {
+    expect(isUnitDifferenceOne("-2.5", "-1.2")).toBe(true);
+    expect(isUnitDifferenceOne("-3.0", "-1.0")).toBe(false);
   });
 });

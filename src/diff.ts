@@ -92,9 +92,16 @@ const getSections = (configDiff: PrefsDiff): PrintDiff[] => {
   ];
 };
 
+export const isUnitDifferenceOne = (a: string, b: string): boolean => {
+  const unitA = Math.floor(parseFloat(a));
+  const unitB = Math.floor(parseFloat(b));
+  return Math.abs(unitA - unitB) === 1;
+};
+
 const handleCompareUsersJS = (
   compareUsersJS: string,
   configDiff: PrefsDiff,
+  oldVersion: string,
   newVersion: string,
 ) => {
   if (!printOptions.doNotPrintConsole) {
@@ -121,17 +128,26 @@ const handleCompareUsersJS = (
       (pref) => pref.key === key && pref.versionRemoved === undefined,
     );
 
-  const wrongDefaultAdded = userKeys.filter(
-    (pref) =>
-      pref.versionAdded === version &&
-      !addedKeys.some((added) => added.key === pref.key),
+  const shouldCheckIfCorrectDefault = isUnitDifferenceOne(
+    oldVersion,
+    newVersion,
   );
 
-  const wrongDefaultRemoved = userKeys.filter(
-    (pref) =>
-      pref.versionRemoved === version &&
-      !removedKeys.some((removed) => removed.key === pref.key),
-  );
+  const wrongDefaultAdded = shouldCheckIfCorrectDefault
+    ? userKeys.filter(
+        (pref) =>
+          pref.versionAdded === version &&
+          !addedKeys.some((added) => added.key === pref.key),
+      )
+    : [];
+
+  const wrongDefaultRemoved = shouldCheckIfCorrectDefault
+    ? userKeys.filter(
+        (pref) =>
+          pref.versionRemoved === version &&
+          !removedKeys.some((removed) => removed.key === pref.key),
+      )
+    : [];
 
   const changed = changedKeys.filter(isUserKeyChanged);
   const removed = removedKeys.filter(isUserKeyRemoved);
@@ -318,6 +334,6 @@ export const diff = async () => {
   handleOutputDiff(sections, newVersion, oldVersion);
 
   if (compareUserjs) {
-    handleCompareUsersJS(compareUserjs, configDiff, newVersion);
+    handleCompareUsersJS(compareUserjs, configDiff, oldVersion, newVersion);
   }
 };

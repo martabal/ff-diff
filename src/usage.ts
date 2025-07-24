@@ -12,7 +12,7 @@ function generateUsage(): string {
     ).join(" ");
 
     const optionalArgs = CmdClass.OPTIONS.map(
-      (opt) => `[${opt.arguments.join(" ")}]`,
+      (opt) => `[${opt.argument.help}]`,
     ).join(" ");
 
     let usageLine = `  ${APP_NAME} ${cmd}`;
@@ -24,12 +24,19 @@ function generateUsage(): string {
 
   lines.push("\nOptions:");
   const maxLength =
-    Math.max(...Cli.OPTIONS.map((opt) => opt.arguments.join(", ").length)) + 4;
+    Math.max(
+      ...Cli.OPTIONS.map(
+        (opt) =>
+          opt.argument.help.length + (opt.argument.smallHelp?.length ?? 0),
+      ),
+    ) + 6;
 
   for (const option of Cli.OPTIONS) {
-    const args = option.arguments.join(", ");
+    const args = option.argument.smallHelp
+      ? option.argument.smallHelp + ", " + option.argument.help
+      : option.argument.help;
     const padding = " ".repeat(Math.max(0, maxLength - args.length));
-    lines.push(`  ${args}${padding}${option.help}`);
+    lines.push(`  ${args}${padding}${option.doc}`);
   }
 
   return lines.join("\n");

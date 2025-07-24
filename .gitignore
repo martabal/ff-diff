@@ -1,4 +1,5 @@
 .ff-diff/
+completions/
 coverage/
 dist/
 diffs/

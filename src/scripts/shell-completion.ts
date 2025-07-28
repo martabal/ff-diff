@@ -1,7 +1,13 @@
 import fs from "fs";
 import path from "path";
-import { ALL_COMMANDS, VERSION_ARGS, HELP_ARGS, CLI_ARGS, Cli } from "./cli";
-import { getArgumentValue } from "./helpers";
+import {
+  ALL_COMMANDS,
+  VERSION_ARGS,
+  HELP_ARGS,
+  CLI_ARGS,
+  Cli,
+} from "@commands/cli";
+import { getArgumentValue } from "@lib/helpers";
 
 const pathArg = getArgumentValue(CLI_ARGS.PATH);
 if (pathArg === null) {

@@ -4,10 +4,10 @@ import {
   getInstalledFirefoxPath,
   getPrefs,
   type Pref,
-} from "./firefox";
+} from "@lib/firefox";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
-import { printOptions } from "./cli";
-import { defaultsDir } from "./helpers";
+import { printOptions } from "@commands/cli";
+import { defaultsDir } from "@lib/helpers";
 
 const formatPrefs = (
   entries: [string, Pref][],

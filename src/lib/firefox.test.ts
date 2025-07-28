@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { join } from "path";
 import os from "os";
 import { existsSync, readFileSync } from "fs";
-import { getFirefoxReleaseProfilePath } from "./firefox";
+import { getFirefoxReleaseProfilePath } from "@lib/firefox";
 
 vi.mock("fs");
 vi.mock("os");

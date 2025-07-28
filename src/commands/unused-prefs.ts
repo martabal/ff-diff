@@ -1,6 +1,6 @@
-import { getInstalledFirefoxPath, getPrefs } from "./firefox";
-import { UnusedPrefCommand } from "./cli";
-import { parseUserPrefs } from "./prefs";
+import { getInstalledFirefoxPath, getPrefs } from "@lib/firefox";
+import { UnusedPrefCommand } from "@commands/cli";
+import { parseUserPrefs } from "@lib/prefs";
 import { readFileSync } from "fs";
 
 export const unusedPrefs = async () => {

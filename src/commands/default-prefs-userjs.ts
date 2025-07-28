@@ -3,12 +3,17 @@ import {
   getFirefoxVersion,
   getInstalledFirefoxPath,
   getPrefs,
-} from "./firefox";
-import { DefaultPrefsUserJSCommand, printOptions } from "./cli";
-import { parseUserPrefs } from "./prefs";
+} from "@lib/firefox";
+import { DefaultPrefsUserJSCommand, printOptions } from "@commands/cli";
+import { parseUserPrefs } from "@lib/prefs";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
-import { defaultsUserJSDir, Format, formatTicks, formatValue } from "./helpers";
+import {
+  defaultsUserJSDir,
+  Format,
+  formatTicks,
+  formatValue,
+} from "@lib/helpers";
 
 const generateOutput = (
   format: Format,

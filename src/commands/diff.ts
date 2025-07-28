@@ -11,7 +11,7 @@ import {
   installDir,
   installFirefox,
   PrintDiff,
-} from "./helpers";
+} from "@lib/helpers";
 import {
   type FirefoxChangedPref,
   type FirefoxPref,
@@ -19,9 +19,14 @@ import {
   type PrefsDiff,
   comparePrefs,
   getPrefs,
-} from "./firefox";
-import { cleanOptions, CLI_ARGS, DiffCommand, printOptions } from "./cli";
-import { parseUserPrefs } from "./prefs";
+} from "@lib/firefox";
+import {
+  cleanOptions,
+  CLI_ARGS,
+  DiffCommand,
+  printOptions,
+} from "@commands/cli";
+import { parseUserPrefs } from "@lib/prefs";
 
 const handlePref = async (
   version: string,

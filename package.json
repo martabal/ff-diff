@@ -29,7 +29,7 @@
     "ff-diff": "vite build -l warn && USE_CURRENT_DIR=true node dist/index.js",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
-    "generate:completion": "COMPLETION=true vite build && node dist/completion.js --path ./completions",
+    "generate:completion": "COMPLETION=true vite build && node dist/shell-completion.js --path ./completions",
     "generate:usage": "USAGE=true vite build && node dist/usage.js",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix --fix-suggestions",

@@ -1,8 +1,8 @@
-import { clean } from "./clean";
-import { getDefaultPrefs } from "./default-prefs";
-import { defaultPrefsUserJS } from "./default-prefs-userjs";
-import { diff } from "./diff";
-import { unusedPrefs } from "./unused-prefs";
+import { clean } from "@commands/clean";
+import { getDefaultPrefs } from "@commands/default-prefs";
+import { defaultPrefsUserJS } from "@commands/default-prefs-userjs";
+import { diff } from "@commands/diff";
+import { unusedPrefs } from "@commands/unused-prefs";
 
 const CONSOLE_COLORS = {
   GREEN: "\u001B[32m",

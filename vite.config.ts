@@ -1,12 +1,13 @@
 import { defineConfig } from "vite";
 import pkg from "./package.json";
+import path from "node:path";
 
 const minify = !!process.env.MINIFY;
 
 const input = process.env.USAGE
-  ? "src/usage.ts"
+  ? "src/scripts/usage.ts"
   : process.env.COMPLETION
-    ? "src/completion.ts"
+    ? "src/scripts/shell-completion.ts"
     : "src/index.ts";
 
 export default defineConfig({
@@ -19,6 +20,14 @@ export default defineConfig({
     },
     minify,
     ssr: true,
+  },
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+      "@commands": path.resolve(__dirname, "./src/commands"),
+      "@lib": path.resolve(__dirname, "./src/lib"),
+      "@scripts": path.resolve(__dirname, "./src/scripts"),
+    },
   },
   define: {
     APP_NAME: JSON.stringify(pkg.name),

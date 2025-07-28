@@ -1,7 +1,7 @@
 import { readdir, rm } from "node:fs/promises";
 import { join } from "node:path";
-import { getArgumentValues, installDir } from "./helpers";
-import { CLI_ARGS, keepOptions } from "./cli";
+import { getArgumentValues, installDir } from "@lib/helpers";
+import { CLI_ARGS, keepOptions } from "@commands/cli";
 
 const parseKeepArgument = (): number[] => {
   const args = getArgumentValues(CLI_ARGS.KEEP);

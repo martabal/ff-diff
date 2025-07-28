@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseUserPrefs } from "./prefs";
+import { parseUserPrefs } from "@lib/prefs";
 
 describe("parseuserprefs", () => {
   it("should parse a simple boolean preference", () => {

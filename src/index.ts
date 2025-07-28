@@ -5,7 +5,7 @@ import {
   HELP_ARGS_VALUES,
   createCommand,
   hasAnyArg,
-} from "./cli";
+} from "@commands/cli";
 
 const showVersion = (): void => {
   console.log(`${APP_NAME} ${APP_VERSION}`);

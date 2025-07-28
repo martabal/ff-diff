@@ -11,8 +11,8 @@ import path from "path";
 import { exit } from "process";
 import { pipeline, Readable } from "stream";
 import { promisify } from "util";
-import { cleanOptions } from "./cli";
-import { FirefoxChangedPref, FirefoxPref, Pref } from "./firefox";
+import { cleanOptions } from "@commands/cli";
+import { FirefoxChangedPref, FirefoxPref, Pref } from "@lib/firefox";
 
 export interface PrintDiff {
   label: string;

@@ -3,7 +3,7 @@ import type { WebDriver } from "selenium-webdriver";
 import { Browser, Builder } from "selenium-webdriver";
 import firefox from "selenium-webdriver/firefox.js";
 import { getArgumentValue } from "./helpers";
-import { CLI_ARGS } from "./cli";
+import { CLI_ARGS } from "@commands/cli";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import os from "node:os";

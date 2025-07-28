@@ -8,11 +8,11 @@ function generateUsage(): string {
     const cmd = CmdClass.COMMAND;
 
     const commandArgs = CmdClass.COMMANDS.map((opt) =>
-      opt.arguments.join(" "),
+      opt.values.join(" "),
     ).join(" ");
 
     const optionalArgs = CmdClass.OPTIONS.map(
-      (opt) => `[${opt.argument.help}]`,
+      (opt) => `[${opt.longOption}]`,
     ).join(" ");
 
     let usageLine = `  ${APP_NAME} ${cmd}`;
@@ -26,15 +26,14 @@ function generateUsage(): string {
   const maxLength =
     Math.max(
       ...Cli.OPTIONS.map(
-        (opt) =>
-          opt.argument.help.length + (opt.argument.smallHelp?.length ?? 0),
+        (opt) => opt.longOption.length + (opt.shortOption?.length ?? 0),
       ),
     ) + 6;
 
   for (const option of Cli.OPTIONS) {
-    const args = option.argument.smallHelp
-      ? option.argument.smallHelp + ", " + option.argument.help
-      : option.argument.help;
+    const args = option.shortOption
+      ? option.shortOption + ", " + option.longOption
+      : option.longOption;
     const padding = " ".repeat(Math.max(0, maxLength - args.length));
     lines.push(`  ${args}${padding}${option.doc}`);
   }

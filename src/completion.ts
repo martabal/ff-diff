@@ -13,10 +13,10 @@ const outputDir = path.resolve(pathArg);
 fs.mkdirSync(outputDir, { recursive: true });
 
 const globalOptions = [
-  VERSION_ARGS.help,
-  VERSION_ARGS.smallHelp,
-  HELP_ARGS.help,
-  HELP_ARGS.smallHelp,
+  VERSION_ARGS.longOption,
+  VERSION_ARGS.shortOption,
+  HELP_ARGS.longOption,
+  HELP_ARGS.shortOption,
 ];
 const commands = ALL_COMMANDS.map((cmd) => cmd.COMMAND);
 
@@ -36,15 +36,15 @@ const commandOptions: Record<
 for (const CmdClass of ALL_COMMANDS) {
   commandOptions[CmdClass.COMMAND] = CmdClass.OPTIONS.flatMap((opt) => {
     const args = [];
-    if (opt.argument.help) {
+    if (opt.longOption) {
       args.push({
-        arg: opt.argument.help.split(" ")[0],
+        arg: opt.longOption.split(" ")[0],
         description: opt.smallDoc ?? opt.doc.split("\n")[0],
       });
     }
-    if (opt.argument.smallHelp) {
+    if (opt.shortOption) {
       args.push({
-        arg: opt.argument.smallHelp,
+        arg: opt.shortOption,
         description: opt.smallDoc ?? opt.doc.split("\n")[0],
       });
     }
@@ -85,12 +85,12 @@ const fishCompletion = `# Fish completion for ${APP_NAME}
 
 ${Cli.COMMANDS.map(
   (cmd) =>
-    `complete -c ${APP_NAME} -n __fish_use_subcommand -f -a "${cmd.arguments.join(" ")}" -d "${(cmd.smallDoc ?? cmd.doc).split("\n")[0]}"`,
+    `complete -c ${APP_NAME} -n __fish_use_subcommand -f -a "${cmd.values.join(" ")}" -d "${(cmd.smallDoc ?? cmd.doc).split("\n")[0]}"`,
 ).join("\n")}
 
 ${Cli.OPTIONS.map(
   (opt) =>
-    `complete -c ${APP_NAME} -n __fish_use_subcommand ${opt.argument.smallHelp ? `-s "${removeLeadingDashes(opt.argument.smallHelp)}"` : ""} -a "${removeLeadingDashes(opt.argument.help)}" -d "${opt.doc.split("\n")[0]}"`,
+    `complete -c ${APP_NAME} -n __fish_use_subcommand ${opt.shortOption ? `-s "${removeLeadingDashes(opt.shortOption)}"` : ""} -a "${removeLeadingDashes(opt.longOption)}" -d "${opt.doc.split("\n")[0]}"`,
 ).join("\n")}
 
 ${ALL_COMMANDS.map(

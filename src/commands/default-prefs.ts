@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { printOptions } from "@cli";
 import { getFirefoxVersion, getPrefs, type Pref } from "@lib/firefox";
-import { defaultsDir } from "@lib/helpers";
+import { defaultsDir } from "@lib/install";
 
 const formatPrefs = (
   entries: [string, Pref][],

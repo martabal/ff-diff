@@ -1,14 +1,14 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { join } from "path";
-import { homedir } from "os";
-import { existsSync, readFileSync } from "fs";
+import { join } from "node:path";
+import { homedir } from "node:os";
+import { existsSync, readFileSync } from "node:fs";
 import { getFirefoxReleaseProfilePath } from "@lib/firefox";
 
 vi.mock("fs");
 vi.mock("os");
 vi.mock("path");
 
-vi.mock("./helpers", () => ({
+vi.mock("./install", () => ({
   getPlatform: () => "linux",
   getArchitecture: () => "x86_64",
 }));

@@ -48,6 +48,19 @@ interface FirefoxGlobal {
   };
 }
 
+const installedMozilla = ".mozilla/firefox";
+
+const createDriver = async (executablePath: string): Promise<WebDriver> => {
+  const options = new Options()
+    .addArguments("-headless")
+    .setBinary(executablePath);
+
+  return await new Builder()
+    .forBrowser(Browser.FIREFOX)
+    .setFirefoxOptions(options)
+    .build();
+};
+
 export const getPrefs = async (
   executablePath: string,
 ): Promise<Map<string, Pref>> => {
@@ -129,17 +142,6 @@ export const comparePrefs = (
   return { addedKeys, removedKeys, changedKeys };
 };
 
-const createDriver = async (executablePath: string): Promise<WebDriver> => {
-  const options = new Options()
-    .addArguments("-headless")
-    .setBinary(executablePath);
-
-  return await new Builder()
-    .forBrowser(Browser.FIREFOX)
-    .setFirefoxOptions(options)
-    .build();
-};
-
 export const getFirefoxVersion = async (
   executablePath: string,
 ): Promise<string> => {
@@ -151,8 +153,6 @@ export const getFirefoxVersion = async (
   await driver.quit();
   return browserVersion;
 };
-
-const installedMozilla = ".mozilla/firefox";
 
 export const getFirefoxReleaseProfilePath = (): InstallFirefox | null => {
   const getPath = (): InstallFirefox | null => {

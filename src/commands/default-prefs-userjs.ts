@@ -7,12 +7,8 @@ import {
   getInstalledFirefoxPath,
   getPrefs,
 } from "@lib/firefox";
-import {
-  defaultsUserJSDir,
-  Format,
-  formatTicks,
-  formatValue,
-} from "@lib/helpers";
+import { defaultsUserJSDir } from "@lib/install";
+import { Format, formatTicks, formatValue } from "@lib/format";
 import { parseUserPrefs } from "@lib/prefs";
 
 const generateOutput = (

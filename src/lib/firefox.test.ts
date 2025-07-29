@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { join } from "path";
-import os from "os";
+import { homedir } from "os";
 import { existsSync, readFileSync } from "fs";
 import { getFirefoxReleaseProfilePath } from "@lib/firefox";
 
@@ -23,7 +23,7 @@ describe("getFirefoxReleaseProfilePath", () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    vi.mocked(os.homedir).mockReturnValue(mockHomeDir);
+    vi.mocked(homedir).mockReturnValue(mockHomeDir);
     vi.mocked(join).mockImplementation((...paths) => paths.join("/"));
   });
 

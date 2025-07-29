@@ -99,7 +99,7 @@ jobs:
         run: npm ci
 
       - name: Generate shell completions
-        run: npm run generate:completion
+        run: npm run generate:shell-completion
 
       - name: Run ShellCheck
         uses: ludeeus/action-shellcheck@00cae500b08a931fb5698e11e79bfbd38e612a38 #v2.0.0

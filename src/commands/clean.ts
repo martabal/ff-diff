@@ -1,29 +1,9 @@
 import { readdir, rm } from "node:fs/promises";
 import { join } from "node:path";
-import { getArgumentValues, installDir } from "@lib/helpers";
-import { CLI_ARGS, keepOptions } from "@commands/cli";
+import { keepOptions } from "@cli";
+import { installDir } from "@lib/helpers";
 
-const parseKeepArgument = (): number[] => {
-  const args = getArgumentValues(CLI_ARGS.KEEP);
-  if (!args) {
-    return [];
-  }
-  const versions = args.map((value) => {
-    const version = Number.parseInt(value, 10);
-    if (isNaN(version)) {
-      console.error(`Error: Invalid version '${value}' provided.`);
-      process.exit(1);
-    }
-    return version;
-  });
-  if (versions.length > 0) {
-    console.log("Versions kept:", versions.join(", "));
-  }
-  return versions;
-};
-
-export const clean = async () => {
-  const keptVersions = parseKeepArgument();
+export const clean = async (keptVersions: number[]) => {
   try {
     const entries = await readdir(installDir, { withFileTypes: true });
 

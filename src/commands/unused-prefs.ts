@@ -1,14 +1,8 @@
 import { getInstalledFirefoxPath, getPrefs } from "@lib/firefox";
-import { UnusedPrefCommand } from "@commands/cli";
 import { parseUserPrefs } from "@lib/prefs";
 import { readFileSync } from "fs";
 
-export const unusedPrefs = async () => {
-  const [, , , compareUserjs] = process.argv;
-  if (compareUserjs === undefined) {
-    new UnusedPrefCommand().usage();
-  }
-
+export const unusedPrefs = async (compareUserjs: string) => {
   const userJsContent = readFileSync(compareUserjs, "utf8");
 
   const { path: firefoxPath } = getInstalledFirefoxPath();

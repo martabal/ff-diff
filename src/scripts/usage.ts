@@ -1,6 +1,6 @@
-import { ALL_COMMANDS, Cli } from "@commands/cli";
+import { Cli, ALL_COMMANDS } from "@cli";
 
-function generateUsage(): string {
+const generateUsage = (): string => {
   const lines: string[] = [];
   lines.push("Usage:");
 
@@ -39,6 +39,6 @@ function generateUsage(): string {
   }
 
   return lines.join("\n");
-}
+};
 
 console.log(generateUsage());

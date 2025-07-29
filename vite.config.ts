@@ -23,7 +23,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      "@cli": path.resolve(__dirname, "./src/cli"),
       "@commands": path.resolve(__dirname, "./src/commands"),
       "@lib": path.resolve(__dirname, "./src/lib"),
       "@scripts": path.resolve(__dirname, "./src/scripts"),

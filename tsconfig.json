@@ -11,7 +11,8 @@
     "moduleResolution": "bundler",
     "outDir": "./dist",
     "paths": {
-      "@/*": ["src/*"],
+      "@cli": ["src/cli/"],
+      "@cli/*": ["src/cli/*"],
       "@commands/*": ["src/commands/*"],
       "@lib/*": ["src/lib/*"],
       "@scripts/*": ["src/scripts/*"]

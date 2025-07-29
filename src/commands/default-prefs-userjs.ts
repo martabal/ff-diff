@@ -1,19 +1,19 @@
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { printOptions } from "@cli";
 import {
   type FirefoxPref,
   getFirefoxVersion,
   getInstalledFirefoxPath,
   getPrefs,
 } from "@lib/firefox";
-import { DefaultPrefsUserJSCommand, printOptions } from "@commands/cli";
-import { parseUserPrefs } from "@lib/prefs";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import path from "node:path";
 import {
   defaultsUserJSDir,
   Format,
   formatTicks,
   formatValue,
 } from "@lib/helpers";
+import { parseUserPrefs } from "@lib/prefs";
 
 const generateOutput = (
   format: Format,
@@ -38,12 +38,7 @@ const generateOutput = (
   return lines;
 };
 
-export const defaultPrefsUserJS = async () => {
-  const [, , , compareUserjs] = process.argv;
-  if (compareUserjs === undefined) {
-    new DefaultPrefsUserJSCommand().usage();
-  }
-
+export const defaultPrefsUserJS = async (compareUserjs: string) => {
   const userJsContent = readFileSync(compareUserjs, "utf8");
 
   const { path: firefoxPath } = getInstalledFirefoxPath();
@@ -86,10 +81,7 @@ export const defaultPrefsUserJS = async () => {
       console.log("creating diffs directory");
       mkdirSync(defaultsUserJSDir);
     }
-    const diffsPath = path.join(
-      defaultsUserJSDir,
-      `default-userjs-${version}.md`,
-    );
+    const diffsPath = join(defaultsUserJSDir, `default-userjs-${version}.md`);
     console.log(`writing diffs to ${diffsPath}`);
     writeFileSync(diffsPath, title + outputMD.join("\n") + "\n");
   }

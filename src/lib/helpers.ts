@@ -1,18 +1,22 @@
-import { execSync } from "child_process";
+import { execSync } from "node:child_process";
 import {
   createWriteStream,
   existsSync,
   mkdirSync,
   readdirSync,
   rmSync,
-} from "fs";
-import { arch, homedir, platform } from "os";
-import path from "path";
-import { exit } from "process";
-import { pipeline, Readable } from "stream";
-import { promisify } from "util";
-import { cleanOptions } from "@commands/cli";
-import { FirefoxChangedPref, FirefoxPref, Pref } from "@lib/firefox";
+} from "node:fs";
+import { arch, homedir, platform } from "node:os";
+import { join } from "node:path";
+import { exit } from "node:process";
+import { pipeline, Readable } from "node:stream";
+import { promisify } from "node:util";
+import { cleanOptions } from "@cli";
+import {
+  type FirefoxChangedPref,
+  type FirefoxPref,
+  type Pref,
+} from "@lib/firefox";
 
 export interface PrintDiff {
   label: string;
@@ -61,93 +65,51 @@ type DownloadArchiveOptions = {
   retry: boolean;
 };
 
+enum PlatformOS {
+  LinuxArm64 = "linux-aarch64",
+  LinuxX86_64 = "linux-x86_64",
+}
+
+type PlatformAndArch = `${NodeJS.Platform}-${NodeJS.Architecture}`;
+
+const mapPlatformArch: Map<PlatformAndArch, PlatformOS> = new Map([
+  ["linux-x64", PlatformOS.LinuxX86_64],
+  ["linux-arm64", PlatformOS.LinuxArm64],
+]);
+
+type Host = {
+  platformOS: PlatformOS;
+  architecture: string;
+  os: string;
+};
+
 const RELATIVE_INSTALL_DIR = `.${APP_NAME}`;
 
 const __dirname =
   process.env.USE_CURRENT_DIR === "true"
-    ? path.join(process.cwd(), RELATIVE_INSTALL_DIR)
-    : path.join(homedir(), RELATIVE_INSTALL_DIR);
-
-const argumentWithoutValue = (argument: string) => {
-  console.error(`Error: Argument "${argument}" is provided but has no value.`);
-  process.exit(1);
-};
-
-export const getArgumentValue = (argument: string) => {
-  const args = process.argv;
-  const versionIndex = args.indexOf(argument);
-  if (versionIndex + 1 >= args.length) {
-    argumentWithoutValue(argument);
-  }
-  let versionValue = null;
-  if (versionIndex !== -1 && args.length > versionIndex + 1) {
-    versionValue = args[versionIndex + 1];
-    if (versionValue.startsWith("--")) {
-      argumentWithoutValue(argument);
-    }
-    return versionValue;
-  }
-  return versionValue;
-};
-
-export const getArgumentValues = (argument: string): string[] => {
-  const args = process.argv;
-  const values: string[] = [];
-
-  let index = args.indexOf(argument);
-  while (index !== -1) {
-    if (index + 1 >= args.length || args[index + 1].startsWith("--")) {
-      argumentWithoutValue(argument);
-    }
-
-    const rawValue = args[index + 1];
-
-    values.push(
-      ...rawValue
-        .split(",")
-        .map((v) => v.trim())
-        .filter((v) => v !== ""),
-    );
-
-    index = args.indexOf(argument, index + 2);
-  }
-
-  return values;
-};
+    ? join(process.cwd(), RELATIVE_INSTALL_DIR)
+    : join(homedir(), RELATIVE_INSTALL_DIR);
 
 const streamPipeline = promisify(pipeline);
 
-const getArchitecture = () => {
-  const architecture = arch();
-  switch (architecture) {
-    case "arm64":
-      return "aarch64";
-    case "x64":
-      return "x86_64";
-    default:
-      console.error(`Your architecture (${architecture}) is not supported`);
-      exit(1);
-  }
-};
-
-const getPlatform = () => {
+const getPlatformOS = (): Host => {
   const os = platform();
-  switch (os) {
-    case "linux":
-      return "linux";
-    default:
-      console.error(`Your platform (${os}) is not supported`);
-      exit(1);
+  const architecture = arch();
+  const key: PlatformAndArch = `${os}-${architecture}`;
+  const platformOS = mapPlatformArch.get(key);
+  if (platformOS === undefined) {
+    console.error(`Unsupported architecture/OS: ${key}`);
+    exit(1);
   }
+  return { os, platformOS, architecture };
 };
 
-const PLATFORM = getPlatform();
-const ARCHITECTURE = getArchitecture();
+const host: Host = getPlatformOS();
 
-export const installDir = path.join(__dirname, "firefox", PLATFORM);
-export const diffsDir = path.join(__dirname, "diffs");
-export const defaultsDir = path.join(__dirname, "default");
-export const defaultsUserJSDir = path.join(__dirname, "default-userjs");
+export const installDir = join(__dirname, "firefox", host.os);
+export const diffsDir = join(__dirname, "diffs");
+export const defaultsDir = join(__dirname, "default");
+export const defaultsUserJSDir = join(__dirname, "default-userjs");
 
 const downloadArchive = async ({
   url,
@@ -179,7 +141,7 @@ const getFilePathWithPrefix = (filePrefix: string): string | null => {
 
   const files = readdirSync(installDir);
   const match = files.find((file) => file.startsWith(filePrefix));
-  return match ? path.join(installDir, match) : null;
+  return match ? join(installDir, match) : null;
 };
 
 export const installFirefox = async ({
@@ -188,9 +150,9 @@ export const installFirefox = async ({
 }: InstallFirefoxOptions): Promise<void> => {
   const fileName = `firefox-${version}.tar`;
   let potentialArchivePath = getFilePathWithPrefix(fileName);
-  const destPath = path.join(installDir, version);
-  const fileDest = path.join(installDir, `${fileName}.xz`);
-  const executablePath = path.join(destPath, "firefox");
+  const destPath = join(installDir, version);
+  const fileDest = join(installDir, `${fileName}.xz`);
+  const executablePath = join(destPath, "firefox");
 
   if (potentialArchivePath) {
     console.log(
@@ -198,7 +160,7 @@ export const installFirefox = async ({
     );
   } else {
     console.log(`Downloading firefox ${version}`);
-    const url = `https://archive.mozilla.org/pub/firefox/releases/${version}/${PLATFORM}-${ARCHITECTURE}/en-US/firefox-${version}.tar.xz`;
+    const url = `https://archive.mozilla.org/pub/firefox/releases/${version}/${host.platformOS}/en-US/firefox-${version}.tar.xz`;
     try {
       potentialArchivePath = await downloadArchive({
         url,
@@ -245,4 +207,24 @@ const extractArchive = async (
       await installFirefox({ version, retry: true });
     }
   }
+};
+
+export const startsWithNumberDotNumber = (str: string): boolean => {
+  const parts = str.split(".");
+
+  if (parts.length < 2) {
+    return false;
+  }
+
+  const first = parts[0];
+  const second = parts[1];
+
+  if (!first || isNaN(Number(first)) || !/^\d+$/.test(first)) {
+    return false;
+  }
+  if (!second || isNaN(Number(second[0]))) {
+    return false;
+  }
+
+  return true;
 };

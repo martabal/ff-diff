@@ -1,17 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { rm } from "node:fs/promises";
-import path from "node:path";
-import {
-  AllFormated,
-  diffsDir,
-  Format,
-  formatTicks,
-  formatValue,
-  getArgumentValue,
-  installDir,
-  installFirefox,
-  PrintDiff,
-} from "@lib/helpers";
+import { join } from "node:path";
+import { cleanOptions, Diff, printOptions } from "@cli";
 import {
   type FirefoxChangedPref,
   type FirefoxPref,
@@ -21,11 +11,15 @@ import {
   getPrefs,
 } from "@lib/firefox";
 import {
-  cleanOptions,
-  CLI_ARGS,
-  DiffCommand,
-  printOptions,
-} from "@commands/cli";
+  type AllFormated,
+  diffsDir,
+  Format,
+  formatTicks,
+  formatValue,
+  installDir,
+  installFirefox,
+  type PrintDiff,
+} from "@lib/helpers";
 import { parseUserPrefs } from "@lib/prefs";
 
 const handlePref = async (
@@ -259,62 +253,29 @@ const handleOutputDiff = (
       console.log("creating diffs directory");
       mkdirSync(diffsDir);
     }
-    const diffsPath = path.join(diffsDir, `${oldVersion}-${newVersion}.md`);
+    const diffsPath = join(diffsDir, `${oldVersion}-${newVersion}.md`);
     console.log(`writing diffs to ${diffsPath}`);
     writeFileSync(diffsPath, title + outputMD.join("\n") + "\n");
   }
 };
 
-const startsWithNumberDotNumber = (str: string): boolean => {
-  const parts = str.split(".");
-
-  if (parts.length < 2) {
-    return false;
-  }
-
-  const first = parts[0];
-  const second = parts[1];
-
-  if (!first || isNaN(Number(first)) || !/^\d+$/.test(first)) {
-    return false;
-  }
-  if (!second || isNaN(Number(second[0]))) {
-    return false;
-  }
-
-  return true;
-};
-
-export const diff = async () => {
-  const [, , , oldVersion, newVersion] = process.argv;
-
-  if (
-    !oldVersion ||
-    !newVersion ||
-    !startsWithNumberDotNumber(oldVersion) ||
-    !startsWithNumberDotNumber(newVersion)
-  ) {
-    new DiffCommand().usage();
-  }
-
-  const compareUserjs = getArgumentValue(CLI_ARGS.COMPARE_USERJS);
-
+export const diff = async (args: Diff) => {
   console.info(
-    `Installing Firefox ${oldVersion} and ${newVersion} in "${installDir}"`,
+    `Installing Firefox ${args.oldVersion} and ${args.newVersion} in "${installDir}"`,
   );
 
   if (!existsSync(installDir)) {
     mkdirSync(installDir, { recursive: true });
   }
 
-  const versions = [oldVersion, newVersion];
+  const versions = [args.oldVersion, args.newVersion];
 
   const firefoxDirs = versions.map((version) => {
-    const dir = path.join(installDir, version, "firefox");
+    const dir = join(installDir, version, "firefox");
     return {
       version,
       dir,
-      installPath: path.join(dir, "firefox"),
+      installPath: join(dir, "firefox"),
     };
   });
 
@@ -336,9 +297,14 @@ export const diff = async () => {
   const configDiff = comparePrefs(prefsMapV1, prefsMapV2);
   const sections = getSections(configDiff);
 
-  handleOutputDiff(sections, newVersion, oldVersion);
+  handleOutputDiff(sections, args.newVersion, args.oldVersion);
 
-  if (compareUserjs) {
-    handleCompareUsersJS(compareUserjs, configDiff, oldVersion, newVersion);
+  if (args.compareUserJS) {
+    handleCompareUsersJS(
+      args.compareUserJS,
+      configDiff,
+      args.oldVersion,
+      args.newVersion,
+    );
   }
 };

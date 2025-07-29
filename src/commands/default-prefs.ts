@@ -1,12 +1,7 @@
-import path from "path";
-import {
-  getFirefoxVersion,
-  getInstalledFirefoxPath,
-  getPrefs,
-  type Pref,
-} from "@lib/firefox";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
-import { printOptions } from "@commands/cli";
+import { join } from "node:path";
+import { printOptions } from "@cli";
+import { getFirefoxVersion, getPrefs, type Pref } from "@lib/firefox";
 import { defaultsDir } from "@lib/helpers";
 
 const formatPrefs = (
@@ -30,7 +25,7 @@ const handleOutput = (
   if (printOptions.saveOutput) {
     if (!existsSync(defaultsDir)) mkdirSync(defaultsDir, { recursive: true });
     const filename = (hash ? `${hash}-` : "") + `${version}-user.js`;
-    const diffsPath = path.join(defaultsDir, filename);
+    const diffsPath = join(defaultsDir, filename);
     console.log(`Writing diffs to ${diffsPath}`);
 
     const fileContent = formatPrefs(
@@ -41,8 +36,7 @@ const handleOutput = (
   }
 };
 
-export const getDefaultPrefs = async () => {
-  const { path: firefoxPath } = getInstalledFirefoxPath();
+export const getDefaultPrefs = async (firefoxPath: string) => {
   const prefsFirefox = await getPrefs(firefoxPath);
   const version = await getFirefoxVersion(firefoxPath);
   const sortedEntries = [...prefsFirefox.entries()].sort(([a], [b]) =>

@@ -1,12 +1,11 @@
-import { exit } from "node:process";
-import type { WebDriver } from "selenium-webdriver";
-import { Browser, Builder } from "selenium-webdriver";
-import firefox from "selenium-webdriver/firefox.js";
-import { getArgumentValue } from "./helpers";
-import { CLI_ARGS } from "@commands/cli";
 import { existsSync, readFileSync } from "node:fs";
+import { homedir } from "node:os";
 import { join } from "node:path";
-import os from "node:os";
+import { exit } from "node:process";
+import { Browser, Builder, type WebDriver } from "selenium-webdriver";
+import { Options } from "selenium-webdriver/firefox.js";
+import { CLI_ARGS } from "@cli";
+import { getArgumentValue } from "@lib/cli";
 
 export interface FirefoxPref {
   key: string;
@@ -131,7 +130,7 @@ export const comparePrefs = (
 };
 
 const createDriver = async (executablePath: string): Promise<WebDriver> => {
-  const options = new firefox.Options()
+  const options = new Options()
     .addArguments("-headless")
     .setBinary(executablePath);
 
@@ -163,7 +162,7 @@ export const getFirefoxReleaseProfilePath = (): InstallFirefox | null => {
     };
   };
 
-  const mozillaPath = join(os.homedir(), `${installedMozilla}`);
+  const mozillaPath = join(homedir(), `${installedMozilla}`);
   const iniPath = join(mozillaPath, "profiles.ini");
 
   if (!existsSync(iniPath)) {
@@ -198,7 +197,7 @@ export const getFirefoxReleaseProfilePath = (): InstallFirefox | null => {
 
 export const getInstalledFirefoxPath = (): InstallFirefox => {
   let firefoxPath = getArgumentValue(CLI_ARGS.FIREFOX_PATH);
-  if (firefoxPath === null) {
+  if (firefoxPath === undefined) {
     const firefoxPath = getFirefoxReleaseProfilePath();
 
     if (firefoxPath === null || !existsSync(firefoxPath.path)) {

@@ -1,22 +1,16 @@
-import fs from "fs";
-import path from "path";
-import {
-  ALL_COMMANDS,
-  VERSION_ARGS,
-  HELP_ARGS,
-  CLI_ARGS,
-  Cli,
-} from "@commands/cli";
-import { getArgumentValue } from "@lib/helpers";
+import { mkdirSync, writeFileSync } from "node:fs";
+import path from "node:path";
+import { ALL_COMMANDS, VERSION_ARGS, HELP_ARGS, CLI_ARGS, Cli } from "@cli";
+import { getArgumentValue } from "@lib/cli";
 
 const pathArg = getArgumentValue(CLI_ARGS.PATH);
-if (pathArg === null) {
+if (pathArg === undefined) {
   console.error("Error: You must provide --path <output-directory>");
   process.exit(1);
 }
 
 const outputDir = path.resolve(pathArg);
-fs.mkdirSync(outputDir, { recursive: true });
+mkdirSync(outputDir, { recursive: true });
 
 const globalOptions = [
   VERSION_ARGS.longOption,
@@ -118,13 +112,13 @@ ${commands
 
 const completionFileName = "completion";
 
-fs.writeFileSync(
+writeFileSync(
   path.join(outputDir, `${completionFileName}.bash`),
   bashCompletion,
   "utf8",
 );
 
-fs.writeFileSync(
+writeFileSync(
   path.join(outputDir, `${completionFileName}.fish`),
   fishCompletion,
   "utf8",

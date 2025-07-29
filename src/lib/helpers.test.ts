@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { isUnitDifferenceOne } from "@commands/diff";
+import { isUnitDifferenceOne } from "@lib/helpers";
 
 const startsWithNumberDotNumber = (str: string): boolean => {
   const parts = str.split(".");

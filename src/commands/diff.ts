@@ -12,15 +12,14 @@ import {
 } from "@lib/firefox";
 import {
   type AllFormated,
-  diffsDir,
   Format,
   formatTicks,
   formatValue,
-  installDir,
-  installFirefox,
   type PrintDiff,
-} from "@lib/helpers";
+} from "@lib/format";
+import { isUnitDifferenceOne } from "@lib/helpers";
 import { parseUserPrefs } from "@lib/prefs";
+import { diffsDir, installDir, installFirefox } from "@lib/install";
 
 const handlePref = async (
   version: string,
@@ -89,12 +88,6 @@ const getSections = (configDiff: PrefsDiff): PrintDiff[] => {
       },
     },
   ];
-};
-
-export const isUnitDifferenceOne = (a: string, b: string): boolean => {
-  const unitA = Math.floor(parseFloat(a));
-  const unitB = Math.floor(parseFloat(b));
-  return Math.abs(unitA - unitB) === 1;
 };
 
 const handleCompareUsersJS = (

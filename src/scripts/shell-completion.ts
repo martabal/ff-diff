@@ -110,18 +110,8 @@ ${commands
   .join("\n")}
 `;
 
-const completionFileName = "completion";
+writeFileSync(path.join(outputDir, `${APP_NAME}.bash`), bashCompletion, "utf8");
 
-writeFileSync(
-  path.join(outputDir, `${completionFileName}.bash`),
-  bashCompletion,
-  "utf8",
-);
+writeFileSync(path.join(outputDir, `${APP_NAME}.fish`), fishCompletion, "utf8");
 
-writeFileSync(
-  path.join(outputDir, `${completionFileName}.fish`),
-  fishCompletion,
-  "utf8",
-);
-
-console.log(`Bash, Fish, and Zsh completions generated in: ${outputDir}`);
+console.log(`Bash and Fish completions generated in: ${outputDir}`);

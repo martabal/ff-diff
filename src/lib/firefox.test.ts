@@ -67,7 +67,7 @@ Version=2`;
     const result = getFirefoxReleaseProfilePath();
 
     expect(result).toStrictEqual({
-      path: `${mockMozillaPath}/def456.default-release`,
+      profilePath: `${mockMozillaPath}/def456.default-release`,
       hash: "def456",
     });
     expect(existsSync).toHaveBeenCalledWith(mockIniPath);
@@ -140,7 +140,7 @@ Version=2`;
     const result = getFirefoxReleaseProfilePath();
 
     expect(result).toStrictEqual({
-      path: `${mockMozillaPath}/abc123.release`,
+      profilePath: `${mockMozillaPath}/abc123.release`,
       hash: "abc123",
     });
   });
@@ -166,7 +166,7 @@ Version=2`;
     const result = getFirefoxReleaseProfilePath();
 
     expect(result).toStrictEqual({
-      path: `${mockMozillaPath}/first.release`,
+      profilePath: `${mockMozillaPath}/first.release`,
       hash: "first",
     });
   });

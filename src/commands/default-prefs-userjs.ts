@@ -4,12 +4,14 @@ import { printOptions } from "@cli";
 import {
   type FirefoxPref,
   getFirefoxVersion,
-  getInstalledFirefoxPath,
+  getFirefoxDefaultProfile,
   getPrefs,
 } from "@lib/firefox";
 import { defaultsUserJSDir } from "@lib/install";
 import { Format, formatTicks, formatValue } from "@lib/format";
 import { parseUserPrefs } from "@lib/prefs";
+import { gettingPrefsMessage, gettingVersionMessage } from "@lib/helpers";
+import { UserJSBasedCommands } from "@commands";
 
 const generateOutput = (
   format: Format,
@@ -34,12 +36,16 @@ const generateOutput = (
   return lines;
 };
 
-export const defaultPrefsUserJS = async (compareUserjs: string) => {
-  const userJsContent = readFileSync(compareUserjs, "utf8");
+export const defaultPrefsUserJS = async (opts: UserJSBasedCommands) => {
+  const userJsContent = readFileSync(opts.compareUserjs, "utf8");
 
-  const { path: firefoxPath } = getInstalledFirefoxPath();
-  const prefsFirefox = await getPrefs(firefoxPath);
-  const version = await getFirefoxVersion(firefoxPath);
+  const profilePath = opts.forceDefaultProfile
+    ? getFirefoxDefaultProfile().profilePath
+    : opts.profilePath;
+  console.log(gettingPrefsMessage);
+  const prefsFirefox = await getPrefs({ profilePath });
+  console.log(gettingVersionMessage);
+  const version = await getFirefoxVersion({ profilePath });
 
   const userKeys = parseUserPrefs(userJsContent);
   userKeys.sort((a, b) => a.key.localeCompare(b.key));
@@ -66,12 +72,16 @@ export const defaultPrefsUserJS = async (compareUserjs: string) => {
   }
 
   if (!printOptions.doNotPrintConsole) {
-    const outputTXT = generateOutput(Format.Text, defaults, compareUserjs);
+    const outputTXT = generateOutput(Format.Text, defaults, opts.compareUserjs);
     console.log(outputTXT.join("\n"));
   }
 
   if (printOptions.saveOutput) {
-    const outputMD = generateOutput(Format.Markdown, defaults, compareUserjs);
+    const outputMD = generateOutput(
+      Format.Markdown,
+      defaults,
+      opts.compareUserjs,
+    );
     const title = `# Default in your user.js and in Firefox ${version}\n\n`;
     if (!existsSync(defaultsUserJSDir)) {
       console.log("creating diffs directory");

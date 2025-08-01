@@ -29,8 +29,8 @@ Usage:
   ff-diff clean [--keep version1,version2] [--keep-archives] [--keep-sources]
   ff-diff diff <old-version> <new-version> [--clean-archives] [--clean-sources] [--do-not-print-in-console] [--save-output-in-file] [--compare-userjs path]
   ff-diff default-prefs [--do-not-print-in-console] [--save-output-in-file] [--firefox-path path]
-  ff-diff unused-prefs-userjs path [--firefox-path path]
-  ff-diff default-prefs-userjs path [--firefox-path path] [--do-not-print-in-console] [--save-output-in-file]
+  ff-diff unused-prefs-userjs path [--firefox-path path] [--force-default-profile] [--profile-path]
+  ff-diff default-prefs-userjs path [--firefox-path path] [--do-not-print-in-console] [--save-output-in-file] [--force-default-profile] [--profile-path]
 
 Options:
   -v, --version    Print version info and exit

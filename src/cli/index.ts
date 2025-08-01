@@ -4,7 +4,7 @@ import { defaultPrefsUserJS } from "@commands/default-prefs-userjs";
 import { diff } from "@commands/diff";
 import { unusedPrefs } from "@commands/unused-prefs";
 import { getArgumentValue, parseKeepArgument } from "@lib/cli";
-import { getInstalledFirefoxPath } from "@lib/firefox";
+import { getFirefoxReleaseProfilePath } from "@lib/firefox";
 import { startsWithNumberDotNumber } from "@lib/helpers";
 
 const CONSOLE_COLORS = {
@@ -42,11 +42,13 @@ export const CLI_ARGS = {
   COMPARE_USERJS: "--compare-userjs",
   DO_NOT_PRINT_IN_CONSOLE: "--do-not-print-in-console",
   FIREFOX_PATH: "--firefox-path",
+  FORCE_DEFAULT_PROFILE: "--force-default-profile",
   KEEP: "--keep",
   KEEP_ARCHIVES: "--keep-archives",
   KEEP_SOURCES: "--keep-sources",
   SAVE_OUTPUT: "--save-output-in-file",
   PATH: "--path",
+  PROFILE_PATH: "--profile-path",
 } as const;
 
 const EXAMPLE_VERSION = {
@@ -83,6 +85,32 @@ const printAndSave: CliOption[] = [
 const pathToFirefox: CliOption = {
   longOption: `${CLI_ARGS.FIREFOX_PATH} ${CLI_VALUES.PATH_USAGE}`,
   doc: "Path to the firefox binary",
+};
+
+const forceDefaultFFProfile: CliOption = {
+  longOption: CLI_ARGS.FORCE_DEFAULT_PROFILE,
+  doc: "Explicitly force firefox to use the default profile",
+};
+
+const FFProfilePath: CliOption = {
+  longOption: CLI_ARGS.PROFILE_PATH,
+  doc: `Set the profile path to use (conflicts with ${CLI_ARGS.FORCE_DEFAULT_PROFILE})`,
+};
+
+const getUserJSBasedCommands = () => {
+  const forceDefaultProfile = process.argv.includes(
+    CLI_ARGS.FORCE_DEFAULT_PROFILE,
+  );
+
+  const profilePath = getArgumentValue(CLI_ARGS.PROFILE_PATH);
+  if (profilePath && forceDefaultFFProfile) {
+    console.error(
+      `You can't have ${CLI_ARGS.FORCE_DEFAULT_PROFILE} and ${CLI_ARGS.PROFILE_PATH} set at the same time`,
+    );
+    process.exit(1);
+  }
+
+  return { profilePath, forceDefaultProfile };
 };
 
 export const hasAnyArg = (args: readonly string[]): boolean => {
@@ -265,6 +293,8 @@ class DefaultPrefsUserJSCommand extends BaseCli {
   public static readonly OPTIONS: readonly CliOption[] = [
     pathToFirefox,
     ...printAndSave,
+    forceDefaultFFProfile,
+    FFProfilePath,
   ];
 
   constructor(fail: boolean = true) {
@@ -278,10 +308,15 @@ class DefaultPrefsUserJSCommand extends BaseCli {
 
   public async entrypoint(): Promise<void> {
     const [, , , compareUserjs] = process.argv;
+    const { forceDefaultProfile, profilePath } = getUserJSBasedCommands();
     if (compareUserjs === undefined) {
       this.usage();
     }
-    await defaultPrefsUserJS(compareUserjs);
+    await defaultPrefsUserJS({
+      compareUserjs,
+      forceDefaultProfile,
+      profilePath,
+    });
   }
 }
 
@@ -305,8 +340,12 @@ class DefaultPrefsCommand extends BaseCli {
   }
 
   public async entrypoint(): Promise<void> {
-    const { path } = getInstalledFirefoxPath();
-    await getDefaultPrefs(path);
+    const install = getFirefoxReleaseProfilePath();
+    if (install === null) {
+      this.usage();
+      return;
+    }
+    await getDefaultPrefs(install.profilePath);
   }
 }
 
@@ -384,7 +423,11 @@ class UnusedPrefCommand extends BaseCli {
   public static readonly DESCRIPTION =
     "Identify unused preferences from your user.js file";
   public static readonly COMMANDS: readonly CliCommand[] = [pathUsageUserJS];
-  public static readonly OPTIONS: readonly CliOption[] = [pathToFirefox];
+  public static readonly OPTIONS: readonly CliOption[] = [
+    pathToFirefox,
+    forceDefaultFFProfile,
+    FFProfilePath,
+  ];
 
   constructor(fail: boolean = true) {
     super(
@@ -397,10 +440,12 @@ class UnusedPrefCommand extends BaseCli {
 
   public async entrypoint(): Promise<void> {
     const [, , , compareUserjs] = process.argv;
+    const { forceDefaultProfile, profilePath } = getUserJSBasedCommands();
+
     if (compareUserjs === undefined) {
       this.usage();
     }
-    await unusedPrefs(compareUserjs);
+    await unusedPrefs({ compareUserjs, forceDefaultProfile, profilePath });
   }
 }
 

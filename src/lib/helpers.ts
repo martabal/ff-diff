@@ -18,6 +18,9 @@ export const startsWithNumberDotNumber = (str: string): boolean => {
   return true;
 };
 
+export const gettingPrefsMessage = "Getting prefs...";
+export const gettingVersionMessage = "Getting firefox version...";
+
 export const isUnitDifferenceOne = (a: string, b: string): boolean => {
   const unitA = Math.floor(parseFloat(a));
   const unitB = Math.floor(parseFloat(b));

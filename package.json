@@ -34,9 +34,9 @@
     "lint": "oxlint",
     "lint:fix": "oxlint --fix --fix-suggestions",
     "shellcheck": "find completions -type f -exec shellcheck -e SC2148 {} +",
-    "test": "vitest --run",
-    "test:cov": "vitest --coverage",
-    "test:watch": "vitest"
+    "test": "npm run build && vitest --run",
+    "test:cov": "npm run build && vitest --coverage",
+    "test:watch": "npm run build && vitest"
   },
   "devDependencies": {
     "@types/node": "24.1.0",

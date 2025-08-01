@@ -9,37 +9,31 @@ export const clean = async (keptVersions: number[]) => {
 
     const removalPromises = entries.map(async (entry) => {
       const fullPath = join(installDir, entry.name);
-      let shouldRemove = false;
-      let logMessage = "";
 
       if (
         entry.isDirectory() &&
-        !keptVersions.includes(Number.parseInt(entry.name, 10)) &&
-        !keepOptions.sources
+        !keepOptions.sources &&
+        !keptVersions.includes(Number.parseInt(entry.name, 10))
       ) {
-        shouldRemove = true;
-        logMessage = `Removing folder: ${entry.name}`;
+        console.log(`Removing folder: ${entry.name}`);
+        await rm(fullPath, { recursive: true, force: true });
+        return true;
       }
 
       if (
         entry.isFile() &&
-        entry.name.startsWith("firefox-") &&
-        !keepOptions.archives
+        !keepOptions.archives &&
+        entry.name.startsWith("firefox-")
       ) {
         const version = Number.parseInt(
           entry.name.slice("firefox-".length),
           10,
         );
         if (!keptVersions.includes(version)) {
-          shouldRemove = true;
-          logMessage = `Remove archive: ${entry.name}`;
+          console.log(`Remove archive: ${entry.name}`);
+          await rm(fullPath, { recursive: true, force: true });
+          return true;
         }
-      }
-
-      if (shouldRemove) {
-        console.log(logMessage);
-        await rm(fullPath, { recursive: true, force: true });
-        return true;
       }
 
       return false;

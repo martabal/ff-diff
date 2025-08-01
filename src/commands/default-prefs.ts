@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { printOptions } from "@cli";
 import { getFirefoxVersion, getPrefs, type Pref } from "@lib/firefox";
 import { defaultsDir } from "@lib/install";
+import { gettingPrefsMessage, gettingVersionMessage } from "@lib/helpers";
 
 const formatPrefs = (
   entries: [string, Pref][],
@@ -36,9 +37,11 @@ const handleOutput = (
   }
 };
 
-export const getDefaultPrefs = async (firefoxPath: string) => {
-  const prefsFirefox = await getPrefs(firefoxPath);
-  const version = await getFirefoxVersion(firefoxPath);
+export const getDefaultPrefs = async (profilePath: string) => {
+  console.log(gettingPrefsMessage);
+  const prefsFirefox = await getPrefs({ profilePath });
+  console.log(gettingVersionMessage);
+  const version = await getFirefoxVersion({ profilePath });
   const sortedEntries = [...prefsFirefox.entries()].sort(([a], [b]) =>
     a.localeCompare(b),
   );

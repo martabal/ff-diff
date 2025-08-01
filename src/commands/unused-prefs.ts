@@ -1,13 +1,18 @@
-import { getInstalledFirefoxPath, getPrefs } from "@lib/firefox";
+import { getFirefoxDefaultProfile, getPrefs } from "@lib/firefox";
+import { gettingPrefsMessage, gettingVersionMessage } from "@lib/helpers";
 import { parseUserPrefs } from "@lib/prefs";
 import { readFileSync } from "fs";
+import { UserJSBasedCommands } from "@commands";
 
-export const unusedPrefs = async (compareUserjs: string) => {
-  const userJsContent = readFileSync(compareUserjs, "utf8");
+export const unusedPrefs = async (opts: UserJSBasedCommands) => {
+  const userJsContent = readFileSync(opts.compareUserjs, "utf8");
 
-  const { path: firefoxPath } = getInstalledFirefoxPath();
-  const prefsFirefox = await getPrefs(firefoxPath);
-
+  const profilePath = opts.forceDefaultProfile
+    ? getFirefoxDefaultProfile().profilePath
+    : opts.profilePath;
+  console.log(gettingPrefsMessage);
+  const prefsFirefox = await getPrefs({ profilePath });
+  console.log(gettingVersionMessage);
   const userKeys = parseUserPrefs(userJsContent);
   userKeys.sort((a, b) => a.key.localeCompare(b.key));
 
@@ -24,7 +29,7 @@ export const unusedPrefs = async (compareUserjs: string) => {
     }
   }
   if (missing.length === 0) {
-    console.log(`No unused prefs in ${compareUserjs}`);
+    console.log(`No unused prefs in ${opts.compareUserjs}`);
   } else {
     console.log(`Unused pref${missing.length === 1 ? "" : "s"}:`);
     for (const pref of missing) {

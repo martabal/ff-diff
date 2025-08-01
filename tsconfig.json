@@ -12,7 +12,7 @@
     "outDir": "./dist",
     "paths": {
       "@cli": ["src/cli/"],
-      "@cli/*": ["src/cli/*"],
+      "@commands": ["src/commands"],
       "@commands/*": ["src/commands/*"],
       "@lib/*": ["src/lib/*"],
       "@scripts/*": ["src/scripts/*"]

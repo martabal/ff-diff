@@ -23,10 +23,10 @@ import { diffsDir, installDir, installFirefox } from "@lib/install";
 
 const handlePref = async (
   version: string,
-  installPath: string,
+  executablePath: string,
 ): Promise<Map<string, Pref>> => {
   await installFirefox({ version, retry: false });
-  return getPrefs(installPath);
+  return getPrefs({ executablePath });
 };
 
 const handleFormatTicks = (format: Format, symbol: string): AllFormated => {

@@ -3,7 +3,7 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 import { exit } from "node:process";
 import { Browser, Builder, type WebDriver } from "selenium-webdriver";
-import { Options } from "selenium-webdriver/firefox.js";
+import { Options, ServiceBuilder } from "selenium-webdriver/firefox";
 import { CLI_ARGS } from "@cli";
 import { getArgumentValue } from "@lib/cli";
 
@@ -14,7 +14,7 @@ export interface FirefoxPref {
 
 export interface InstallFirefox {
   hash?: string;
-  path: string;
+  profilePath: string;
 }
 
 export interface FirefoxChangedPref extends FirefoxPref {
@@ -27,6 +27,11 @@ export interface PrefsDiff {
   addedKeys: FirefoxPref[];
   removedKeys: FirefoxPref[];
   changedKeys: FirefoxChangedPref[];
+}
+
+export interface FirefoxInstallOptions {
+  executablePath?: string;
+  profilePath?: string;
 }
 
 interface FirefoxGlobal {
@@ -50,21 +55,31 @@ interface FirefoxGlobal {
 
 const installedMozilla = ".mozilla/firefox";
 
-const createDriver = async (executablePath: string): Promise<WebDriver> => {
-  const options = new Options()
-    .addArguments("-headless")
-    .setBinary(executablePath);
+const createDriver = async (
+  opts: FirefoxInstallOptions,
+): Promise<WebDriver> => {
+  const options = new Options().addArguments("-headless");
 
+  if (opts.profilePath) {
+    options.addArguments(`no-remote -P "${opts.profilePath}"`);
+  }
+
+  if (opts.executablePath) {
+    options.setBinary(opts.executablePath);
+  }
+
+  const service = new ServiceBuilder().enableVerboseLogging();
   return await new Builder()
     .forBrowser(Browser.FIREFOX)
+    .setFirefoxService(service)
     .setFirefoxOptions(options)
     .build();
 };
 
 export const getPrefs = async (
-  executablePath: string,
+  options: FirefoxInstallOptions,
 ): Promise<Map<string, Pref>> => {
-  const driver: WebDriver = await createDriver(executablePath);
+  const driver: WebDriver = await createDriver(options);
 
   await driver.get("about:config");
 
@@ -143,9 +158,9 @@ export const comparePrefs = (
 };
 
 export const getFirefoxVersion = async (
-  executablePath: string,
+  options: FirefoxInstallOptions,
 ): Promise<string> => {
-  const driver: WebDriver = await createDriver(executablePath);
+  const driver: WebDriver = await createDriver(options);
 
   const capabilities = await driver.getCapabilities();
   const browserVersion =
@@ -157,7 +172,7 @@ export const getFirefoxVersion = async (
 export const getFirefoxReleaseProfilePath = (): InstallFirefox | null => {
   const getPath = (): InstallFirefox | null => {
     return {
-      path: `${mozillaPath}/${currentSection["Path"]}`,
+      profilePath: `${mozillaPath}/${currentSection["Path"]}`,
       hash: currentSection["Path"].split(".")[0],
     };
   };
@@ -195,16 +210,16 @@ export const getFirefoxReleaseProfilePath = (): InstallFirefox | null => {
   return null;
 };
 
-export const getInstalledFirefoxPath = (): InstallFirefox => {
-  let firefoxPath = getArgumentValue(CLI_ARGS.FIREFOX_PATH);
-  if (firefoxPath === undefined) {
+export const getFirefoxDefaultProfile = (): InstallFirefox => {
+  let profilePath = getArgumentValue(CLI_ARGS.FIREFOX_PATH);
+  if (profilePath === undefined) {
     const firefoxPath = getFirefoxReleaseProfilePath();
 
-    if (firefoxPath === null || !existsSync(firefoxPath.path)) {
+    if (firefoxPath === null || !existsSync(firefoxPath.profilePath)) {
       console.error("Can't find installed firefox version");
       process.exit(1);
     }
     return firefoxPath;
   }
-  return { path: firefoxPath };
+  return { profilePath };
 };

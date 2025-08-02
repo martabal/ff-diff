@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { join } from "node:path";
 import { homedir } from "node:os";
 import { existsSync, readFileSync } from "node:fs";
-import { getFirefoxReleaseProfilePath } from "@lib/firefox";
+import { getFirefoxReleaseProfilePath, installedMozilla } from "@lib/firefox";
 
 vi.mock("fs");
 vi.mock("os");
@@ -13,11 +13,9 @@ vi.mock("./install", () => ({
   getArchitecture: () => "x86_64",
 }));
 
-const mockInstalledMozilla = ".mozilla/firefox";
-
 describe("getFirefoxReleaseProfilePath", () => {
   const mockHomeDir = "/home/user";
-  const mockMozillaPath = `${mockHomeDir}/${mockInstalledMozilla}`;
+  const mockMozillaPath = `${mockHomeDir}/${installedMozilla}`;
   const mockIniPath = `${mockMozillaPath}/profiles.ini`;
 
   beforeEach(() => {

@@ -25,7 +25,7 @@
   "scripts": {
     "build": "MINIFY=true vite build",
     "check:typescript": "tsc --noEmit",
-    "check:all": "npm run generate:shell-completion && npm run shellcheck && npm run check:typescript && npm run test && npm run format && npm run lint",
+    "check:all": "npm run generate:shell-completion && npm run shellcheck && npm run check:typescript && npm run test:all && npm run format && npm run lint",
     "ff-diff": "vite build -l warn && USE_CURRENT_DIR=true node dist/index.js",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
@@ -34,7 +34,9 @@
     "lint": "oxlint",
     "lint:fix": "oxlint --fix --fix-suggestions",
     "shellcheck": "find completions -type f -exec shellcheck -e SC2148 {} +",
-    "test": "npm run build && vitest --run",
+    "test": "vitest --run --exclude '**/*.end-to-end.test.ts'",
+    "test:all": "npm run build && vitest --run",
+    "test:end-to-end": "npm run build && vitest end-to-end --run",
     "test:cov": "npm run build && vitest --coverage",
     "test:watch": "npm run build && vitest"
   },

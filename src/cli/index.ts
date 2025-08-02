@@ -188,7 +188,7 @@ abstract class BaseCli {
 
     const maxLen = Math.max(maxCmdLen, maxOptLen) + 10;
 
-    console.log(this.description);
+    (this.fail ? console.error : console.log)(this.description);
 
     if (this.commands.length > 0) {
       this.printSection("Usage:", this.commands, maxLen, " ");
@@ -209,7 +209,9 @@ abstract class BaseCli {
     maxLen: number,
     separator: string,
   ): void {
-    console.log(`\n${CONSOLE_COLORS.GREEN}${title}${CONSOLE_COLORS.RESET}`);
+    const output = this.fail ? console.error : console.log;
+
+    output(`\n${CONSOLE_COLORS.GREEN}${title}${CONSOLE_COLORS.RESET}`);
 
     for (const item of items) {
       const isOption = (item as CliOption).longOption !== undefined;
@@ -234,10 +236,10 @@ abstract class BaseCli {
       const helpLines = helpText.split("\n");
       const padding = " ".repeat(Math.max(0, maxLen - args.length + 4));
 
-      console.log(`  ${coloredArgs}${padding}${helpLines[0]}`);
+      output(`  ${coloredArgs}${padding}${helpLines[0]}`);
 
       for (let i = 1; i < helpLines.length; i++) {
-        console.log(" ".repeat(maxLen + 6) + helpLines[i]);
+        output(" ".repeat(maxLen + 6) + helpLines[i]);
       }
     }
   }

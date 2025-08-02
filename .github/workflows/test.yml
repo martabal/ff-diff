@@ -27,7 +27,7 @@ jobs:
         run: npm ci
 
       - name: Run formatter
-        run: npx prettier --check .
+        run: npm run format
 
   lint:
     name: Run linter
@@ -122,7 +122,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run tests
+      - name: Run unit tests
         run: npm run test
 
   end-to-end-tests:
@@ -140,5 +140,5 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run tests
+      - name: Run end-to-end tests
         run: npm run test:end-to-end

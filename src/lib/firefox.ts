@@ -4,8 +4,6 @@ import { join } from "node:path";
 import { exit } from "node:process";
 import { Browser, Builder, type WebDriver } from "selenium-webdriver";
 import { Options, ServiceBuilder } from "selenium-webdriver/firefox";
-import { CLI_ARGS } from "@cli";
-import { getArgumentValue } from "@lib/cli";
 
 export interface FirefoxPref {
   key: string;
@@ -53,7 +51,7 @@ interface FirefoxGlobal {
   };
 }
 
-const installedMozilla = ".mozilla/firefox";
+export const installedMozilla = ".mozilla/firefox";
 
 const createDriver = async (
   opts: FirefoxInstallOptions,
@@ -211,15 +209,11 @@ export const getFirefoxReleaseProfilePath = (): InstallFirefox | null => {
 };
 
 export const getFirefoxDefaultProfile = (): InstallFirefox => {
-  let profilePath = getArgumentValue(CLI_ARGS.FIREFOX_PATH);
-  if (profilePath === undefined) {
-    const firefoxPath = getFirefoxReleaseProfilePath();
+  const firefoxPath = getFirefoxReleaseProfilePath();
 
-    if (firefoxPath === null || !existsSync(firefoxPath.profilePath)) {
-      console.error("Can't find installed firefox version");
-      process.exit(1);
-    }
-    return firefoxPath;
+  if (firefoxPath === null || !existsSync(firefoxPath.profilePath)) {
+    console.error("Can't find installed firefox version");
+    process.exit(1);
   }
-  return { profilePath };
+  return firefoxPath;
 };

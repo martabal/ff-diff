@@ -6,12 +6,7 @@ import { unusedPrefs } from "@commands/unused-prefs";
 import { getArgumentValue, parseKeepArgument } from "@lib/cli";
 import { getFirefoxReleaseProfilePath } from "@lib/firefox";
 import { startsWithNumberDotNumber } from "@lib/helpers";
-
-const CONSOLE_COLORS = {
-  GREEN: "\u001B[32m",
-  RESET: "\u001B[0m",
-  CYAN: "\u001B[36m",
-} as const;
+import { styleText } from "node:util";
 
 interface SourceCleanupOptions {
   archives: boolean;
@@ -211,7 +206,7 @@ abstract class BaseCli {
   ): void {
     const output = this.fail ? console.error : console.log;
 
-    output(`\n${CONSOLE_COLORS.GREEN}${title}${CONSOLE_COLORS.RESET}`);
+    output(`\n${styleText("green", title)}`);
 
     for (const item of items) {
       const isOption = (item as CliOption).longOption !== undefined;
@@ -221,12 +216,9 @@ abstract class BaseCli {
         : (item as CliCommand).values.join(separator);
 
       const coloredArgs = isOption
-        ? `${CONSOLE_COLORS.CYAN}${args}${CONSOLE_COLORS.RESET}`
+        ? `${styleText("cyan", args)}`
         : (item as CliCommand).values
-            .map(
-              (value) =>
-                `${CONSOLE_COLORS.CYAN}${value}${CONSOLE_COLORS.RESET}`,
-            )
+            .map((value) => `${styleText("cyan", value)}`)
             .join(separator);
 
       const helpText = isOption

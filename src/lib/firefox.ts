@@ -3,7 +3,7 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 import { exit } from "node:process";
 import { Browser, Builder, type WebDriver } from "selenium-webdriver";
-import { Options, ServiceBuilder } from "selenium-webdriver/firefox";
+import { Options } from "selenium-webdriver/firefox";
 
 export interface FirefoxPref {
   key: string;
@@ -66,10 +66,8 @@ const createDriver = async (
     options.setBinary(opts.executablePath);
   }
 
-  const service = new ServiceBuilder().enableVerboseLogging();
   return await new Builder()
     .forBrowser(Browser.FIREFOX)
-    .setFirefoxService(service)
     .setFirefoxOptions(options)
     .build();
 };

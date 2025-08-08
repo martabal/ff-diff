@@ -1,18 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { isUnitDifferenceOne } from "@lib/helpers";
-
-const startsWithNumberDotNumber = (str: string): boolean => {
-  const parts = str.split(".");
-  if (parts.length < 2) return false;
-
-  const first = parts[0];
-  const second = parts[1];
-
-  if (!first || isNaN(Number(first)) || !/^\d+$/.test(first)) return false;
-  if (!second || isNaN(Number(second[0]))) return false;
-
-  return true;
-};
+import { isUnitDifferenceOne, startsWithNumberDotNumber } from "@lib/helpers";
 
 describe("startsWithNumberDotNumber", () => {
   it('should return true for "1.0"', () => {

@@ -1,21 +1,21 @@
 export const startsWithNumberDotNumber = (str: string): boolean => {
-  const parts = str.split(".");
-
-  if (parts.length < 2) {
+  const dotIndex = str.indexOf(".");
+  if (dotIndex === -1 || dotIndex === 0) {
     return false;
   }
 
-  const first = parts[0];
-  const second = parts[1];
-
-  if (!first || isNaN(Number(first)) || !/^\d+$/.test(first)) {
-    return false;
-  }
-  if (!second || isNaN(Number(second[0]))) {
-    return false;
+  const beforeDot = str.slice(0, dotIndex);
+  for (let i = 0; i < beforeDot.length; i++) {
+    const char = beforeDot[i];
+    if (char < "0" || char > "9") {
+      return false;
+    }
   }
 
-  return true;
+  const afterDotChar = str[dotIndex + 1];
+  return (
+    afterDotChar !== undefined && afterDotChar >= "0" && afterDotChar <= "9"
+  );
 };
 
 export const gettingPrefsMessage = "Getting prefs...";

@@ -8,7 +8,7 @@ updates:
       ci-dependencies:
         patterns:
           - "*"
-  - package-ecosystem: "npm"
+  - package-ecosystem: "pnpm"
     directory: "/"
     schedule:
       interval: "weekly"

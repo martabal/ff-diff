@@ -2,7 +2,7 @@ import {
   type FirefoxChangedPref,
   type FirefoxPref,
   type Pref,
-} from "@lib/firefox";
+} from "$lib/firefox";
 
 export interface PrintDiff {
   label: string;

@@ -1,11 +1,11 @@
-import { clean } from "@commands/clean";
-import { getDefaultPrefs } from "@commands/default-prefs";
-import { defaultPrefsUserJS } from "@commands/default-prefs-userjs";
-import { diff } from "@commands/diff";
-import { unusedPrefs } from "@commands/unused-prefs";
-import { getArgumentValue, parseKeepArgument } from "@lib/cli";
-import { getFirefoxReleaseProfilePath } from "@lib/firefox";
-import { startsWithNumberDotNumber } from "@lib/helpers";
+import { clean } from "$commands/clean";
+import { getDefaultPrefs } from "$commands/default-prefs";
+import { defaultPrefsUserJS } from "$commands/default-prefs-userjs";
+import { diff } from "$commands/diff";
+import { unusedPrefs } from "$commands/unused-prefs";
+import { getArgumentValue, parseKeepArgument } from "$lib/cli";
+import { getFirefoxReleaseProfilePath } from "$lib/firefox";
+import { startsWithNumberDotNumber } from "$lib/helpers";
 import { styleText } from "node:util";
 
 interface SourceCleanupOptions {
@@ -164,7 +164,7 @@ abstract class BaseCli {
     this.options = options;
   }
 
-  public abstract entrypoint(): Promise<void>;
+  public abstract entrypoint(): Promise<void> | void;
 
   public usage(): void {
     const maxCmdLen =
@@ -216,9 +216,9 @@ abstract class BaseCli {
         : (item as CliCommand).values.join(separator);
 
       const coloredArgs = isOption
-        ? `${styleText("cyan", args)}`
+        ? styleText("cyan", args)
         : (item as CliCommand).values
-            .map((value) => `${styleText("cyan", value)}`)
+            .map((value) => styleText("cyan", value))
             .join(separator);
 
       const helpText = isOption
@@ -469,9 +469,9 @@ export class Cli extends BaseCli {
     super(fail, APP_DESCRIPTION, Cli.COMMANDS, Cli.OPTIONS);
   }
 
-  public async entrypoint(): Promise<void> {
+  public entrypoint(): void {
     this.fail = true;
-    await this.usage();
+    this.usage();
   }
 }
 

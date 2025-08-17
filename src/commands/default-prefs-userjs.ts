@@ -1,17 +1,17 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { printOptions } from "@cli";
+import { printOptions } from "$cli";
 import {
   type FirefoxPref,
   getFirefoxVersion,
   getFirefoxDefaultProfile,
   getPrefs,
-} from "@lib/firefox";
-import { defaultsUserJSDir } from "@lib/install";
-import { Format, formatTicks, formatValue } from "@lib/format";
-import { parseUserPrefs } from "@lib/prefs";
-import { gettingPrefsMessage, gettingVersionMessage } from "@lib/helpers";
-import { UserJSBasedCommands } from "@commands";
+} from "$lib/firefox";
+import { defaultsUserJSDir } from "$lib/install";
+import { Format, formatTicks, formatValue } from "$lib/format";
+import { parseUserPrefs } from "$lib/prefs";
+import { gettingPrefsMessage, gettingVersionMessage } from "$lib/helpers";
+import { UserJSBasedCommands } from "$commands";
 
 const generateOutput = (
   format: Format,

@@ -17,9 +17,10 @@
     "vitest"
   ],
   "rules": {
+    "eslint/max-lines-per-function": "off",
     "max-classes-per-file": "off",
     "max-lines": "off",
     "max-dependencies": "off",
-    "eslint/max-lines-per-function": "off"
+    "typescript/no-unsafe-type-assertion": "off"
   }
 }

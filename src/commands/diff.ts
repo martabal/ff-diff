@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { rm } from "node:fs/promises";
 import { join } from "node:path";
-import { cleanOptions, Diff, printOptions } from "@cli";
+import { cleanOptions, Diff, printOptions } from "$cli";
 import {
   type FirefoxChangedPref,
   type FirefoxPref,
@@ -9,17 +9,17 @@ import {
   type PrefsDiff,
   comparePrefs,
   getPrefs,
-} from "@lib/firefox";
+} from "$lib/firefox";
 import {
   type AllFormated,
   Format,
   formatTicks,
   formatValue,
   type PrintDiff,
-} from "@lib/format";
-import { isUnitDifferenceOne } from "@lib/helpers";
-import { parseUserPrefs } from "@lib/prefs";
-import { diffsDir, installDir, installFirefox } from "@lib/install";
+} from "$lib/format";
+import { isUnitDifferenceOne } from "$lib/helpers";
+import { parseUserPrefs } from "$lib/prefs";
+import { diffsDir, installDir, installFirefox } from "$lib/install";
 
 const handlePref = async (
   version: string,

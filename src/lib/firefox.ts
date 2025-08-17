@@ -66,10 +66,12 @@ const createDriver = async (
     options.setBinary(opts.executablePath);
   }
 
-  return await new Builder()
+  let builder = await new Builder()
     .forBrowser(Browser.FIREFOX)
     .setFirefoxOptions(options)
     .build();
+
+  return builder;
 };
 
 export const getPrefs = async (
@@ -159,9 +161,15 @@ export const getFirefoxVersion = async (
   const driver: WebDriver = await createDriver(options);
 
   const capabilities = await driver.getCapabilities();
-  const browserVersion =
+  const browserVersion: unknown =
     capabilities.get("browserVersion") || capabilities.get("version");
   await driver.quit();
+
+  if (typeof browserVersion !== "string") {
+    throw new TypeError(
+      "Unable to determine Firefox version: version not found or not a string",
+    );
+  }
   return browserVersion;
 };
 
@@ -173,7 +181,7 @@ export const getFirefoxReleaseProfilePath = (): InstallFirefox | null => {
     };
   };
 
-  const mozillaPath = join(homedir(), `${installedMozilla}`);
+  const mozillaPath = join(homedir(), installedMozilla);
   const iniPath = join(mozillaPath, "profiles.ini");
 
   if (!existsSync(iniPath)) {

@@ -10,11 +10,10 @@
     "moduleResolution": "bundler",
     "outDir": "./dist",
     "paths": {
-      "@cli": ["./src/cli/"],
-      "@commands": ["./src/commands"],
-      "@commands/*": ["./src/commands/*"],
-      "@lib/*": ["./src/lib/*"],
-      "@scripts/*": ["./src/scripts/*"]
+      "$cli": ["./src/cli/"],
+      "$commands": ["./src/commands"],
+      "$commands/*": ["./src/commands/*"],
+      "$lib/*": ["./src/lib/*"]
     },
     "removeComments": true,
     "resolveJsonModule": true,

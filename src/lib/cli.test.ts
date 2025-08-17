@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { getArgumentValue, getArgumentValues } from "@lib/cli";
+import { getArgumentValue, getArgumentValues } from "$lib/cli";
 
 const expectExitError = "process.exit";
 const mockProcessExit = vi.spyOn(process, "exit").mockImplementation(() => {

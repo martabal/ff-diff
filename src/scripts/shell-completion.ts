@@ -1,7 +1,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
-import { ALL_COMMANDS, VERSION_ARGS, HELP_ARGS, CLI_ARGS, Cli } from "@cli";
-import { getArgumentValue } from "@lib/cli";
+import { ALL_COMMANDS, VERSION_ARGS, HELP_ARGS, CLI_ARGS, Cli } from "$cli";
+import { getArgumentValue } from "$lib/cli";
 
 const pathArg = getArgumentValue(CLI_ARGS.PATH);
 if (pathArg === undefined) {

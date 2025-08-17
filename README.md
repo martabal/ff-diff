@@ -51,7 +51,6 @@ Clone this repository:
 git clone https://github.com/martabal/ff-diff.git
 cd ff-diff
 pnpm install --frozen-lockfile
-pnpm run ff-diff -- diff -h
 ```
 
 ## Commands
@@ -87,7 +86,7 @@ In production mode (i.e., when the script is installed globally using `pnpm i -g
 By default, the script keep both the downloaded archives and the extracted source files. To remove them, you can run the script with the `--remove-archives` and/or `--remove-sources` arguments. If you want to use specific version you can use:
 
 ```bash
-pnpm run ff-diff clean -- --keep <version1>,<version2>
+pnpm run ff-diff clean --keep <version1>,<version2>
 ```
 
 If you want to only keep archives you can use `pnpm run clean -- --keep <version1>,<version2> --keep-archives` or `pnpm run clean -- --keep <version1>,<version2> --keep-sources` if you want to keep the sources

@@ -40,7 +40,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run ff-diff
-        run: pnpm run ff-diff -- diff ${{ github.event.inputs.old-version }} ${{ github.event.inputs.new-version }} --do-not-print-in-console --save-output-in-file
+        run: pnpm run ff-diff diff ${{ github.event.inputs.old-version }} ${{ github.event.inputs.new-version }} --do-not-print-in-console --save-output-in-file
 
       - name: Create a new GitHub Discussion
         uses: abirismyname/create-discussion@c2b7c825241769dda523865ae444a879f6bbd0e0 # v2.1.1

@@ -12,13 +12,13 @@ Features:
 Requirements:
 
 - Internet connection (for downloading Firefox binaries, only for the diff command)
-- node >= 20 and npm
+- node >= 20 and pnpm
 - tar (only for the diff command)
 
-## Installation (NPM)
+## Installation (pnpm)
 
 ```bash
-npm i -g ff-diff
+pnpm i -g ff-diff
 ```
 
 ## Usage
@@ -50,8 +50,8 @@ Clone this repository:
 ```bash
 git clone https://github.com/martabal/ff-diff.git
 cd ff-diff
-npm ci
-npm run ff-diff -- diff -h
+pnpm install --frozen-lockfile
+pnpm run ff-diff -- diff -h
 ```
 
 ## Commands
@@ -61,13 +61,13 @@ npm run ff-diff -- diff -h
 Run the comparison command:
 
 ```bash
-npm run ff-diff diff <old-version> <new-version>
+pnpm run ff-diff diff <old-version> <new-version>
 ```
 
 for example:
 
 ```bash
-npm run ff-diff diff 137.0 138.0
+pnpm run ff-diff diff 137.0 138.0
 ```
 
 If you use a custom `user.js`. You can check if some of the keys are removed/changed with the argument `--compare-userjs <path_to_your_userjs>`.
@@ -81,16 +81,16 @@ Example of a generated diffs:
 
 ### clean
 
-When running the script in development mode with `npm run dev`, Firefox sources and binaries are saved in the current directory.
-In production mode (i.e., when the script is installed globally using `npm i -g ff-diff`), these files are stored in `~/.ff-diff`.
+When running the script in development mode with `pnpm run dev`, Firefox sources and binaries are saved in the current directory.
+In production mode (i.e., when the script is installed globally using `pnpm i -g ff-diff`), these files are stored in `~/.ff-diff`.
 
 By default, the script keep both the downloaded archives and the extracted source files. To remove them, you can run the script with the `--remove-archives` and/or `--remove-sources` arguments. If you want to use specific version you can use:
 
 ```bash
-npm run ff-diff clean -- --keep <version1>,<version2>
+pnpm run ff-diff clean -- --keep <version1>,<version2>
 ```
 
-If you want to only keep archives you can use `npm run clean -- --keep <version1>,<version2> --keep-archives` or `npm run clean -- --keep <version1>,<version2> --keep-sources` if you want to keep the sources
+If you want to only keep archives you can use `pnpm run clean -- --keep <version1>,<version2> --keep-archives` or `pnpm run clean -- --keep <version1>,<version2> --keep-sources` if you want to keep the sources
 
 ### default-prefs
 

@@ -22,6 +22,7 @@ type DownloadArchiveOptions = {
   url: string;
   fileDest: string;
   retry: boolean;
+  version: string;
 };
 
 enum PlatformOS {
@@ -84,6 +85,7 @@ const downloadArchive = async ({
   url,
   fileDest,
   retry,
+  version,
 }: DownloadArchiveOptions): Promise<string> => {
   let response = await fetch(url);
 
@@ -91,8 +93,13 @@ const downloadArchive = async ({
     url = url.replace(".tar.xz", ".tar.bz2");
     fileDest = fileDest.replace(".tar.xz", ".tar.bz2");
     console.warn(`${url} it not found, trying ${url} instead`);
-    return downloadArchive({ url, fileDest, retry: true });
+    return downloadArchive({ url, fileDest, retry: true, version });
   }
+
+  if (retry) {
+    throw new Error(`Can't find firefox version ${version}`);
+  }
+
   if (!response.ok || !response.body) {
     throw new Error(`Failed to download file, status code: ${response.status}`);
   }
@@ -125,9 +132,10 @@ export const installFirefox = async ({
         url,
         fileDest,
         retry: false,
+        version,
       });
     } catch (error) {
-      console.error(`Can't download firefox ${version}: ${String(error)}`);
+      console.error(String(error));
       process.exit(1);
     }
   }

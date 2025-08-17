@@ -1,4 +1,4 @@
-import { CLI_ARGS } from "@cli";
+import { CLI_ARGS } from "$cli";
 
 const argumentWithoutValue = (argument: string) => {
   console.error(`Error: Argument "${argument}" is provided but has no value.`);

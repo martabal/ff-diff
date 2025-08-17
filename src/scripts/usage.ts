@@ -1,4 +1,4 @@
-import { Cli, ALL_COMMANDS } from "@cli";
+import { Cli, ALL_COMMANDS } from "$cli";
 
 const generateUsage = (): string => {
   const lines: string[] = [];

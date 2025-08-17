@@ -1,4 +1,4 @@
-import { type FirefoxPref, type Pref } from "@lib/firefox";
+import { type FirefoxPref, type Pref } from "$lib/firefox";
 
 interface Default {
   version?: number;

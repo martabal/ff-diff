@@ -1,9 +1,9 @@
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { printOptions } from "@cli";
-import { getFirefoxVersion, getPrefs, type Pref } from "@lib/firefox";
-import { defaultsDir } from "@lib/install";
-import { gettingPrefsMessage, gettingVersionMessage } from "@lib/helpers";
+import { printOptions } from "$cli";
+import { getFirefoxVersion, getPrefs, type Pref } from "$lib/firefox";
+import { defaultsDir } from "$lib/install";
+import { gettingPrefsMessage, gettingVersionMessage } from "$lib/helpers";
 
 const formatPrefs = (
   entries: [string, Pref][],

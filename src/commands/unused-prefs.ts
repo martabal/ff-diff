@@ -1,8 +1,8 @@
-import { getFirefoxDefaultProfile, getPrefs } from "@lib/firefox";
-import { gettingPrefsMessage, gettingVersionMessage } from "@lib/helpers";
-import { parseUserPrefs } from "@lib/prefs";
+import { getFirefoxDefaultProfile, getPrefs } from "$lib/firefox";
+import { gettingPrefsMessage, gettingVersionMessage } from "$lib/helpers";
+import { parseUserPrefs } from "$lib/prefs";
 import { readFileSync } from "fs";
-import { UserJSBasedCommands } from "@commands";
+import { UserJSBasedCommands } from "$commands";
 
 export const unusedPrefs = async (opts: UserJSBasedCommands) => {
   const userJsContent = readFileSync(opts.compareUserjs, "utf8");

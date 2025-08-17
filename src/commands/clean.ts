@@ -1,7 +1,7 @@
 import { readdir, rm } from "node:fs/promises";
 import { join } from "node:path";
-import { keepOptions } from "@cli";
-import { installDir } from "@lib/install";
+import { keepOptions } from "$cli";
+import { installDir } from "$lib/install";
 
 export const clean = async (keptVersions: number[]) => {
   try {

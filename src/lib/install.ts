@@ -1,4 +1,4 @@
-import { cleanOptions } from "@cli";
+import { cleanOptions } from "$cli";
 import { execSync } from "node:child_process";
 import {
   createWriteStream,
@@ -91,13 +91,13 @@ const downloadArchive = async ({
     url = url.replace(".tar.xz", ".tar.bz2");
     fileDest = fileDest.replace(".tar.xz", ".tar.bz2");
     console.warn(`${url} it not found, trying ${url} instead`);
-    return await downloadArchive({ url, fileDest, retry: true });
+    return downloadArchive({ url, fileDest, retry: true });
   }
   if (!response.ok || !response.body) {
     throw new Error(`Failed to download file, status code: ${response.status}`);
   }
 
-  const readableStream = response.body as ReadableStream<Uint8Array>;
+  const readableStream = response.body;
   const nodeReadableStream = Readable.from(readableStream);
   await streamPipeline(nodeReadableStream, createWriteStream(fileDest));
   return fileDest;
@@ -127,7 +127,7 @@ export const installFirefox = async ({
         retry: false,
       });
     } catch (error) {
-      console.error(`Can't download firefox ${version}: ${error}`);
+      console.error(`Can't download firefox ${version}: ${String(error)}`);
       process.exit(1);
     }
   }
@@ -138,7 +138,7 @@ export const installFirefox = async ({
 
   if (cleanOptions.archives) {
     console.log(`Removing archive for Firefox ${version}`);
-    await rmSync(potentialArchivePath);
+    rmSync(potentialArchivePath);
   }
 };
 
@@ -161,7 +161,7 @@ const extractArchive = async (
         "Error when extracting the archive, removing the archive and downloading the archive",
       );
       if (potentialArchivePath) {
-        await rmSync(potentialArchivePath);
+        rmSync(potentialArchivePath);
       }
       await installFirefox({ version, retry: true });
     }

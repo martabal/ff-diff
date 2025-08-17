@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { isUnitDifferenceOne, startsWithNumberDotNumber } from "@lib/helpers";
+import { isUnitDifferenceOne, startsWithNumberDotNumber } from "$lib/helpers";
 
 describe("startsWithNumberDotNumber", () => {
   it('should return true for "1.0"', () => {

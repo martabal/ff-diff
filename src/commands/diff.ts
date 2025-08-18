@@ -287,14 +287,16 @@ export const diff = async (args: Diff) => {
     );
   }
 
+  const configDiff = comparePrefs(prefsMapV1, prefsMapV2);
+
   if (args.hideCommonChangedValues) {
     for (const key of commonChangedValuesForKeys) {
-      prefsMapV1.delete(key);
-      prefsMapV2.delete(key);
+      configDiff.changedKeys = configDiff.changedKeys.filter(
+        (pref) => pref.key !== key,
+      );
     }
   }
 
-  const configDiff = comparePrefs(prefsMapV1, prefsMapV2);
   const sections = getSections(configDiff);
 
   handleOutputDiff(sections, args.newVersion, args.oldVersion);

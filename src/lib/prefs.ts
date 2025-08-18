@@ -16,8 +16,12 @@ interface PrefInfo extends FirefoxPref {
 const parseValue = (rawValue: string): Pref => {
   const trimmed = rawValue.trim();
 
-  if (trimmed === "true") return true;
-  if (trimmed === "false") return false;
+  if (trimmed === "true") {
+    return true;
+  }
+  if (trimmed === "false") {
+    return false;
+  }
 
   const first = trimmed[0];
   const last = trimmed[trimmed.length - 1];

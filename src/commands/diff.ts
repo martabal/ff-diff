@@ -160,7 +160,9 @@ const handleCompareUsersJS = (
     prefs: typeof userKeys,
     type: "added" | "removed",
   ) => {
-    if (prefs.length === 0) return null;
+    if (prefs.length === 0) {
+      return null;
+    }
 
     const messageTitle = `${removedSymbol} Some prefs are marked as ${type} on version ${newVersion} but that's incorrect:\n`;
 

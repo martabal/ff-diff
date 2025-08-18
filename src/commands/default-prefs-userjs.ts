@@ -15,25 +15,41 @@ import { UserJSBasedCommands } from "$commands";
 
 const generateOutput = (
   format: Format,
-  defaults: FirefoxPref[],
-  compareUserjs: string,
+  wrongDefault: FirefoxPref[],
+  alreadyDefault: FirefoxPref[],
 ) => {
-  const { tickStart, tickKeyValue: tick } = formatTicks[format];
+  const { tickKeyValue: tick } = formatTicks[format];
 
-  const lines: string[] = [];
-
-  if (defaults.length === 0) {
-    lines.push(`No default prefs in ${compareUserjs}`);
-  } else {
-    for (const pref of defaults) {
-      const formattedValue = formatValue(pref.value);
-      lines.push(
-        `${tickStart}${tick}${pref.key}${tick}: ${tick}${formattedValue}${tick}`,
-      );
+  const formatPrefs = (
+    title: string,
+    prefs: FirefoxPref[],
+    emptyMsg: string,
+  ) => {
+    if (prefs.length === 0) {
+      return [emptyMsg];
     }
-  }
+    return [
+      `${title}${format === Format.Markdown ? "\n" : ""}`,
+      ...prefs.map(
+        (pref) =>
+          `- ${tick}${pref.key}${tick}: ${tick}${formatValue(pref.value)}${tick}`,
+      ),
+    ];
+  };
 
-  return lines;
+  return [
+    ...formatPrefs(
+      "Wrong default for:",
+      wrongDefault,
+      "No wrong default prefs",
+    ),
+    ...(wrongDefault.length > 0 || alreadyDefault.length > 0 ? [""] : []),
+    ...formatPrefs(
+      "Explicit default not set for:",
+      alreadyDefault,
+      "All prefs have a clear explicit default",
+    ),
+  ];
 };
 
 export const defaultPrefsUserJS = async (opts: UserJSBasedCommands) => {
@@ -49,38 +65,45 @@ export const defaultPrefsUserJS = async (opts: UserJSBasedCommands) => {
 
   const userKeys = parseUserPrefs(userJsContent);
   userKeys.sort((a, b) => a.key.localeCompare(b.key));
-  const defaults: FirefoxPref[] = [];
+  const alreadyDefault: FirefoxPref[] = [];
+  const wrongDefault: FirefoxPref[] = [];
   for (const pref of userKeys) {
     const prefsValue = prefsFirefox.get(pref.key);
 
-    if (prefsValue === undefined) continue;
+    if (prefsValue === undefined) {
+      // use ff-diff unused-prefs-userjs to know unknown keys
+      continue;
+    }
 
     const isDefaultUndefinedAndMatches =
       pref.default === undefined && pref.value === prefsValue;
 
-    const isDefaultDefinedAndDifferent = pref.default?.value !== prefsValue;
+    if (isDefaultUndefinedAndMatches) {
+      alreadyDefault.push({ key: pref.key, value: prefsValue });
+    }
+
+    const isDefaultDefinedAndDifferent =
+      pref.default?.value && pref.default?.value !== prefsValue;
 
     const isDefaultValueVersionInferior =
-      (pref?.default?.version ?? Infinity) <= parseInt(version, 10);
+      pref?.default?.version === undefined ||
+      pref?.default?.version <= parseInt(version, 10);
 
-    if (
-      isDefaultUndefinedAndMatches ||
-      (isDefaultDefinedAndDifferent && isDefaultValueVersionInferior)
-    ) {
-      defaults.push({ key: pref.key, value: prefsValue });
+    if (isDefaultDefinedAndDifferent && isDefaultValueVersionInferior) {
+      wrongDefault.push({ key: pref.key, value: prefsValue });
     }
   }
 
   if (!printOptions.doNotPrintConsole) {
-    const outputTXT = generateOutput(Format.Text, defaults, opts.compareUserjs);
-    console.log(outputTXT.join("\n"));
+    const outputTXT = generateOutput(Format.Text, wrongDefault, alreadyDefault);
+    console.log(`\n${outputTXT.join("\n")}`);
   }
 
   if (printOptions.saveOutput) {
     const outputMD = generateOutput(
       Format.Markdown,
-      defaults,
-      opts.compareUserjs,
+      wrongDefault,
+      alreadyDefault,
     );
     const title = `# Default in your user.js and in Firefox ${version}\n\n`;
     if (!existsSync(defaultsUserJSDir)) {
@@ -88,7 +111,9 @@ export const defaultPrefsUserJS = async (opts: UserJSBasedCommands) => {
       mkdirSync(defaultsUserJSDir);
     }
     const diffsPath = join(defaultsUserJSDir, `default-userjs-${version}.md`);
-    console.log(`writing diffs to ${diffsPath}`);
+    console.log(
+      `${printOptions.doNotPrintConsole ? "" : "\n"}writing diffs to ${diffsPath}`,
+    );
     writeFileSync(diffsPath, title + outputMD.join("\n") + "\n");
   }
 };

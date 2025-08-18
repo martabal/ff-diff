@@ -51,6 +51,10 @@ const getVersionValue = (
     : undefined;
 };
 
+export const commonChangedValuesForKeys = [
+  "browser.newtabpage.activity-stream.support.url",
+];
+
 export const parseUserPrefs = (content: string): PrefInfo[] => {
   const regex =
     /user_pref\(\s*['"]([^'"]+)['"]\s*,\s*([\s\S]*?)\s*\)(?:;\s*\/\/\s*(.*))?/gm;

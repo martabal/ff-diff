@@ -38,6 +38,7 @@ export const CLI_ARGS = {
   DO_NOT_PRINT_IN_CONSOLE: "--do-not-print-in-console",
   FIREFOX_PATH: "--firefox-path",
   FORCE_DEFAULT_PROFILE: "--force-default-profile",
+  HIDE_COMMON_CHANGED_VALUES: "--hide-common-changed-values",
   KEEP: "--keep",
   KEEP_ARCHIVES: "--keep-archives",
   KEEP_SOURCES: "--keep-sources",
@@ -245,7 +246,6 @@ class CleanCommand extends BaseCli {
   public static readonly OPTIONS: readonly CliOption[] = [
     {
       longOption: `${CLI_ARGS.KEEP} ${CLI_VALUES.VERSION1},${CLI_VALUES.VERSION2}`,
-
       doc: [
         "Specify one or more versions whose archives and binaries should be preserved during cleanup",
         "Provide a comma-separated list of versions to keep",
@@ -345,6 +345,7 @@ class DefaultPrefsCommand extends BaseCli {
 
 export interface Diff {
   compareUserJS?: string;
+  hideCommonChangedValues: boolean;
   oldVersion: string;
   newVersion: string;
 }
@@ -369,18 +370,20 @@ class DiffCommand extends BaseCli {
   public static readonly OPTIONS: readonly CliOption[] = [
     {
       longOption: CLI_ARGS.CLEAN_ARCHIVES,
-
       doc: "Remove archives after retrieving preferences",
     },
     {
       longOption: CLI_ARGS.CLEAN_SOURCES,
-
       doc: "Remove binaries after retrieving preferences",
     },
     ...printAndSave,
     {
       longOption: `${CLI_ARGS.COMPARE_USERJS} ${CLI_VALUES.PATH_USAGE}`,
       doc: "Check for removed or changed keys in the specified user.js file",
+    },
+    {
+      longOption: CLI_ARGS.HIDE_COMMON_CHANGED_VALUES,
+      doc: "Hide the common changed values",
     },
   ];
 
@@ -406,8 +409,15 @@ class DiffCommand extends BaseCli {
     }
 
     const compareUserJS = getArgumentValue(CLI_ARGS.COMPARE_USERJS);
-
-    await diff({ compareUserJS, oldVersion, newVersion });
+    const hideCommonChangedValues = process.argv.includes(
+      CLI_ARGS.HIDE_COMMON_CHANGED_VALUES,
+    );
+    await diff({
+      compareUserJS,
+      oldVersion,
+      newVersion,
+      hideCommonChangedValues,
+    });
   }
 }
 

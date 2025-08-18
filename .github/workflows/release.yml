@@ -31,7 +31,15 @@ jobs:
       - name: Build
         run: pnpm run build
 
+      - name: Set npmrc
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+          echo "registry=https://registry.npmjs.org" >> ~/.npmrc
+          echo "always-auth=true" >> ~/.npmrc
+
       - name: Publish package
-        run: pnpm publish --access public
+        run: pnpm publish --access public --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

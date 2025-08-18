@@ -1,3 +1,4 @@
 dist/
 .ff-diff/
 coverage/
+pnpm-lock.yaml

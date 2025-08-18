@@ -18,7 +18,7 @@ import {
   type PrintDiff,
 } from "$lib/format";
 import { isUnitDifferenceOne } from "$lib/helpers";
-import { parseUserPrefs } from "$lib/prefs";
+import { commonChangedValuesForKeys, parseUserPrefs } from "$lib/prefs";
 import { diffsDir, installDir, installFirefox } from "$lib/install";
 
 const handlePref = async (
@@ -285,6 +285,13 @@ export const diff = async (args: Diff) => {
         await rm(dir, { recursive: true, force: true });
       }),
     );
+  }
+
+  if (args.hideCommonChangedValues) {
+    for (const key of commonChangedValuesForKeys) {
+      prefsMapV1.delete(key);
+      prefsMapV2.delete(key);
+    }
   }
 
   const configDiff = comparePrefs(prefsMapV1, prefsMapV2);

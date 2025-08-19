@@ -108,7 +108,7 @@ jobs:
         run: pnpm run check:typescript
 
   completion:
-    name: Run build for shell completions
+    name: Run script for generating shells completion
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -128,7 +128,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Generate shell completions
+      - name: Run generating shells completion script
         run: pnpm run generate:shell-completion
 
       - name: Run ShellCheck
@@ -160,6 +160,30 @@ jobs:
 
       - name: Run unit tests
         run: pnpm run test
+
+  usage:
+    name: Run script for generating usage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
+        with:
+          run_install: false
+
+      - name: Install latest node LTS
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version-file: "package.json"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run generating usage script
+        run: pnpm run generate:usage
 
   end-to-end-tests:
     name: Run end-to-end tests

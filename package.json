@@ -41,7 +41,7 @@
     "test:watch": "pnpm run build && vitest"
   },
   "devDependencies": {
-    "@types/node": "24.3.0",
+    "@types/node": "24.3.1",
     "@types/selenium-webdriver": "4.1.28",
     "@vitest/coverage-v8": "3.2.4",
     "oxlint": "1.14.0",

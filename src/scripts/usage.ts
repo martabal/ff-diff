@@ -1,3 +1,5 @@
+import fs from "fs";
+import path from "path";
 import { Cli, ALL_COMMANDS } from "$cli";
 
 const generateUsage = (): string => {
@@ -41,4 +43,20 @@ const generateUsage = (): string => {
   return lines.join("\n");
 };
 
-console.log(generateUsage());
+const updateReadme = () => {
+  const readmePath = path.resolve("README.md");
+  const readme = fs.readFileSync(readmePath, "utf8");
+
+  const usageBlock = ["```bash", `$ ${APP_NAME}`, generateUsage(), "```"].join(
+    "\n",
+  );
+
+  const updated = readme.replace(
+    /(<!--- Begin usage -->)([\s\S]*?)(<!--- End usage -->)/,
+    `$1\n\n${usageBlock}\n\n$3`,
+  );
+
+  fs.writeFileSync(readmePath, updated);
+};
+
+updateReadme();

@@ -39,9 +39,12 @@ const handleOutput = (
 
 export const getDefaultPrefs = async (profilePath: string) => {
   console.log(gettingPrefsMessage);
-  const prefsFirefox = await getPrefs({ profilePath });
   console.log(gettingVersionMessage);
-  const version = await getFirefoxVersion({ profilePath });
+
+  const [prefsFirefox, version] = await Promise.all([
+    getPrefs({ profilePath }),
+    getFirefoxVersion({ profilePath }),
+  ]);
   const sortedEntries = [...prefsFirefox.entries()].sort(([a], [b]) =>
     a.localeCompare(b),
   );

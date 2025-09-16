@@ -59,9 +59,12 @@ export const defaultPrefsUserJS = async (opts: UserJSBasedCommands) => {
     ? getFirefoxDefaultProfile().profilePath
     : opts.profilePath;
   console.log(gettingPrefsMessage);
-  const prefsFirefox = await getPrefs({ profilePath });
   console.log(gettingVersionMessage);
-  const version = await getFirefoxVersion({ profilePath });
+
+  const [prefsFirefox, version] = await Promise.all([
+    getPrefs({ profilePath }),
+    getFirefoxVersion({ profilePath }),
+  ]);
 
   const userKeys = parseUserPrefs(userJsContent);
   userKeys.sort((a, b) => a.key.localeCompare(b.key));

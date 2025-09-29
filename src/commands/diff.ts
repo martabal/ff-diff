@@ -141,8 +141,8 @@ const handleCompareUsersJS = (
       )
     : [];
 
-  const changed = changedKeys.filter(isUserKeyChanged);
-  const removed = removedKeys.filter(isUserKeyRemoved);
+  const changed = changedKeys.filter((key) => isUserKeyChanged(key));
+  const removed = removedKeys.filter((key) => isUserKeyRemoved(key));
 
   if (
     wrongDefaultAdded.length === 0 &&

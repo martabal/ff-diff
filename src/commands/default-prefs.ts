@@ -45,7 +45,7 @@ export const getDefaultPrefs = async (profilePath: string) => {
     getPrefs({ profilePath }),
     getFirefoxVersion({ profilePath }),
   ]);
-  const sortedEntries = [...prefsFirefox.entries()].sort(([a], [b]) =>
+  const sortedEntries = [...prefsFirefox.entries()].toSorted(([a], [b]) =>
     a.localeCompare(b),
   );
   handleOutput(sortedEntries, version);

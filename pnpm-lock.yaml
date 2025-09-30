@@ -16,8 +16,8 @@ importers:
         specifier: 24.6.0
         version: 24.6.0
       '@types/selenium-webdriver':
-        specifier: 4.1.29
-        version: 4.1.29
+        specifier: 4.35.0
+        version: 4.35.0
       '@vitest/coverage-v8':
         specifier: 3.2.4
         version: 3.2.4(vitest@3.2.4(@types/node@24.6.0))
@@ -443,8 +443,8 @@ packages:
   '@types/node@24.6.0':
     resolution: {integrity: sha512-F1CBxgqwOMc4GKJ7eY22hWhBVQuMYTtqI8L0FcszYcpYX0fzfDGpez22Xau8Mgm7O9fI+zA/TYIdq3tGWfweBA==}
 
-  '@types/selenium-webdriver@4.1.29':
-    resolution: {integrity: sha512-kc6K2AMRFxgeUoEVLlPxtG4tVV5n4Yc6C9jHbUb80w4a6rFE8W7WbRgmSdOzXBQc6qsJrOY6IkNMo5MKG7rZhw==}
+  '@types/selenium-webdriver@4.35.0':
+    resolution: {integrity: sha512-LvGXF8O4Bxmapu6X0oUwmGr2vwYIxuqsrfLBlhkEGxfOQ/kfG8O3KhRd+JMdH7gmuz+9+0m0Z7zaVv/IUAQMkQ==}
 
   '@types/ws@8.18.1':
     resolution: {integrity: sha512-ThVF6DCVhA8kUGy+aazFQ4kXQ7E1Ty7A3ypFOe0IcJV8O/M511G99AW24irKrW56Wt44yG9+ij8FaqoBGkuBXg==}
@@ -1206,7 +1206,7 @@ snapshots:
     dependencies:
       undici-types: 7.13.0
 
-  '@types/selenium-webdriver@4.1.29':
+  '@types/selenium-webdriver@4.35.0':
     dependencies:
       '@types/node': 24.6.0
       '@types/ws': 8.18.1

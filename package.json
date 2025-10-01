@@ -40,13 +40,13 @@
     "test:watch": "pnpm run build && vitest"
   },
   "devDependencies": {
-    "@types/node": "24.6.0",
-    "@types/selenium-webdriver": "4.1.29",
+    "@types/node": "24.6.1",
+    "@types/selenium-webdriver": "4.35.1",
     "@vitest/coverage-v8": "3.2.4",
     "oxlint": "1.19.0",
     "oxlint-tsgolint": "0.2.0",
     "prettier": "3.6.2",
-    "typescript": "5.9.2",
+    "typescript": "5.9.3",
     "vite": "7.1.7",
     "vitest": "3.2.4"
   },

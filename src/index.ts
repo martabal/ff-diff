@@ -57,7 +57,9 @@ const mainWithErrorHandling = async (): Promise<void> => {
   await main();
 };
 
-mainWithErrorHandling().catch((error) => {
+try {
+  await mainWithErrorHandling();
+} catch (error) {
   console.error("Application failed to start:", error);
   process.exit(1);
-});
+}

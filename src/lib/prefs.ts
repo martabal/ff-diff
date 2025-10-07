@@ -24,7 +24,7 @@ const parseValue = (rawValue: string): Pref => {
   }
 
   const first = trimmed[0];
-  const last = trimmed[trimmed.length - 1];
+  const last = trimmed.at(-1);
 
   if ((first === '"' || first === "'") && first === last) {
     return trimmed.slice(1, -1);

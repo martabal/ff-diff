@@ -90,7 +90,9 @@ ${Cli.COMMANDS.map(
 
 ${Cli.OPTIONS.map(
   (opt) =>
-    `complete -c ${APP_NAME} -n __fish_use_subcommand ${opt.shortOption ? `-s "${removeLeadingDashes(opt.shortOption)}"` : ""} -a "${removeLeadingDashes(opt.longOption)}" -d "${opt.doc.split("\n")[0]}"`,
+    `complete -c ${APP_NAME} -n __fish_use_subcommand ${
+      opt.shortOption ? `-s "${removeLeadingDashes(opt.shortOption)}"` : ""
+    } -a "${removeLeadingDashes(opt.longOption)}" -d "${opt.doc.split("\n")[0]}"`,
 ).join("\n")}
 
 ${ALL_COMMANDS.map(

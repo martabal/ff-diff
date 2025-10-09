@@ -219,7 +219,9 @@ const generateOutput = (
         : `${label} in ${newVersion}:`;
     const content =
       keys.length > 0
-        ? `${keys.map((key) => formatter(key, format)).join("\n")}${format === Format.Markdown ? "\n\n</details>" : ""}`
+        ? `${keys.map((key) => formatter(key, format)).join("\n")}${
+            format === Format.Markdown ? "\n\n</details>" : ""
+          }`
         : "(none)";
 
     lines.push(header, content);

@@ -115,7 +115,9 @@ export const defaultPrefsUserJS = async (opts: UserJSBasedCommands) => {
     }
     const diffsPath = join(defaultsUserJSDir, `default-userjs-${version}.md`);
     console.log(
-      `${printOptions.doNotPrintConsole ? "" : "\n"}writing diffs to ${diffsPath}`,
+      `${
+        printOptions.doNotPrintConsole ? "" : "\n"
+      }writing diffs to ${diffsPath}`,
     );
     writeFileSync(diffsPath, title + outputMD.join("\n") + "\n");
   }

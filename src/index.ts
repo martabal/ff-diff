@@ -36,30 +36,32 @@ const main = async (): Promise<void> => {
   await cliInstance.entrypoint();
 };
 
+const printErrorAndQuit = (message: string, err?: Error): void => {
+  console.error(err ? `${message} ${err}` : message);
+  process.exit(1);
+};
+
 const mainWithErrorHandling = async (): Promise<void> => {
   process.on("uncaughtException", (error) => {
-    console.error("Uncaught Exception:", error);
-    process.exit(1);
+    printErrorAndQuit("Uncaught Exception:", error);
   });
 
-  process.on("unhandledRejection", (reason) => {
-    console.error("Unhandled promise rejection:", reason);
-    process.exit(1);
+  process.on("unhandledRejection", (reason: Error) => {
+    printErrorAndQuit("Unhandled promise rejection:", reason);
   });
 
-  ["SIGINT", "SIGTERM"].forEach((signal) => {
+  for (const signal of ["SIGINT", "SIGTERM"]) {
     process.on(signal, () => {
-      console.log(`\nReceived ${signal}. Shutting down...`);
-      process.exit(0);
+      printErrorAndQuit(`\nReceived ${signal}. Stopping...`);
     });
-  });
-
-  await main();
+  }
+  try {
+    await main();
+  } catch {}
 };
 
 try {
   await mainWithErrorHandling();
-} catch (error) {
-  console.error("Application failed to start:", error);
+} catch {
   process.exit(1);
 }

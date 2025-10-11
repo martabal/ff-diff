@@ -24,7 +24,6 @@ pnpm i -g ff-diff
 ## Usage
 
 <!--- Begin usage -->
-
 ```bash
 $ ff-diff
 Usage:
@@ -38,7 +37,6 @@ Options:
   -v, --version    Print version info and exit
   -h, --help       Print help
 ```
-
 <!--- End usage -->
 
 Example:

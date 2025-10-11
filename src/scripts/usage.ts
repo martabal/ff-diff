@@ -53,7 +53,7 @@ const updateReadme = () => {
 
   const updated = readme.replace(
     /(<!--- Begin usage -->)([\s\S]*?)(<!--- End usage -->)/,
-    `$1\n\n${usageBlock}\n\n$3`,
+    `$1\n${usageBlock}\n$3`,
   );
 
   fs.writeFileSync(readmePath, updated);

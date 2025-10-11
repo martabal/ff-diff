@@ -210,7 +210,7 @@ jobs:
         run: pnpm run test:end-to-end
 
   readme-usage-up-to-date:
-    name: Run end-to-end tests
+    name: Generate usage in README
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code

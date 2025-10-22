@@ -30,12 +30,14 @@ const handlePref = async (
 };
 
 const handleFormatTicks = (format: Format, symbol: string): AllFormated => {
-  const { tickStart, tickSymbol, tickKeyValue } = formatTicks[format];
+  const { tickStart, tickSymbol, tickKeyValue, tickTransform } =
+    formatTicks[format];
 
   return {
     tickStart,
     tickSymbol: tickSymbol ?? symbol,
     tickKeyValue,
+    tickTransform,
   };
 };
 
@@ -81,10 +83,11 @@ const getSections = (configDiff: PrefsDiff): PrintDiff[] => {
           tickStart,
           tickSymbol,
           tickKeyValue: tick,
+          tickTransform,
         } = handleFormatTicks(format, "~");
         const formattedValue = formatValue(value);
         const formattedValueNewValue = formatValue(newValue);
-        return `${tickStart}${tickSymbol} ${tick}${key}${tick}: ${tick}${formattedValue}${tick} -> ${tick}${formattedValueNewValue}${tick}`;
+        return `${tickStart}${tickSymbol} ${tick}${key}${tick}: ${tick}${formattedValue}${tick} ${tickTransform} ${tick}${formattedValueNewValue}${tick}`;
       },
     },
   ];

@@ -21,6 +21,7 @@ interface Ticks {
   tickStart: string;
   tickSymbol?: string;
   tickKeyValue: Pref;
+  tickTransform: string;
 }
 
 export interface AllFormated extends Ticks {
@@ -32,10 +33,12 @@ export const formatTicks: Record<Format, Ticks> = {
     tickStart: "",
     tickSymbol: "-",
     tickKeyValue: "`",
+    tickTransform: "&rarr;",
   },
   [Format.Text]: {
     tickStart: " ",
     tickSymbol: undefined,
     tickKeyValue: "",
+    tickTransform: "->",
   },
 };

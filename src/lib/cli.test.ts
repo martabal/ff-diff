@@ -6,12 +6,13 @@ const mockProcessExit = vi.spyOn(process, "exit").mockImplementation(() => {
   throw new Error(expectExitError);
 });
 
-let mockConsoleError: ReturnType<typeof vi.spyOn>;
+const mockConsoleError = vi
+  .spyOn(console, "error")
+  .mockImplementation(() => {});
 
 describe("getArgumentValue", () => {
   beforeEach(() => {
     vi.resetAllMocks();
-    mockConsoleError = vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
   it("should return the value when argument exists with valid value", () => {
@@ -140,7 +141,6 @@ describe("getArgumentValue", () => {
 describe("getArgumentValues", () => {
   beforeEach(() => {
     vi.resetAllMocks();
-    mockConsoleError = vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
   it("should return empty array when argument does not exist", () => {

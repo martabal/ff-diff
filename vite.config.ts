@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { defineConfig } from "rolldown-vite";
 import pkg from "./package.json";
 import path from "node:path";
 

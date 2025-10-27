@@ -7,7 +7,11 @@ import {
   getFirefoxDefaultProfile,
   getPrefs,
 } from "$lib/firefox";
-import { defaultsUserJSDir } from "$lib/install";
+import {
+  defaultsUserJSDir,
+  getPrefsFromInstalledVersion,
+  installDir,
+} from "$lib/install";
 import { Format, formatTicks, formatValue } from "$lib/format";
 import { parseUserPrefs } from "$lib/prefs";
 import { gettingPrefsMessage, gettingVersionMessage } from "$lib/helpers";
@@ -62,7 +66,12 @@ export const defaultPrefsUserJS = async (opts: UserJSBasedCommands) => {
   console.log(gettingVersionMessage);
 
   const [prefsFirefox, version] = await Promise.all([
-    getPrefs({ profilePath }),
+    opts.firefoxVersion
+      ? getPrefsFromInstalledVersion(
+          opts.firefoxVersion,
+          join(installDir, opts.firefoxVersion, "firefox"),
+        )
+      : getPrefs({ profilePath }),
     getFirefoxVersion({ profilePath }),
   ]);
 

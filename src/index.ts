@@ -5,7 +5,9 @@ import {
   HELP_ARGS_VALUES,
   createCommand,
   hasAnyArg,
+  ALL_COMMANDS,
 } from "$cli";
+import { styleText } from "node:util";
 
 const showVersion = (): void => {
   console.log(`${APP_NAME} ${APP_VERSION}`);
@@ -27,8 +29,17 @@ const main = async (): Promise<void> => {
   }
 
   if (HELP_ARGS_VALUES.includes(secondArgument)) {
-    const cli = createCommand(firstArgument, false);
+    const createCLI = () => {
+      if (ALL_COMMANDS.some((cmdClass) => cmdClass.COMMAND === firstArgument)) {
+        return createCommand(firstArgument, false);
+      }
+      console.error(styleText("red", "Unknown command: "), firstArgument, "\n");
+      return new Cli(true);
+    };
+    const cli = createCLI();
+
     cli.usage();
+
     return;
   }
 

@@ -3,6 +3,8 @@ import { gettingPrefsMessage, gettingVersionMessage } from "$lib/helpers";
 import { parseUserPrefs } from "$lib/prefs";
 import { readFileSync } from "fs";
 import { UserJSBasedCommands } from "$commands";
+import { getPrefsFromInstalledVersion, installDir } from "$lib/install";
+import { join } from "path";
 
 export const unusedPrefs = async (opts: UserJSBasedCommands) => {
   const userJsContent = readFileSync(opts.compareUserjs, "utf8");
@@ -11,7 +13,13 @@ export const unusedPrefs = async (opts: UserJSBasedCommands) => {
     ? getFirefoxDefaultProfile().profilePath
     : opts.profilePath;
   console.log(gettingPrefsMessage);
-  const prefsFirefox = await getPrefs({ profilePath });
+
+  const prefsFirefox = await (opts.firefoxVersion
+    ? getPrefsFromInstalledVersion(
+        opts.firefoxVersion,
+        join(installDir, opts.firefoxVersion, "firefox"),
+      )
+    : getPrefs({ profilePath }));
   console.log(gettingVersionMessage);
   const userKeys = parseUserPrefs(userJsContent);
   userKeys.sort((a, b) => a.key.localeCompare(b.key));

@@ -8,7 +8,6 @@ import {
   type Pref,
   type PrefsDiff,
   comparePrefs,
-  getPrefs,
 } from "$lib/firefox";
 import {
   type AllFormated,
@@ -19,15 +18,11 @@ import {
 } from "$lib/format";
 import { isUnitDifferenceOne } from "$lib/helpers";
 import { commonChangedValuesForKeys, parseUserPrefs } from "$lib/prefs";
-import { diffsDir, installDir, installFirefox } from "$lib/install";
-
-const handlePref = async (
-  version: string,
-  executablePath: string,
-): Promise<Map<string, Pref>> => {
-  await installFirefox({ version, retry: false });
-  return getPrefs({ executablePath });
-};
+import {
+  diffsDir,
+  getPrefsFromInstalledVersion,
+  installDir,
+} from "$lib/install";
 
 const handleFormatTicks = (format: Format, symbol: string): AllFormated => {
   const { tickStart, tickSymbol, tickKeyValue, tickTransform } =
@@ -281,7 +276,7 @@ export const diff = async (args: Diff) => {
 
   const [prefsMapV1, prefsMapV2] = await Promise.all(
     firefoxDirs.map(({ version, installPath }) =>
-      handlePref(version, installPath),
+      getPrefsFromInstalledVersion(version, installPath),
     ),
   );
 

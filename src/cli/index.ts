@@ -37,6 +37,7 @@ export const CLI_ARGS = {
   COMPARE_USERJS: "--compare-userjs",
   DO_NOT_PRINT_IN_CONSOLE: "--do-not-print-in-console",
   FIREFOX_PATH: "--firefox-path",
+  FIREFOX_VERSION: "--firefox-version",
   FORCE_DEFAULT_PROFILE: "--force-default-profile",
   HIDE_COMMON_CHANGED_VALUES: "--hide-common-changed-values",
   KEEP: "--keep",
@@ -54,6 +55,8 @@ const EXAMPLE_VERSION = {
 
 const CLI_VALUES = {
   PATH_USAGE: "path",
+
+  VERSION: "version",
 
   VERSION1: "version1",
   VERSION2: "version2",
@@ -93,6 +96,18 @@ const FFProfilePath: CliOption = {
   doc: `Set the profile path to use (conflicts with ${CLI_ARGS.FORCE_DEFAULT_PROFILE})`,
 };
 
+const FFVersion: CliOption = {
+  longOption: `${CLI_ARGS.FIREFOX_VERSION} ${CLI_VALUES.VERSION}`,
+  doc: `Use a specific firefox version`,
+};
+
+const exitWithError = (firstArg: string, secondArg: string) => {
+  console.error(
+    `You can't have ${firstArg} and ${secondArg} set at the same time`,
+  );
+  process.exit(1);
+};
+
 const getUserJSBasedCommands = () => {
   const forceDefaultProfile = process.argv.includes(
     CLI_ARGS.FORCE_DEFAULT_PROFILE,
@@ -100,13 +115,15 @@ const getUserJSBasedCommands = () => {
 
   const profilePath = getArgumentValue(CLI_ARGS.PROFILE_PATH);
   if (profilePath && forceDefaultFFProfile) {
-    console.error(
-      `You can't have ${CLI_ARGS.FORCE_DEFAULT_PROFILE} and ${CLI_ARGS.PROFILE_PATH} set at the same time`,
-    );
-    process.exit(1);
+    exitWithError(CLI_ARGS.FORCE_DEFAULT_PROFILE, CLI_ARGS.PROFILE_PATH);
   }
 
-  return { profilePath, forceDefaultProfile };
+  const firefoxVersion = getArgumentValue(FFVersion.longOption);
+  if (profilePath && forceDefaultFFProfile) {
+    exitWithError(CLI_ARGS.FIREFOX_VERSION, CLI_ARGS.PROFILE_PATH);
+  }
+
+  return { profilePath, forceDefaultProfile, firefoxVersion };
 };
 
 export const hasAnyArg = (args: readonly string[]): boolean => {
@@ -289,6 +306,7 @@ class DefaultPrefsUserJSCommand extends BaseCli {
     ...printAndSave,
     forceDefaultFFProfile,
     FFProfilePath,
+    FFVersion,
   ];
 
   constructor(fail: boolean = true) {
@@ -302,14 +320,14 @@ class DefaultPrefsUserJSCommand extends BaseCli {
 
   public async entrypoint(): Promise<void> {
     const [, , , compareUserjs] = process.argv;
-    const { forceDefaultProfile, profilePath } = getUserJSBasedCommands();
+    const userjsBasedCommands = getUserJSBasedCommands();
+
     if (compareUserjs === undefined) {
       this.usage();
     }
     await defaultPrefsUserJS({
       compareUserjs,
-      forceDefaultProfile,
-      profilePath,
+      ...userjsBasedCommands,
     });
   }
 }
@@ -431,6 +449,7 @@ class UnusedPrefCommand extends BaseCli {
     pathToFirefox,
     forceDefaultFFProfile,
     FFProfilePath,
+    FFVersion,
   ];
 
   constructor(fail: boolean = true) {
@@ -444,12 +463,12 @@ class UnusedPrefCommand extends BaseCli {
 
   public async entrypoint(): Promise<void> {
     const [, , , compareUserjs] = process.argv;
-    const { forceDefaultProfile, profilePath } = getUserJSBasedCommands();
+    const userjsBasedCommands = getUserJSBasedCommands();
 
     if (compareUserjs === undefined) {
       this.usage();
     }
-    await unusedPrefs({ compareUserjs, forceDefaultProfile, profilePath });
+    await unusedPrefs({ compareUserjs, ...userjsBasedCommands });
   }
 }
 

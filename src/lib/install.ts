@@ -12,6 +12,7 @@ import { join } from "node:path";
 import { exit } from "node:process";
 import { pipeline, Readable } from "node:stream";
 import { promisify } from "node:util";
+import { getPrefs, Pref } from "$lib/firefox";
 
 type InstallFirefoxOptions = {
   version: string;
@@ -79,6 +80,14 @@ const getFilePathWithPrefix = (filePrefix: string): string | null => {
   const files = readdirSync(installDir);
   const match = files.find((file) => file.startsWith(filePrefix));
   return match ? join(installDir, match) : null;
+};
+
+export const getPrefsFromInstalledVersion = async (
+  version: string,
+  executablePath: string,
+): Promise<Map<string, Pref>> => {
+  await installFirefox({ version, retry: false });
+  return getPrefs({ executablePath });
 };
 
 const downloadArchive = async ({

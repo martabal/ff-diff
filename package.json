@@ -23,7 +23,8 @@
     "user_pref"
   ],
   "scripts": {
-    "build": "MINIFY=true vite build",
+    "build": "vite build",
+    "build:prod": "vite build --minify",
     "check:typescript": "tsc --noEmit",
     "check:all": "pnpm run generate:shell-completion && pnpm run check:typescript && pnpm run test:all && pnpm run format && pnpm run lint",
     "ff-diff": "vite build -l warn && USE_CURRENT_DIR=true node dist/index.js",
@@ -40,15 +41,15 @@
     "test:watch": "pnpm run build && vitest"
   },
   "devDependencies": {
-    "@types/node": "24.9.2",
+    "@types/node": "24.10.0",
     "@types/selenium-webdriver": "4.35.3",
-    "@vitest/coverage-v8": "4.0.5",
+    "@vitest/coverage-v8": "4.0.6",
     "oxfmt": "0.9.0",
     "oxlint": "1.25.0",
     "oxlint-tsgolint": "0.4.0",
     "rolldown-vite": "7.1.20",
     "typescript": "5.9.3",
-    "vitest": "4.0.5"
+    "vitest": "4.0.6"
   },
   "dependencies": {
     "selenium-webdriver": "4.38.0"

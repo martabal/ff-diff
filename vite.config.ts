@@ -2,8 +2,6 @@ import { defineConfig } from "rolldown-vite";
 import pkg from "./package.json";
 import path from "node:path";
 
-const minify = !!process.env.MINIFY;
-
 const input = process.env.USAGE
   ? "src/scripts/usage.ts"
   : process.env.COMPLETION
@@ -18,7 +16,6 @@ export default defineConfig({
         dir: "dist",
       },
     },
-    minify,
     ssr: true,
   },
   resolve: {

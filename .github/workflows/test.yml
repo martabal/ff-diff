@@ -260,3 +260,18 @@ jobs:
             echo "README.md is out of date. Please run 'pnpm run generate:usage' and commit the changes."
             exit 1
           fi
+
+  typos:
+    name: Typos
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #v5.0.0
+        with:
+          persist-credentials: false
+
+      - name: Spell check code
+        uses: crate-ci/typos@80c8a4945eec0f6d464eaf9e65ed98ef085283d1

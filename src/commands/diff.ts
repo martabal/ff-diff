@@ -10,7 +10,7 @@ import {
   comparePrefs,
 } from "$lib/firefox";
 import {
-  type AllFormated,
+  type AllFormatted,
   Format,
   formatTicks,
   formatValue,
@@ -24,7 +24,7 @@ import {
   installDir,
 } from "$lib/install";
 
-const handleFormatTicks = (format: Format, symbol: string): AllFormated => {
+const handleFormatTicks = (format: Format, symbol: string): AllFormatted => {
   const { tickStart, tickSymbol, tickKeyValue, tickTransform } =
     formatTicks[format];
 

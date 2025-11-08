@@ -24,7 +24,7 @@ interface Ticks {
   tickTransform: string;
 }
 
-export interface AllFormated extends Ticks {
+export interface AllFormatted extends Ticks {
   tickSymbol: string;
 }
 

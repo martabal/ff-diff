@@ -15,7 +15,7 @@ const showVersion = (): void => {
 };
 
 const main = async (): Promise<void> => {
-  const [, , firstArgument, secondArgument] = process.argv;
+  const [, , firstArgument, ...otherArgs] = process.argv;
 
   if (hasAnyArg(VERSION_ARGS_VALUES)) {
     showVersion();
@@ -28,7 +28,7 @@ const main = async (): Promise<void> => {
     return;
   }
 
-  if (HELP_ARGS_VALUES.includes(secondArgument)) {
+  if (HELP_ARGS_VALUES.some((item) => otherArgs.includes(item))) {
     const createCLI = () => {
       if (ALL_COMMANDS.some((cmdClass) => cmdClass.COMMAND === firstArgument)) {
         return createCommand(firstArgument, false);

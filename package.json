@@ -47,8 +47,8 @@
     "@types/node": "24.10.0",
     "@types/selenium-webdriver": "4.35.3",
     "@vitest/coverage-v8": "4.0.8",
-    "oxfmt": "0.11.0",
-    "oxlint": "1.26.0",
+    "oxfmt": "0.13.0",
+    "oxlint": "1.28.0",
     "oxlint-tsgolint": "0.5.1",
     "rolldown-vite": "7.2.2",
     "typescript": "5.9.3",
@@ -61,5 +61,5 @@
     "node": ">=20.12.0 <21 || >=21.7.0 <22 || >=22.13.0 <23 || >=23.5.0"
   },
   "type": "module",
-  "packageManager": "pnpm@10.20.0+sha512.cf9998222162dd85864d0a8102e7892e7ba4ceadebbf5a31f9c2fce48dfce317a9c53b9f6464d1ef9042cba2e02ae02a9f7c143a2b438cd93c91840f0192b9dd"
+  "packageManager": "pnpm@10.21.0+sha512.da3337267e400fdd3d479a6c68079ac6db01d8ca4f67572083e722775a796788a7a9956613749e000fac20d424b594f7a791a5f4e2e13581c5ef947f26968a40"
 }

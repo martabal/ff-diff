@@ -41,6 +41,7 @@
     "test:cov": "pnpm run build && vitest --coverage",
     "test:watch": "pnpm run build && vitest",
     "typos": "typos .",
+    "update": "pnpm up --latest && pnpm run update:corepack && pnpm update",
     "update:corepack": "corepack use pnpm@latest"
   },
   "devDependencies": {
@@ -50,7 +51,7 @@
     "oxfmt": "0.13.0",
     "oxlint": "1.28.0",
     "oxlint-tsgolint": "0.5.1",
-    "rolldown-vite": "7.2.2",
+    "rolldown-vite": "7.2.4",
     "typescript": "5.9.3",
     "vitest": "4.0.8"
   },

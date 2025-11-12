@@ -45,13 +45,13 @@
     "update:corepack": "corepack use pnpm@latest"
   },
   "devDependencies": {
-    "@types/node": "24.10.0",
+    "@types/node": "24.10.1",
     "@types/selenium-webdriver": "4.35.3",
     "@vitest/coverage-v8": "4.0.8",
     "oxfmt": "0.13.0",
     "oxlint": "1.28.0",
-    "oxlint-tsgolint": "0.5.1",
-    "rolldown-vite": "7.2.4",
+    "oxlint-tsgolint": "0.6.0",
+    "rolldown-vite": "7.2.5",
     "typescript": "5.9.3",
     "vitest": "4.0.8"
   },

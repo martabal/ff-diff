@@ -274,4 +274,4 @@ jobs:
           persist-credentials: false
 
       - name: Spell check code
-        uses: crate-ci/typos@80c8a4945eec0f6d464eaf9e65ed98ef085283d1
+        uses: crate-ci/typos@626c4bedb751ce0b7f03262ca97ddda9a076ae1c

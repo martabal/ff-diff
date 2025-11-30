@@ -20,15 +20,8 @@ export const clean = async (keptVersions: number[]) => {
         return true;
       }
 
-      if (
-        entry.isFile() &&
-        !keepOptions.archives &&
-        entry.name.startsWith("firefox-")
-      ) {
-        const version = Number.parseInt(
-          entry.name.slice("firefox-".length),
-          10,
-        );
+      if (entry.isFile() && !keepOptions.archives && entry.name.startsWith("firefox-")) {
+        const version = Number.parseInt(entry.name.slice("firefox-".length), 10);
         if (!keptVersions.includes(version)) {
           console.log(`Remove archive: ${entry.name}`);
           await rm(fullPath, { recursive: true, force: true });

@@ -21,17 +21,10 @@ const globalOptions = [
 const commands = ALL_COMMANDS.map((cmd) => cmd.COMMAND);
 
 const removeLeadingDashes = (str: string): string => {
-  return str.startsWith("--")
-    ? str.slice(2)
-    : str.startsWith("-")
-      ? str.slice(1)
-      : str;
+  return str.startsWith("--") ? str.slice(2) : str.startsWith("-") ? str.slice(1) : str;
 };
 
-const commandOptions: Record<
-  string,
-  Array<{ arg: string; description: string }>
-> = {};
+const commandOptions: Record<string, Array<{ arg: string; description: string }>> = {};
 
 for (const CmdClass of ALL_COMMANDS) {
   commandOptions[CmdClass.COMMAND] = CmdClass.OPTIONS.flatMap((opt) => {

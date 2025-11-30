@@ -102,16 +102,12 @@ const FFVersion: CliOption = {
 };
 
 const exitWithError = (firstArg: string, secondArg: string) => {
-  console.error(
-    `You can't have ${firstArg} and ${secondArg} set at the same time`,
-  );
+  console.error(`You can't have ${firstArg} and ${secondArg} set at the same time`);
   process.exit(1);
 };
 
 const getUserJSBasedCommands = () => {
-  const forceDefaultProfile = process.argv.includes(
-    CLI_ARGS.FORCE_DEFAULT_PROFILE,
-  );
+  const forceDefaultProfile = process.argv.includes(CLI_ARGS.FORCE_DEFAULT_PROFILE);
 
   const profilePath = getArgumentValue(CLI_ARGS.PROFILE_PATH);
   if (profilePath && forceDefaultFFProfile) {
@@ -193,9 +189,7 @@ abstract class BaseCli {
     const maxOptLen =
       this.options.length > 0
         ? Math.max(
-            ...this.options.map(
-              (opt) => opt.longOption.length + (opt.shortOption?.length ?? 0),
-            ),
+            ...this.options.map((opt) => opt.longOption.length + (opt.shortOption?.length ?? 0)),
           )
         : 0;
 
@@ -235,13 +229,9 @@ abstract class BaseCli {
 
       const coloredArgs = isOption
         ? styleText("cyan", args)
-        : (item as CliCommand).values
-            .map((value) => styleText("cyan", value))
-            .join(separator);
+        : (item as CliCommand).values.map((value) => styleText("cyan", value)).join(separator);
 
-      const helpText = isOption
-        ? (item as CliOption).doc
-        : (item as CliCommand).doc;
+      const helpText = isOption ? (item as CliOption).doc : (item as CliCommand).doc;
 
       const helpLines = helpText.split("\n");
       const padding = " ".repeat(Math.max(0, maxLen - args.length + 4));
@@ -281,12 +271,7 @@ class CleanCommand extends BaseCli {
   ];
 
   constructor(fail: boolean = true) {
-    super(
-      fail,
-      CleanCommand.DESCRIPTION,
-      CleanCommand.COMMANDS,
-      CleanCommand.OPTIONS,
-    );
+    super(fail, CleanCommand.DESCRIPTION, CleanCommand.COMMANDS, CleanCommand.OPTIONS);
   }
 
   public async entrypoint(): Promise<void> {
@@ -298,8 +283,7 @@ class CleanCommand extends BaseCli {
 class DefaultPrefsUserJSCommand extends BaseCli {
   public static readonly COMMAND = "default-prefs-userjs";
   public static readonly SMALL_DESCRIPTION = undefined;
-  public static readonly DESCRIPTION =
-    "Identify default preferences from your user.js file";
+  public static readonly DESCRIPTION = "Identify default preferences from your user.js file";
   public static readonly COMMANDS: readonly CliCommand[] = [pathUsageUserJS];
   public static readonly OPTIONS: readonly CliOption[] = [
     pathToFirefox,
@@ -337,10 +321,7 @@ class DefaultPrefsCommand extends BaseCli {
   public static readonly SMALL_DESCRIPTION = undefined;
   public static readonly DESCRIPTION = `Get a list of all default prefs`;
   public static readonly COMMANDS: readonly CliCommand[] = [];
-  public static readonly OPTIONS: readonly CliOption[] = [
-    ...printAndSave,
-    pathToFirefox,
-  ];
+  public static readonly OPTIONS: readonly CliOption[] = [...printAndSave, pathToFirefox];
 
   constructor(fail: boolean = true) {
     super(
@@ -372,8 +353,7 @@ class DiffCommand extends BaseCli {
   public static readonly COMMAND = "diff";
   public static readonly SMALL_DESCRIPTION =
     "Compare the default preferences of two firefox versions";
-  public static readonly DESCRIPTION =
-    DiffCommand.SMALL_DESCRIPTION + " and highlight differences";
+  public static readonly DESCRIPTION = DiffCommand.SMALL_DESCRIPTION + " and highlight differences";
 
   public static readonly COMMANDS: readonly CliCommand[] = [
     {
@@ -406,12 +386,7 @@ class DiffCommand extends BaseCli {
   ];
 
   constructor(fail: boolean = true) {
-    super(
-      fail,
-      DiffCommand.DESCRIPTION,
-      DiffCommand.COMMANDS,
-      DiffCommand.OPTIONS,
-    );
+    super(fail, DiffCommand.DESCRIPTION, DiffCommand.COMMANDS, DiffCommand.OPTIONS);
   }
 
   public async entrypoint(): Promise<void> {
@@ -427,9 +402,7 @@ class DiffCommand extends BaseCli {
     }
 
     const compareUserJS = getArgumentValue(CLI_ARGS.COMPARE_USERJS);
-    const hideCommonChangedValues = process.argv.includes(
-      CLI_ARGS.HIDE_COMMON_CHANGED_VALUES,
-    );
+    const hideCommonChangedValues = process.argv.includes(CLI_ARGS.HIDE_COMMON_CHANGED_VALUES);
     await diff({
       compareUserJS,
       oldVersion,
@@ -442,8 +415,7 @@ class DiffCommand extends BaseCli {
 class UnusedPrefCommand extends BaseCli {
   public static readonly COMMAND = "unused-prefs-userjs";
   public static readonly SMALL_DESCRIPTION = undefined;
-  public static readonly DESCRIPTION =
-    "Identify unused preferences from your user.js file";
+  public static readonly DESCRIPTION = "Identify unused preferences from your user.js file";
   public static readonly COMMANDS: readonly CliCommand[] = [pathUsageUserJS];
   public static readonly OPTIONS: readonly CliOption[] = [
     pathToFirefox,
@@ -481,18 +453,13 @@ export const ALL_COMMANDS = [
 ];
 
 export class Cli extends BaseCli {
-  public static readonly COMMANDS: readonly CliCommand[] = ALL_COMMANDS.map(
-    (cmd) => ({
-      values: [cmd.COMMAND],
-      doc: cmd.DESCRIPTION,
-      smallDoc: cmd.SMALL_DESCRIPTION,
-    }),
-  );
+  public static readonly COMMANDS: readonly CliCommand[] = ALL_COMMANDS.map((cmd) => ({
+    values: [cmd.COMMAND],
+    doc: cmd.DESCRIPTION,
+    smallDoc: cmd.SMALL_DESCRIPTION,
+  }));
 
-  public static readonly OPTIONS: readonly CliOption[] = [
-    VERSION_ARGS,
-    HELP_ARGS,
-  ];
+  public static readonly OPTIONS: readonly CliOption[] = [VERSION_ARGS, HELP_ARGS];
 
   constructor(fail = true) {
     super(fail, APP_DESCRIPTION, Cli.COMMANDS, Cli.OPTIONS);

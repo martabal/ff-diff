@@ -6,9 +6,7 @@ const mockProcessExit = vi.spyOn(process, "exit").mockImplementation(() => {
   throw new Error(expectExitError);
 });
 
-const mockConsoleError = vi
-  .spyOn(console, "error")
-  .mockImplementation(() => {});
+const mockConsoleError = vi.spyOn(console, "error").mockImplementation(() => {});
 
 describe("getArgumentValue", () => {
   beforeEach(() => {
@@ -54,15 +52,7 @@ describe("getArgumentValue", () => {
   });
 
   it("should return the correct value when multiple arguments exist", () => {
-    process.argv = [
-      "node",
-      "script.js",
-      "--env",
-      "dev",
-      "--config",
-      "config.json",
-      "--verbose",
-    ];
+    process.argv = ["node", "script.js", "--env", "dev", "--config", "config.json", "--verbose"];
 
     const result = getArgumentValue("--config");
 
@@ -71,14 +61,7 @@ describe("getArgumentValue", () => {
   });
 
   it("should return the first occurrence when argument appears multiple times", () => {
-    process.argv = [
-      "node",
-      "script.js",
-      "--config",
-      "first.json",
-      "--config",
-      "second.json",
-    ];
+    process.argv = ["node", "script.js", "--config", "first.json", "--config", "second.json"];
 
     const result = getArgumentValue("--config");
 
@@ -105,12 +88,7 @@ describe("getArgumentValue", () => {
   });
 
   it("should handle arguments with equals-like values", () => {
-    process.argv = [
-      "node",
-      "script.js",
-      "--url",
-      "http://example.com?param=value",
-    ];
+    process.argv = ["node", "script.js", "--url", "http://example.com?param=value"];
 
     const result = getArgumentValue("--url");
 
@@ -160,12 +138,7 @@ describe("getArgumentValues", () => {
   });
 
   it("should parse comma-separated values correctly", () => {
-    process.argv = [
-      "node",
-      "script.js",
-      "--files",
-      "file1.js,file2.js,file3.js",
-    ];
+    process.argv = ["node", "script.js", "--files", "file1.js,file2.js,file3.js"];
 
     const result = getArgumentValues("--files");
 
@@ -173,12 +146,7 @@ describe("getArgumentValues", () => {
   });
 
   it("should handle comma-separated values with spaces", () => {
-    process.argv = [
-      "node",
-      "script.js",
-      "--files",
-      "file1.js, file2.js , file3.js",
-    ];
+    process.argv = ["node", "script.js", "--files", "file1.js, file2.js , file3.js"];
 
     const result = getArgumentValues("--files");
 
@@ -186,12 +154,7 @@ describe("getArgumentValues", () => {
   });
 
   it("should filter out empty values from comma-separated list", () => {
-    process.argv = [
-      "node",
-      "script.js",
-      "--files",
-      "file1.js,,file2.js, ,file3.js",
-    ];
+    process.argv = ["node", "script.js", "--files", "file1.js,,file2.js, ,file3.js"];
 
     const result = getArgumentValues("--files");
 
@@ -199,14 +162,7 @@ describe("getArgumentValues", () => {
   });
 
   it("should handle multiple occurrences of the same argument", () => {
-    process.argv = [
-      "node",
-      "script.js",
-      "--files",
-      "file1.js,file2.js",
-      "--files",
-      "file3.js",
-    ];
+    process.argv = ["node", "script.js", "--files", "file1.js,file2.js", "--files", "file3.js"];
 
     const result = getArgumentValues("--files");
 
@@ -227,12 +183,7 @@ describe("getArgumentValues", () => {
 
     const result = getArgumentValues("--files");
 
-    expect(result).toEqual([
-      "src/file1.js",
-      "src/file2.js",
-      "test/file3.js",
-      "test/file4.js",
-    ]);
+    expect(result).toEqual(["src/file1.js", "src/file2.js", "test/file3.js", "test/file4.js"]);
   });
 
   it("should handle single comma-separated value", () => {

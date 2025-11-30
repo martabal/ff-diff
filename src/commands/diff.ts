@@ -9,24 +9,13 @@ import {
   type PrefsDiff,
   comparePrefs,
 } from "$lib/firefox";
-import {
-  type AllFormatted,
-  Format,
-  formatTicks,
-  formatValue,
-  type PrintDiff,
-} from "$lib/format";
+import { type AllFormatted, Format, formatTicks, formatValue, type PrintDiff } from "$lib/format";
 import { isUnitDifferenceOne } from "$lib/helpers";
 import { commonChangedValuesForKeys, parseUserPrefs } from "$lib/prefs";
-import {
-  diffsDir,
-  getPrefsFromInstalledVersion,
-  installDir,
-} from "$lib/install";
+import { diffsDir, getPrefsFromInstalledVersion, installDir } from "$lib/install";
 
 const handleFormatTicks = (format: Format, symbol: string): AllFormatted => {
-  const { tickStart, tickSymbol, tickKeyValue, tickTransform } =
-    formatTicks[format];
+  const { tickStart, tickSymbol, tickKeyValue, tickTransform } = formatTicks[format];
 
   return {
     tickStart,
@@ -47,11 +36,7 @@ const getSections = (configDiff: PrefsDiff): PrintDiff[] => {
       keys: configDiff.addedKeys,
       formatter: (item, format) => {
         const { key, value } = item as FirefoxPref;
-        const {
-          tickStart,
-          tickSymbol,
-          tickKeyValue: tick,
-        } = handleFormatTicks(format, "+");
+        const { tickStart, tickSymbol, tickKeyValue: tick } = handleFormatTicks(format, "+");
         const formattedValue = formatValue(value);
         return `${tickStart}${tickSymbol} ${tick}${key}${tick}: ${tick}${formattedValue}${tick}`;
       },
@@ -61,11 +46,7 @@ const getSections = (configDiff: PrefsDiff): PrintDiff[] => {
       keys: configDiff.removedKeys,
       formatter: (item, format) => {
         const { key } = item as FirefoxPref;
-        const {
-          tickStart,
-          tickSymbol,
-          tickKeyValue: tick,
-        } = handleFormatTicks(format, "-");
+        const { tickStart, tickSymbol, tickKeyValue: tick } = handleFormatTicks(format, "-");
         return `${tickStart}${tickSymbol} ${tick}${key}${tick}`;
       },
     },
@@ -108,26 +89,18 @@ const handleCompareUsersJS = (
   const isUserKeyChanged = ({ key, value }: { key: string; value: Pref }) =>
     userKeys.some(
       (pref) =>
-        pref.key === key &&
-        pref.default?.version === version &&
-        pref.default.value === value,
+        pref.key === key && pref.default?.version === version && pref.default.value === value,
     );
 
   const isUserKeyRemoved = ({ key }: { key: string }) =>
-    userKeys.some(
-      (pref) => pref.key === key && pref.versionRemoved === undefined,
-    );
+    userKeys.some((pref) => pref.key === key && pref.versionRemoved === undefined);
 
-  const shouldCheckIfCorrectDefault = isUnitDifferenceOne(
-    oldVersion,
-    newVersion,
-  );
+  const shouldCheckIfCorrectDefault = isUnitDifferenceOne(oldVersion, newVersion);
 
   const wrongDefaultAdded = shouldCheckIfCorrectDefault
     ? userKeys.filter(
         (pref) =>
-          pref.versionAdded === version &&
-          !addedKeys.some((added) => added.key === pref.key),
+          pref.versionAdded === version && !addedKeys.some((added) => added.key === pref.key),
       )
     : [];
 
@@ -154,10 +127,7 @@ const handleCompareUsersJS = (
 
   const output: string[] = [];
 
-  const addWrongDefaultsMessage = (
-    prefs: typeof userKeys,
-    type: "added" | "removed",
-  ) => {
+  const addWrongDefaultsMessage = (prefs: typeof userKeys, type: "added" | "removed") => {
     if (prefs.length === 0) {
       return null;
     }
@@ -180,8 +150,7 @@ const handleCompareUsersJS = (
       `${changedSymbol} The following user.js prefs were changed:\n` +
         changed
           .map(
-            (pref) =>
-              `~ ${pref.key}: ${formatValue(pref.value)} -> ${formatValue(pref.newValue)}`,
+            (pref) => `~ ${pref.key}: ${formatValue(pref.value)} -> ${formatValue(pref.newValue)}`,
           )
           .join("\n"),
     );
@@ -201,11 +170,7 @@ const handleCompareUsersJS = (
   console.log(output.join("\n"));
 };
 
-const generateOutput = (
-  format: Format,
-  sections: PrintDiff[],
-  newVersion: string,
-) => {
+const generateOutput = (format: Format, sections: PrintDiff[], newVersion: string) => {
   const lines: string[] = [];
 
   for (let index = 0; index < sections.length; index += 1) {
@@ -232,11 +197,7 @@ const generateOutput = (
   return lines;
 };
 
-const handleOutputDiff = (
-  sections: PrintDiff[],
-  newVersion: string,
-  oldVersion: string,
-) => {
+const handleOutputDiff = (sections: PrintDiff[], newVersion: string, oldVersion: string) => {
   if (!printOptions.doNotPrintConsole) {
     const outputTXT = generateOutput(Format.Text, sections, newVersion);
     console.log(outputTXT.join("\n"));
@@ -255,9 +216,7 @@ const handleOutputDiff = (
 };
 
 export const diff = async (args: Diff) => {
-  console.info(
-    `Installing Firefox ${args.oldVersion} and ${args.newVersion} in "${installDir}"`,
-  );
+  console.info(`Installing Firefox ${args.oldVersion} and ${args.newVersion} in "${installDir}"`);
 
   if (!existsSync(installDir)) {
     mkdirSync(installDir, { recursive: true });
@@ -293,9 +252,7 @@ export const diff = async (args: Diff) => {
 
   if (args.hideCommonChangedValues) {
     for (const key of commonChangedValuesForKeys) {
-      configDiff.changedKeys = configDiff.changedKeys.filter(
-        (pref) => pref.key !== key,
-      );
+      configDiff.changedKeys = configDiff.changedKeys.filter((pref) => pref.key !== key);
     }
   }
 
@@ -304,11 +261,6 @@ export const diff = async (args: Diff) => {
   handleOutputDiff(sections, args.newVersion, args.oldVersion);
 
   if (args.compareUserJS) {
-    handleCompareUsersJS(
-      args.compareUserJS,
-      configDiff,
-      args.oldVersion,
-      args.newVersion,
-    );
+    handleCompareUsersJS(args.compareUserJS, configDiff, args.oldVersion, args.newVersion);
   }
 };

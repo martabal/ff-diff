@@ -12,17 +12,14 @@ interface ExecResult {
 const execWithExitCode = (command: string): Promise<ExecResult> => {
   command = `${APP_ENTRY} ${command}`;
   return new Promise((resolve) => {
-    exec(
-      command,
-      (error: ExecException | null, stdout: string, stderr: string) => {
-        const result = {
-          stdout,
-          stderr,
-          exitCode: error?.code ?? 0,
-        };
-        resolve(result);
-      },
-    );
+    exec(command, (error: ExecException | null, stdout: string, stderr: string) => {
+      const result = {
+        stdout,
+        stderr,
+        exitCode: error?.code ?? 0,
+      };
+      resolve(result);
+    });
   });
 };
 

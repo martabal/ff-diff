@@ -7,11 +7,7 @@ import {
   getFirefoxDefaultProfile,
   getPrefs,
 } from "$lib/firefox";
-import {
-  defaultsUserJSDir,
-  getPrefsFromInstalledVersion,
-  installDir,
-} from "$lib/install";
+import { defaultsUserJSDir, getPrefsFromInstalledVersion, installDir } from "$lib/install";
 import { Format, formatTicks, formatValue } from "$lib/format";
 import { parseUserPrefs } from "$lib/prefs";
 import { gettingPrefsMessage, gettingVersionMessage } from "$lib/helpers";
@@ -24,29 +20,20 @@ const generateOutput = (
 ) => {
   const { tickKeyValue: tick } = formatTicks[format];
 
-  const formatPrefs = (
-    title: string,
-    prefs: FirefoxPref[],
-    emptyMsg: string,
-  ) => {
+  const formatPrefs = (title: string, prefs: FirefoxPref[], emptyMsg: string) => {
     if (prefs.length === 0) {
       return [emptyMsg];
     }
     return [
       `${title}${format === Format.Markdown ? "\n" : ""}`,
       ...prefs.map(
-        (pref) =>
-          `- ${tick}${pref.key}${tick}: ${tick}${formatValue(pref.value)}${tick}`,
+        (pref) => `- ${tick}${pref.key}${tick}: ${tick}${formatValue(pref.value)}${tick}`,
       ),
     ];
   };
 
   return [
-    ...formatPrefs(
-      "Wrong default for:",
-      wrongDefault,
-      "No wrong default prefs",
-    ),
+    ...formatPrefs("Wrong default for:", wrongDefault, "No wrong default prefs"),
     ...(wrongDefault.length > 0 || alreadyDefault.length > 0 ? [""] : []),
     ...formatPrefs(
       "Explicit default not set for:",
@@ -87,19 +74,16 @@ export const defaultPrefsUserJS = async (opts: UserJSBasedCommands) => {
       continue;
     }
 
-    const isDefaultUndefinedAndMatches =
-      pref.default === undefined && pref.value === prefsValue;
+    const isDefaultUndefinedAndMatches = pref.default === undefined && pref.value === prefsValue;
 
     if (isDefaultUndefinedAndMatches) {
       alreadyDefault.push({ key: pref.key, value: prefsValue });
     }
 
-    const isDefaultDefinedAndDifferent =
-      pref.default?.value && pref.default?.value !== prefsValue;
+    const isDefaultDefinedAndDifferent = pref.default?.value && pref.default?.value !== prefsValue;
 
     const isDefaultValueVersionInferior =
-      pref?.default?.version === undefined ||
-      pref?.default?.version <= parseInt(version, 10);
+      pref?.default?.version === undefined || pref?.default?.version <= parseInt(version, 10);
 
     if (isDefaultDefinedAndDifferent && isDefaultValueVersionInferior) {
       wrongDefault.push({ key: pref.key, value: prefsValue });
@@ -112,22 +96,14 @@ export const defaultPrefsUserJS = async (opts: UserJSBasedCommands) => {
   }
 
   if (printOptions.saveOutput) {
-    const outputMD = generateOutput(
-      Format.Markdown,
-      wrongDefault,
-      alreadyDefault,
-    );
+    const outputMD = generateOutput(Format.Markdown, wrongDefault, alreadyDefault);
     const title = `# Default in your user.js and in Firefox ${version}\n\n`;
     if (!existsSync(defaultsUserJSDir)) {
       console.log("creating diffs directory");
       mkdirSync(defaultsUserJSDir);
     }
     const diffsPath = join(defaultsUserJSDir, `default-userjs-${version}.md`);
-    console.log(
-      `${
-        printOptions.doNotPrintConsole ? "" : "\n"
-      }writing diffs to ${diffsPath}`,
-    );
+    console.log(`${printOptions.doNotPrintConsole ? "" : "\n"}writing diffs to ${diffsPath}`);
     writeFileSync(diffsPath, title + outputMD.join("\n") + "\n");
   }
 };

@@ -5,21 +5,12 @@ import { getFirefoxVersion, getPrefs, type Pref } from "$lib/firefox";
 import { defaultsDir } from "$lib/install";
 import { gettingPrefsMessage, gettingVersionMessage } from "$lib/helpers";
 
-const formatPrefs = (
-  entries: [string, Pref][],
-  template: (k: string, v: Pref) => string,
-) => entries.map(([key, value]) => template(key, value)).join("\n");
+const formatPrefs = (entries: [string, Pref][], template: (k: string, v: Pref) => string) =>
+  entries.map(([key, value]) => template(key, value)).join("\n");
 
-const handleOutput = (
-  sortedEntries: [string, Pref][],
-  version: string,
-  hash?: string,
-) => {
+const handleOutput = (sortedEntries: [string, Pref][], version: string, hash?: string) => {
   if (!printOptions.doNotPrintConsole) {
-    const consoleContent = formatPrefs(
-      sortedEntries,
-      (k, v) => `- ${k}: ${JSON.stringify(v)}`,
-    );
+    const consoleContent = formatPrefs(sortedEntries, (k, v) => `- ${k}: ${JSON.stringify(v)}`);
     console.log(consoleContent);
   }
 
@@ -45,8 +36,6 @@ export const getDefaultPrefs = async (profilePath: string) => {
     getPrefs({ profilePath }),
     getFirefoxVersion({ profilePath }),
   ]);
-  const sortedEntries = [...prefsFirefox.entries()].toSorted(([a], [b]) =>
-    a.localeCompare(b),
-  );
+  const sortedEntries = [...prefsFirefox.entries()].toSorted(([a], [b]) => a.localeCompare(b));
   handleOutput(sortedEntries, version);
 };

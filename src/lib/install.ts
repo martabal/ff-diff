@@ -1,12 +1,6 @@
 import { cleanOptions } from "$cli";
 import { execSync } from "node:child_process";
-import {
-  createWriteStream,
-  existsSync,
-  mkdirSync,
-  readdirSync,
-  rmSync,
-} from "node:fs";
+import { createWriteStream, existsSync, mkdirSync, readdirSync, rmSync } from "node:fs";
 import { arch, homedir, platform } from "node:os";
 import { join } from "node:path";
 import { exit } from "node:process";
@@ -119,10 +113,7 @@ const downloadArchive = async ({
   return fileDest;
 };
 
-export const installFirefox = async ({
-  version,
-  retry,
-}: InstallFirefoxOptions): Promise<void> => {
+export const installFirefox = async ({ version, retry }: InstallFirefoxOptions): Promise<void> => {
   const fileName = `firefox-${version}.tar`;
   let potentialArchivePath = getFilePathWithPrefix(fileName);
   const destPath = join(installDir, version);
@@ -130,9 +121,7 @@ export const installFirefox = async ({
   const executablePath = join(destPath, "firefox");
 
   if (potentialArchivePath) {
-    console.log(
-      `Archive already exists at ${potentialArchivePath}. Skipping download.`,
-    );
+    console.log(`Archive already exists at ${potentialArchivePath}. Skipping download.`);
   } else {
     console.log(`Downloading firefox ${version}`);
     const url = `https://archive.mozilla.org/pub/firefox/releases/${version}/${host.platformOS}/en-US/firefox-${version}.tar.xz`;

@@ -13,9 +13,7 @@ export const startsWithNumberDotNumber = (str: string): boolean => {
   }
 
   const afterDotChar = str[dotIndex + 1];
-  return (
-    afterDotChar !== undefined && afterDotChar >= "0" && afterDotChar <= "9"
-  );
+  return afterDotChar !== undefined && afterDotChar >= "0" && afterDotChar <= "9";
 };
 
 export const gettingPrefsMessage = "Getting prefs...";

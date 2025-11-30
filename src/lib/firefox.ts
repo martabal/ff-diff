@@ -53,9 +53,7 @@ interface FirefoxGlobal {
 
 export const installedMozilla = ".mozilla/firefox";
 
-const createDriver = async (
-  opts: FirefoxInstallOptions,
-): Promise<WebDriver> => {
+const createDriver = async (opts: FirefoxInstallOptions): Promise<WebDriver> => {
   const options = new Options().addArguments("-headless");
 
   if (opts.profilePath) {
@@ -66,17 +64,12 @@ const createDriver = async (
     options.setBinary(opts.executablePath);
   }
 
-  let builder = await new Builder()
-    .forBrowser(Browser.FIREFOX)
-    .setFirefoxOptions(options)
-    .build();
+  let builder = await new Builder().forBrowser(Browser.FIREFOX).setFirefoxOptions(options).build();
 
   return builder;
 };
 
-export const getPrefs = async (
-  options: FirefoxInstallOptions,
-): Promise<Map<string, Pref>> => {
+export const getPrefs = async (options: FirefoxInstallOptions): Promise<Map<string, Pref>> => {
   const driver: WebDriver = await createDriver(options);
 
   await driver.get("about:config");
@@ -113,19 +106,14 @@ export const getPrefs = async (
     console.error("no preferences detected");
     exit(1);
   }
-  const prefs = new Map<string, Pref>(
-    prefsArray.map(({ key, value }) => [key, value]),
-  );
+  const prefs = new Map<string, Pref>(prefsArray.map(({ key, value }) => [key, value]));
 
   await driver.quit();
 
   return prefs;
 };
 
-export const comparePrefs = (
-  prefsV1: Map<string, Pref>,
-  prefsV2: Map<string, Pref>,
-): PrefsDiff => {
+export const comparePrefs = (prefsV1: Map<string, Pref>, prefsV2: Map<string, Pref>): PrefsDiff => {
   const addedKeys: FirefoxPref[] = [];
   const removedKeys: FirefoxPref[] = [];
   const changedKeys: FirefoxChangedPref[] = [];
@@ -155,20 +143,15 @@ export const comparePrefs = (
   return { addedKeys, removedKeys, changedKeys };
 };
 
-export const getFirefoxVersion = async (
-  options: FirefoxInstallOptions,
-): Promise<string> => {
+export const getFirefoxVersion = async (options: FirefoxInstallOptions): Promise<string> => {
   const driver: WebDriver = await createDriver(options);
 
   const capabilities = await driver.getCapabilities();
-  const browserVersion: unknown =
-    capabilities.get("browserVersion") || capabilities.get("version");
+  const browserVersion: unknown = capabilities.get("browserVersion") || capabilities.get("version");
   await driver.quit();
 
   if (typeof browserVersion !== "string") {
-    throw new TypeError(
-      "Unable to determine Firefox version: version not found or not a string",
-    );
+    throw new TypeError("Unable to determine Firefox version: version not found or not a string");
   }
   return browserVersion;
 };
@@ -194,10 +177,7 @@ export const getFirefoxReleaseProfilePath = (): InstallFirefox | null => {
   let currentSection: Record<string, string> = {};
   for (const line of lines) {
     if (line.startsWith("[") && line.endsWith("]")) {
-      if (
-        currentSection["Name"]?.includes("release") &&
-        currentSection["Path"]
-      ) {
+      if (currentSection["Name"]?.includes("release") && currentSection["Path"]) {
         return getPath();
       }
       currentSection = {};

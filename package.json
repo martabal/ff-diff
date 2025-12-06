@@ -47,13 +47,13 @@
   "devDependencies": {
     "@types/node": "24.10.1",
     "@types/selenium-webdriver": "4.35.4",
-    "@vitest/coverage-v8": "4.0.14",
-    "oxfmt": "0.15.0",
-    "oxlint": "1.30.0",
+    "@vitest/coverage-v8": "4.0.15",
+    "oxfmt": "0.16.0",
+    "oxlint": "1.31.0",
     "oxlint-tsgolint": "0.8.3",
-    "rolldown-vite": "7.2.8",
+    "rolldown-vite": "7.2.9",
     "typescript": "5.9.3",
-    "vitest": "4.0.14"
+    "vitest": "4.0.15"
   },
   "dependencies": {
     "selenium-webdriver": "4.38.0"

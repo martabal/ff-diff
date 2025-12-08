@@ -6,19 +6,10 @@
     "suspicious": "error"
   },
   "ignorePatterns": [".ff-diff", "dist", "coverage"],
-  "plugins": [
-    "eslint",
-    "import",
-    "node",
-    "oxc",
-    "promise",
-    "typescript",
-    "unicorn",
-    "vitest"
-  ],
+  "plugins": ["eslint", "import", "node", "oxc", "promise", "typescript", "unicorn", "vitest"],
   "rules": {
     "eslint/max-lines-per-function": "off",
-    "strict-boolean-expressions" :"off",
+    "strict-boolean-expressions": "off",
     "max-classes-per-file": "off",
     "max-lines": "off",
     "max-dependencies": "off",

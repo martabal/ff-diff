@@ -13,14 +13,14 @@
       "$cli": ["./src/cli/"],
       "$commands": ["./src/commands"],
       "$commands/*": ["./src/commands/*"],
-      "$lib/*": ["./src/lib/*"]
+      "$lib/*": ["./src/lib/*"],
     },
     "removeComments": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
-    "target": "esnext"
+    "target": "esnext",
   },
-  "exclude": ["dist", "firefox", "node_modules"]
+  "exclude": ["dist", "firefox", "node_modules"],
 }

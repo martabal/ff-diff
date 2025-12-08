@@ -114,7 +114,7 @@ const getUserJSBasedCommands = () => {
     exitWithError(CLI_ARGS.FORCE_DEFAULT_PROFILE, CLI_ARGS.PROFILE_PATH);
   }
 
-  const firefoxVersion = getArgumentValue(FFVersion.longOption);
+  const firefoxVersion = getArgumentValue(CLI_ARGS.FIREFOX_VERSION);
   if (profilePath && forceDefaultFFProfile) {
     exitWithError(CLI_ARGS.FIREFOX_VERSION, CLI_ARGS.PROFILE_PATH);
   }

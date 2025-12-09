@@ -45,7 +45,7 @@
     "update:corepack": "corepack use pnpm@latest"
   },
   "devDependencies": {
-    "@types/node": "24.10.1",
+    "@types/node": "24.10.2",
     "@types/selenium-webdriver": "4.35.4",
     "@vitest/coverage-v8": "4.0.15",
     "oxfmt": "0.17.0",

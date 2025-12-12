@@ -13,32 +13,32 @@ importers:
         version: 4.39.0
     devDependencies:
       '@types/node':
-        specifier: 24.10.1
-        version: 24.10.1
+        specifier: 25.0.1
+        version: 25.0.1
       '@types/selenium-webdriver':
         specifier: 4.35.4
         version: 4.35.4
       '@vitest/coverage-v8':
         specifier: 4.0.15
-        version: 4.0.15(vitest@4.0.15(@types/node@24.10.1)(lightningcss@1.30.2))
+        version: 4.0.15(vitest@4.0.15(@types/node@25.0.1)(lightningcss@1.30.2))
       oxfmt:
         specifier: 0.17.0
         version: 0.17.0
       oxlint:
         specifier: 1.32.0
-        version: 1.32.0(oxlint-tsgolint@0.8.4)
+        version: 1.32.0(oxlint-tsgolint@0.8.6)
       oxlint-tsgolint:
-        specifier: 0.8.4
-        version: 0.8.4
+        specifier: 0.8.6
+        version: 0.8.6
       rolldown-vite:
-        specifier: 7.2.10
-        version: 7.2.10(@types/node@24.10.1)(esbuild@0.25.12)
+        specifier: 7.2.11
+        version: 7.2.11(@types/node@25.0.1)(esbuild@0.25.12)
       typescript:
         specifier: 5.9.3
         version: 5.9.3
       vitest:
         specifier: 4.0.15
-        version: 4.0.15(@types/node@24.10.1)(lightningcss@1.30.2)
+        version: 4.0.15(@types/node@25.0.1)(lightningcss@1.30.2)
 
 packages:
 
@@ -291,33 +291,33 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@oxlint-tsgolint/darwin-arm64@0.8.4':
-    resolution: {integrity: sha512-aygL+K1tOIDXkGncB8q6DbwQjK6CD81sfsUNmhQUcYNNgpOAc88BWyCR3Si8/nlu4sQOdydmfjeVJqJsHaQUxQ==}
+  '@oxlint-tsgolint/darwin-arm64@0.8.6':
+    resolution: {integrity: sha512-khvQiNpPVNkyz6vmN50v5j1X6r9anRDXy3htDBpObx4V5bp33BK94onh46e91GTEbBevmeUG/Zm/U3+np4gehw==}
     cpu: [arm64]
     os: [darwin]
 
-  '@oxlint-tsgolint/darwin-x64@0.8.4':
-    resolution: {integrity: sha512-rc4iOtwir3eK+f4eh8EzYyVvtwNlkIP+7WkVfkFydNJ1wzzrAZvn2TT1C9U6vcFaaDp2aDM3jie3ZwmMghQxbA==}
+  '@oxlint-tsgolint/darwin-x64@0.8.6':
+    resolution: {integrity: sha512-AardvXBLB0m05BGcubXTqWSpNv2aD68QyY7BB/u2AqKzMoEtvzSB710FL06vOTPpaVpl3GvSVHCFw2juo35lTQ==}
     cpu: [x64]
     os: [darwin]
 
-  '@oxlint-tsgolint/linux-arm64@0.8.4':
-    resolution: {integrity: sha512-Wbdr640YAG7++2GAeHGDDijA69XwC3xQRp4hgaz6wR+JK6VWXQpeaHKW8v9axNLH9AVlnjUbEpZSh2MPkOpF3Q==}
+  '@oxlint-tsgolint/linux-arm64@0.8.6':
+    resolution: {integrity: sha512-oSgMIilQBUVSOGdWIm4/5GJV4QmqwBQYpsGtRUpTAd3BZTWVuo40//n/ogJFnlCVd+i4yhsGLtwexd/7YlJ9sw==}
     cpu: [arm64]
     os: [linux]
 
-  '@oxlint-tsgolint/linux-x64@0.8.4':
-    resolution: {integrity: sha512-nWg57xz4xA++COoEb26RnwiMOOA+wfzipOSfqz/xSCwEXQDKryXfYMl7no7a3MsneHP2f4/JbOrDHbYishm3rw==}
+  '@oxlint-tsgolint/linux-x64@0.8.6':
+    resolution: {integrity: sha512-EhR2TejCW5gBPEs6ASgfFFgdveHvpKOHQC2zbO3HoFT/xNU0DvYbEsScKM8SUDWFMQlHU67A7bynNGRY2kFSSg==}
     cpu: [x64]
     os: [linux]
 
-  '@oxlint-tsgolint/win32-arm64@0.8.4':
-    resolution: {integrity: sha512-LwRTv/30zlms4BaJrfW+ZnihdIvOku0Rrdo0FfMwSt7HlYfZdoB1yibTkC8yLfRlnbxyR0d57AQPjRasKAgyyQ==}
+  '@oxlint-tsgolint/win32-arm64@0.8.6':
+    resolution: {integrity: sha512-PQeV8YitT2HR/uJV8ugERIpA4WHDem7i5TuPtgYrp7wvKS98G9ILpnPgATrOup/VdBMIzCDl02c23z4+I5NSTw==}
     cpu: [arm64]
     os: [win32]
 
-  '@oxlint-tsgolint/win32-x64@0.8.4':
-    resolution: {integrity: sha512-jg2OezQ4Wwe+B3bOAUWH3CQdu/r5XtYwG/mwmgueL4KLmbJyO47w40hjBESHHgD8057BuHhJrf7lZpZN80bdzw==}
+  '@oxlint-tsgolint/win32-x64@0.8.6':
+    resolution: {integrity: sha512-JDlyJSOnJXahee9xL55gT02kmQGSP0hR/5OP5asXvr7q6dj9t4skltcwYiA+D4HthF04oaW1F0+6pJnNTfDE0w==}
     cpu: [x64]
     os: [win32]
 
@@ -566,8 +566,8 @@ packages:
   '@types/estree@1.0.8':
     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
 
-  '@types/node@24.10.1':
-    resolution: {integrity: sha512-GNWcUTRBgIRJD5zj+Tq0fKOJ5XZajIiBroOF0yvj2bSU1WvNdYS/dn9UxwsujGW4JX06dnHyjV2y9rRaybH0iQ==}
+  '@types/node@25.0.1':
+    resolution: {integrity: sha512-czWPzKIAXucn9PtsttxmumiQ9N0ok9FrBwgRWrwmVLlp86BrMExzvXRLFYRJ+Ex3g6yqj+KuaxfX1JTgV2lpfg==}
 
   '@types/selenium-webdriver@4.35.4':
     resolution: {integrity: sha512-hZFsK0dt/2PA5eLrFOJwkoTBpPXtaKnln7NCtg3pMAPwg7DXG6kTilHoAw8KzsQeDFLJ0mYcL6dPSMt1Qk7eSw==}
@@ -806,8 +806,8 @@ packages:
     engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
 
-  oxlint-tsgolint@0.8.4:
-    resolution: {integrity: sha512-0eyQ83M0JpeA8a4SPk61xwxBw+N9jMolDCLmzoD9J8HcL3BGTEcOLb5Ud7nCcmM3hSYzO91RqNPHayESG+os2A==}
+  oxlint-tsgolint@0.8.6:
+    resolution: {integrity: sha512-DC9rqwFyEb5RlxOjvXdqaqxM5PwK01002oh/fcdC05mNPiI04d6CPWtReHqX6Ig1dc5LYuVeh3wuPrrp6WTjtw==}
     hasBin: true
 
   oxlint@1.32.0:
@@ -843,8 +843,8 @@ packages:
   readable-stream@2.3.8:
     resolution: {integrity: sha512-8p0AUk4XODgIewSi0l8Epjs+EVnWiK7NoDIEGU0HhE7+ZyY8D1IMY7odu5lRrFXGg71L15KG8QrPmum45RTtdA==}
 
-  rolldown-vite@7.2.10:
-    resolution: {integrity: sha512-v2ekZjuVLfumjp1Cr7LSQM1n2oOo3+gMruhOgT0Q4/cQ2J3nkTDLTAWLQQ86UHMbFYyVIN1wGh8BEZbvjkyctg==}
+  rolldown-vite@7.2.11:
+    resolution: {integrity: sha512-WwCantGLbztBNipg+WwcA+a1c3Mo9LPY0VZ35IFXnUsQyZzsMHtzmy+H5PqELPj3AOauI9L/HMCjoJZp3i9eFg==}
     engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
     peerDependencies:
@@ -1209,22 +1209,22 @@ snapshots:
   '@oxfmt/win32-x64@0.17.0':
     optional: true
 
-  '@oxlint-tsgolint/darwin-arm64@0.8.4':
+  '@oxlint-tsgolint/darwin-arm64@0.8.6':
     optional: true
 
-  '@oxlint-tsgolint/darwin-x64@0.8.4':
+  '@oxlint-tsgolint/darwin-x64@0.8.6':
     optional: true
 
-  '@oxlint-tsgolint/linux-arm64@0.8.4':
+  '@oxlint-tsgolint/linux-arm64@0.8.6':
     optional: true
 
-  '@oxlint-tsgolint/linux-x64@0.8.4':
+  '@oxlint-tsgolint/linux-x64@0.8.6':
     optional: true
 
-  '@oxlint-tsgolint/win32-arm64@0.8.4':
+  '@oxlint-tsgolint/win32-arm64@0.8.6':
     optional: true
 
-  '@oxlint-tsgolint/win32-x64@0.8.4':
+  '@oxlint-tsgolint/win32-x64@0.8.6':
     optional: true
 
   '@oxlint/darwin-arm64@1.32.0':
@@ -1376,20 +1376,20 @@ snapshots:
 
   '@types/estree@1.0.8': {}
 
-  '@types/node@24.10.1':
+  '@types/node@25.0.1':
     dependencies:
       undici-types: 7.16.0
 
   '@types/selenium-webdriver@4.35.4':
     dependencies:
-      '@types/node': 24.10.1
+      '@types/node': 25.0.1
       '@types/ws': 8.18.1
 
   '@types/ws@8.18.1':
     dependencies:
-      '@types/node': 24.10.1
+      '@types/node': 25.0.1
 
-  '@vitest/coverage-v8@4.0.15(vitest@4.0.15(@types/node@24.10.1)(lightningcss@1.30.2))':
+  '@vitest/coverage-v8@4.0.15(vitest@4.0.15(@types/node@25.0.1)(lightningcss@1.30.2))':
     dependencies:
       '@bcoe/v8-coverage': 1.0.2
       '@vitest/utils': 4.0.15
@@ -1402,7 +1402,7 @@ snapshots:
       obug: 2.1.1
       std-env: 3.10.0
       tinyrainbow: 3.0.3
-      vitest: 4.0.15(@types/node@24.10.1)(lightningcss@1.30.2)
+      vitest: 4.0.15(@types/node@25.0.1)(lightningcss@1.30.2)
     transitivePeerDependencies:
       - supports-color
 
@@ -1415,13 +1415,13 @@ snapshots:
       chai: 6.2.1
       tinyrainbow: 3.0.3
 
-  '@vitest/mocker@4.0.15(vite@7.2.7(@types/node@24.10.1)(lightningcss@1.30.2))':
+  '@vitest/mocker@4.0.15(vite@7.2.7(@types/node@25.0.1)(lightningcss@1.30.2))':
     dependencies:
       '@vitest/spy': 4.0.15
       estree-walker: 3.0.3
       magic-string: 0.30.21
     optionalDependencies:
-      vite: 7.2.7(@types/node@24.10.1)(lightningcss@1.30.2)
+      vite: 7.2.7(@types/node@25.0.1)(lightningcss@1.30.2)
 
   '@vitest/pretty-format@4.0.15':
     dependencies:
@@ -1631,16 +1631,16 @@ snapshots:
       '@oxfmt/win32-arm64': 0.17.0
       '@oxfmt/win32-x64': 0.17.0
 
-  oxlint-tsgolint@0.8.4:
+  oxlint-tsgolint@0.8.6:
     optionalDependencies:
-      '@oxlint-tsgolint/darwin-arm64': 0.8.4
-      '@oxlint-tsgolint/darwin-x64': 0.8.4
-      '@oxlint-tsgolint/linux-arm64': 0.8.4
-      '@oxlint-tsgolint/linux-x64': 0.8.4
-      '@oxlint-tsgolint/win32-arm64': 0.8.4
-      '@oxlint-tsgolint/win32-x64': 0.8.4
+      '@oxlint-tsgolint/darwin-arm64': 0.8.6
+      '@oxlint-tsgolint/darwin-x64': 0.8.6
+      '@oxlint-tsgolint/linux-arm64': 0.8.6
+      '@oxlint-tsgolint/linux-x64': 0.8.6
+      '@oxlint-tsgolint/win32-arm64': 0.8.6
+      '@oxlint-tsgolint/win32-x64': 0.8.6
 
-  oxlint@1.32.0(oxlint-tsgolint@0.8.4):
+  oxlint@1.32.0(oxlint-tsgolint@0.8.6):
     optionalDependencies:
       '@oxlint/darwin-arm64': 1.32.0
       '@oxlint/darwin-x64': 1.32.0
@@ -1650,7 +1650,7 @@ snapshots:
       '@oxlint/linux-x64-musl': 1.32.0
       '@oxlint/win32-arm64': 1.32.0
       '@oxlint/win32-x64': 1.32.0
-      oxlint-tsgolint: 0.8.4
+      oxlint-tsgolint: 0.8.6
 
   pako@1.0.11: {}
 
@@ -1678,7 +1678,7 @@ snapshots:
       string_decoder: 1.1.1
       util-deprecate: 1.0.2
 
-  rolldown-vite@7.2.10(@types/node@24.10.1)(esbuild@0.25.12):
+  rolldown-vite@7.2.11(@types/node@25.0.1)(esbuild@0.25.12):
     dependencies:
       '@oxc-project/runtime': 0.101.0
       fdir: 6.5.0(picomatch@4.0.3)
@@ -1688,7 +1688,7 @@ snapshots:
       rolldown: 1.0.0-beta.53
       tinyglobby: 0.2.15
     optionalDependencies:
-      '@types/node': 24.10.1
+      '@types/node': 25.0.1
       esbuild: 0.25.12
       fsevents: 2.3.3
 
@@ -1793,7 +1793,7 @@ snapshots:
 
   util-deprecate@1.0.2: {}
 
-  vite@7.2.7(@types/node@24.10.1)(lightningcss@1.30.2):
+  vite@7.2.7(@types/node@25.0.1)(lightningcss@1.30.2):
     dependencies:
       esbuild: 0.25.12
       fdir: 6.5.0(picomatch@4.0.3)
@@ -1802,14 +1802,14 @@ snapshots:
       rollup: 4.53.3
       tinyglobby: 0.2.15
     optionalDependencies:
-      '@types/node': 24.10.1
+      '@types/node': 25.0.1
       fsevents: 2.3.3
       lightningcss: 1.30.2
 
-  vitest@4.0.15(@types/node@24.10.1)(lightningcss@1.30.2):
+  vitest@4.0.15(@types/node@25.0.1)(lightningcss@1.30.2):
     dependencies:
       '@vitest/expect': 4.0.15
-      '@vitest/mocker': 4.0.15(vite@7.2.7(@types/node@24.10.1)(lightningcss@1.30.2))
+      '@vitest/mocker': 4.0.15(vite@7.2.7(@types/node@25.0.1)(lightningcss@1.30.2))
       '@vitest/pretty-format': 4.0.15
       '@vitest/runner': 4.0.15
       '@vitest/snapshot': 4.0.15
@@ -1826,10 +1826,10 @@ snapshots:
       tinyexec: 1.0.2
       tinyglobby: 0.2.15
       tinyrainbow: 3.0.3
-      vite: 7.2.7(@types/node@24.10.1)(lightningcss@1.30.2)
+      vite: 7.2.7(@types/node@25.0.1)(lightningcss@1.30.2)
       why-is-node-running: 2.3.0
     optionalDependencies:
-      '@types/node': 24.10.1
+      '@types/node': 25.0.1
     transitivePeerDependencies:
       - jiti
       - less

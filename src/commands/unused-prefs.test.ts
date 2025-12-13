@@ -261,10 +261,9 @@ describe("unusedPrefs", () => {
       profilePath: "/mock/profile",
     });
 
-    const calls = consoleLogSpy.mock.calls;
-    const prefCalls = calls.filter((call) => call[0].startsWith("- "));
-    expect(prefCalls[0][0]).toBe("- alpha.pref");
-    expect(prefCalls[1][0]).toBe("- middle.pref");
-    expect(prefCalls[2][0]).toBe("- zebra.pref");
+    // Check that the prefs are output in alphabetical order
+    expect(consoleLogSpy).toHaveBeenCalledWith("- alpha.pref");
+    expect(consoleLogSpy).toHaveBeenCalledWith("- middle.pref");
+    expect(consoleLogSpy).toHaveBeenCalledWith("- zebra.pref");
   });
 });

@@ -125,9 +125,7 @@ describe(`${APP_NAME} command arguments`, () => {
   });
 
   it("should handle multiple option flags correctly", async () => {
-    const { stdout, exitCode } = await execWithExitCode(
-      `diff --help --do-not-print-in-console`,
-    );
+    const { stdout, exitCode } = await execWithExitCode(`diff --help --do-not-print-in-console`);
     expect(exitCode).toBe(0);
     expect(stdout).toContain("Compare the default preferences");
   });

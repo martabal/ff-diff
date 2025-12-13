@@ -106,18 +106,19 @@ const exitWithError = (firstArg: string, secondArg: string) => {
   process.exit(1);
 };
 
+const validateConflictingArgs = (arg1: string | undefined, arg1Name: string, arg2Name: string) => {
+  if (arg1 && process.argv.includes(arg2Name)) {
+    exitWithError(arg1Name, arg2Name);
+  }
+};
+
 const getUserJSBasedCommands = () => {
   const forceDefaultProfile = process.argv.includes(CLI_ARGS.FORCE_DEFAULT_PROFILE);
-
   const profilePath = getArgumentValue(CLI_ARGS.PROFILE_PATH);
-  if (profilePath && forceDefaultFFProfile) {
-    exitWithError(CLI_ARGS.FORCE_DEFAULT_PROFILE, CLI_ARGS.PROFILE_PATH);
-  }
-
   const firefoxVersion = getArgumentValue(CLI_ARGS.FIREFOX_VERSION);
-  if (profilePath && forceDefaultFFProfile) {
-    exitWithError(CLI_ARGS.FIREFOX_VERSION, CLI_ARGS.PROFILE_PATH);
-  }
+
+  validateConflictingArgs(profilePath, CLI_ARGS.PROFILE_PATH, CLI_ARGS.FORCE_DEFAULT_PROFILE);
+  validateConflictingArgs(firefoxVersion, CLI_ARGS.FIREFOX_VERSION, CLI_ARGS.PROFILE_PATH);
 
   return { profilePath, forceDefaultProfile, firefoxVersion };
 };

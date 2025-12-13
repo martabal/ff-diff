@@ -1,4 +1,4 @@
-import fs from "node:fs";
+import fs from "node:fs/promises";
 import path from "node:path";
 import { Cli, ALL_COMMANDS } from "$cli";
 
@@ -36,9 +36,9 @@ const generateUsage = (): string => {
   return lines.join("\n");
 };
 
-const updateReadme = () => {
+const updateReadme = async () => {
   const readmePath = path.resolve("README.md");
-  const readme = fs.readFileSync(readmePath, "utf8");
+  const readme = await fs.readFile(readmePath, "utf8");
 
   const usageBlock = ["```bash", `$ ${APP_NAME}`, generateUsage(), "```"].join("\n");
 
@@ -47,7 +47,7 @@ const updateReadme = () => {
     `$1\n\n${usageBlock}\n\n$3`,
   );
 
-  fs.writeFileSync(readmePath, updated);
+  await fs.writeFile(readmePath, updated);
 };
 
-updateReadme();
+await updateReadme();

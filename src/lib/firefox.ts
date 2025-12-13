@@ -53,7 +53,7 @@ interface FirefoxGlobal {
 
 export const installedMozilla = ".mozilla/firefox";
 
-const createDriver = async (opts: FirefoxInstallOptions): Promise<WebDriver> => {
+const createDriver = (opts: FirefoxInstallOptions): Promise<WebDriver> => {
   const options = new Options().addArguments("-headless");
 
   if (opts.profilePath) {
@@ -64,9 +64,7 @@ const createDriver = async (opts: FirefoxInstallOptions): Promise<WebDriver> => 
     options.setBinary(opts.executablePath);
   }
 
-  let builder = await new Builder().forBrowser(Browser.FIREFOX).setFirefoxOptions(options).build();
-
-  return builder;
+  return new Builder().forBrowser(Browser.FIREFOX).setFirefoxOptions(options).build();
 };
 
 export const getPrefs = async (options: FirefoxInstallOptions): Promise<Map<string, Pref>> => {
@@ -113,6 +111,8 @@ export const getPrefs = async (options: FirefoxInstallOptions): Promise<Map<stri
   return prefs;
 };
 
+const sortByKey = (a: { key: string }, b: { key: string }) => a.key.localeCompare(b.key);
+
 export const comparePrefs = (prefsV1: Map<string, Pref>, prefsV2: Map<string, Pref>): PrefsDiff => {
   const addedKeys: FirefoxPref[] = [];
   const removedKeys: FirefoxPref[] = [];
@@ -136,9 +136,9 @@ export const comparePrefs = (prefsV1: Map<string, Pref>, prefsV2: Map<string, Pr
     }
   }
 
-  addedKeys.sort((a, b) => a.key.localeCompare(b.key));
-  changedKeys.sort((a, b) => a.key.localeCompare(b.key));
-  removedKeys.sort((a, b) => a.key.localeCompare(b.key));
+  addedKeys.sort(sortByKey);
+  changedKeys.sort(sortByKey);
+  removedKeys.sort(sortByKey);
 
   return { addedKeys, removedKeys, changedKeys };
 };

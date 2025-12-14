@@ -41,6 +41,10 @@ describe("startsWithNumberDotNumber", () => {
   it('should return false for ".1"', () => {
     expect(startsWithNumberDotNumber(".1")).toBe(false);
   });
+
+  it('should return false for "1..2" (double dot)', () => {
+    expect(startsWithNumberDotNumber("1..2")).toBe(false);
+  });
 });
 
 describe("isUnitDifferenceOne", () => {
@@ -65,5 +69,27 @@ describe("isUnitDifferenceOne", () => {
   it("should handle negative numbers correctly", () => {
     expect(isUnitDifferenceOne("-2.5", "-1.2")).toBe(true);
     expect(isUnitDifferenceOne("-3.0", "-1.0")).toBe(false);
+  });
+
+  it("should handle decimal variations correctly", () => {
+    expect(isUnitDifferenceOne("1.9", "2.1")).toBe(true);
+    expect(isUnitDifferenceOne("2.1", "1.9")).toBe(true);
+    expect(isUnitDifferenceOne("5.99", "6.01")).toBe(true);
+    expect(isUnitDifferenceOne("10.1", "10.9")).toBe(false);
+  });
+
+  it("should handle more negative number combinations", () => {
+    expect(isUnitDifferenceOne("-5.5", "-4.5")).toBe(true);
+    expect(isUnitDifferenceOne("-4.5", "-5.5")).toBe(true);
+    expect(isUnitDifferenceOne("-10.1", "-8.9")).toBe(false);
+  });
+
+  it("should handle combinations of positive and negative units", () => {
+    expect(isUnitDifferenceOne("-1.5", "0.5")).toBe(false); // floor(-1.5) = -2, floor(0.5) = 0, diff = 2
+    expect(isUnitDifferenceOne("0.5", "-1.5")).toBe(false); // floor(0.5) = 0, floor(-1.5) = -2, diff = 2
+    expect(isUnitDifferenceOne("-1.5", "-0.5")).toBe(true); // floor(-1.5) = -2, floor(-0.5) = -1, diff = 1
+    expect(isUnitDifferenceOne("-0.5", "0.5")).toBe(true); // floor(-0.5) = -1, floor(0.5) = 0, diff = 1
+    expect(isUnitDifferenceOne("-2.0", "1.0")).toBe(false); // floor(-2.0) = -2, floor(1.0) = 1, diff = 3
+    expect(isUnitDifferenceOne("-1.0", "0.0")).toBe(true); // floor(-1.0) = -1, floor(0.0) = 0, diff = 1
   });
 });

@@ -53,7 +53,7 @@ interface FirefoxGlobal {
 
 export const installedMozilla = ".mozilla/firefox";
 
-const createDriver = async (opts: FirefoxInstallOptions): Promise<WebDriver> => {
+const createDriver = (opts: FirefoxInstallOptions): Promise<WebDriver> => {
   const options = new Options().addArguments("-headless");
 
   if (opts.profilePath) {
@@ -64,9 +64,7 @@ const createDriver = async (opts: FirefoxInstallOptions): Promise<WebDriver> => 
     options.setBinary(opts.executablePath);
   }
 
-  let builder = await new Builder().forBrowser(Browser.FIREFOX).setFirefoxOptions(options).build();
-
-  return builder;
+  return new Builder().forBrowser(Browser.FIREFOX).setFirefoxOptions(options).build();
 };
 
 export const getPrefs = async (options: FirefoxInstallOptions): Promise<Map<string, Pref>> => {

@@ -1,4 +1,4 @@
-import { mkdirSync, writeFileSync } from "node:fs";
+import fs from "node:fs/promises";
 import path from "node:path";
 import { ALL_COMMANDS, VERSION_ARGS, HELP_ARGS, CLI_ARGS, Cli } from "$cli";
 import { getArgumentValue } from "$lib/cli";
@@ -10,7 +10,7 @@ if (pathArg === undefined) {
 }
 
 const outputDir = path.resolve(pathArg);
-mkdirSync(outputDir, { recursive: true });
+await fs.mkdir(outputDir, { recursive: true });
 
 const globalOptions = [
   VERSION_ARGS.longOption,
@@ -105,8 +105,8 @@ ${commands
   .join("\n")}
 `;
 
-writeFileSync(path.join(outputDir, `${APP_NAME}.bash`), bashCompletion, "utf8");
+await fs.writeFile(path.join(outputDir, `${APP_NAME}.bash`), bashCompletion, "utf8");
 
-writeFileSync(path.join(outputDir, `${APP_NAME}.fish`), fishCompletion, "utf8");
+await fs.writeFile(path.join(outputDir, `${APP_NAME}.fish`), fishCompletion, "utf8");
 
 console.log(`Bash and Fish completions generated in: ${outputDir}`);

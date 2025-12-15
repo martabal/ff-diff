@@ -1,26 +1,27 @@
 {
   "name": "ff-diff",
   "version": "0.2.17",
-  "license": "MIT",
   "description": "Compare changes in user preference files between two versions of Firefox",
-  "author": "martabal",
-  "bin": {
-    "ff-diff": "./dist/index.js"
-  },
-  "files": [
-    "dist/"
+  "keywords": [
+    "diff",
+    "firefox",
+    "user.js",
+    "user:config",
+    "user_pref",
+    "versions"
   ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/martabal/ff-diff.git"
   },
-  "keywords": [
-    "firefox",
-    "diff",
-    "versions",
-    "user:config",
-    "user.js",
-    "user_pref"
+  "author": "martabal",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "ff-diff": "./dist/index.js"
+  },
+  "files": [
+    "dist/"
   ],
   "scripts": {
     "build": "vite build",
@@ -44,23 +45,22 @@
     "update": "pnpm up --latest && pnpm run update:corepack && pnpm update",
     "update:corepack": "corepack use pnpm@latest"
   },
+  "dependencies": {
+    "selenium-webdriver": "4.39.0"
+  },
   "devDependencies": {
-    "@types/node": "25.0.1",
+    "@types/node": "25.0.2",
     "@types/selenium-webdriver": "4.35.4",
     "@vitest/coverage-v8": "4.0.15",
-    "oxfmt": "0.17.0",
-    "oxlint": "1.32.0",
-    "oxlint-tsgolint": "0.9.0",
+    "oxfmt": "0.18.0",
+    "oxlint": "1.33.0",
+    "oxlint-tsgolint": "0.9.1",
     "rolldown-vite": "7.2.11",
     "typescript": "5.9.3",
     "vitest": "4.0.15"
   },
-  "dependencies": {
-    "selenium-webdriver": "4.39.0"
-  },
+  "packageManager": "pnpm@10.26.0+sha512.3b3f6c725ebe712506c0ab1ad4133cf86b1f4b687effce62a9b38b4d72e3954242e643190fc51fa1642949c735f403debd44f5cb0edd657abe63a8b6a7e1e402",
   "engines": {
     "node": ">=20.12.0 <21 || >=21.7.0 <22 || >=22.13.0 <23 || >=23.5.0"
-  },
-  "type": "module",
-  "packageManager": "pnpm@10.25.0+sha512.5e82639027af37cf832061bcc6d639c219634488e0f2baebe785028a793de7b525ffcd3f7ff574f5e9860654e098fe852ba8ac5dd5cefe1767d23a020a92f501"
+  }
 }

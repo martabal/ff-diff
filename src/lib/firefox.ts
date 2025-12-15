@@ -145,7 +145,7 @@ export const getFirefoxVersion = async (options: FirefoxInstallOptions): Promise
   const driver: WebDriver = await createDriver(options);
 
   const capabilities = await driver.getCapabilities();
-  const browserVersion: unknown = capabilities.get("browserVersion") || capabilities.get("version");
+  const browserVersion: unknown = capabilities.get("browserVersion") ?? capabilities.get("version");
   await driver.quit();
 
   if (typeof browserVersion !== "string") {

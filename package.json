@@ -51,13 +51,13 @@
   "devDependencies": {
     "@types/node": "25.0.2",
     "@types/selenium-webdriver": "4.35.4",
-    "@vitest/coverage-v8": "4.0.15",
+    "@vitest/coverage-v8": "4.0.16",
     "oxfmt": "0.18.0",
     "oxlint": "1.33.0",
     "oxlint-tsgolint": "0.9.1",
     "rolldown-vite": "7.2.11",
     "typescript": "5.9.3",
-    "vitest": "4.0.15"
+    "vitest": "4.0.16"
   },
   "packageManager": "pnpm@10.26.0+sha512.3b3f6c725ebe712506c0ab1ad4133cf86b1f4b687effce62a9b38b4d72e3954242e643190fc51fa1642949c735f403debd44f5cb0edd657abe63a8b6a7e1e402",
   "engines": {

@@ -85,11 +85,11 @@ describe("isUnitDifferenceOne", () => {
   });
 
   it("should handle combinations of positive and negative units", () => {
-    expect(isUnitDifferenceOne("-1.5", "0.5")).toBe(false); // floor(-1.5) = -2, floor(0.5) = 0, diff = 2
-    expect(isUnitDifferenceOne("0.5", "-1.5")).toBe(false); // floor(0.5) = 0, floor(-1.5) = -2, diff = 2
-    expect(isUnitDifferenceOne("-1.5", "-0.5")).toBe(true); // floor(-1.5) = -2, floor(-0.5) = -1, diff = 1
-    expect(isUnitDifferenceOne("-0.5", "0.5")).toBe(true); // floor(-0.5) = -1, floor(0.5) = 0, diff = 1
-    expect(isUnitDifferenceOne("-2.0", "1.0")).toBe(false); // floor(-2.0) = -2, floor(1.0) = 1, diff = 3
-    expect(isUnitDifferenceOne("-1.0", "0.0")).toBe(true); // floor(-1.0) = -1, floor(0.0) = 0, diff = 1
+    expect(isUnitDifferenceOne("-1.5", "0.5")).toBe(false);
+    expect(isUnitDifferenceOne("0.5", "-1.5")).toBe(false);
+    expect(isUnitDifferenceOne("-1.5", "-0.5")).toBe(true);
+    expect(isUnitDifferenceOne("-0.5", "0.5")).toBe(true);
+    expect(isUnitDifferenceOne("-2.0", "1.0")).toBe(false);
+    expect(isUnitDifferenceOne("-1.0", "0.0")).toBe(true);
   });
 });

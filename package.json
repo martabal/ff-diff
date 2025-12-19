@@ -10,19 +10,19 @@
     "user_pref",
     "versions"
   ],
+  "license": "MIT",
+  "author": "martabal",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/martabal/ff-diff.git"
   },
-  "author": "martabal",
-  "license": "MIT",
-  "type": "module",
   "bin": {
     "ff-diff": "./dist/index.js"
   },
   "files": [
     "dist/"
   ],
+  "type": "module",
   "scripts": {
     "build": "vite build",
     "build:prod": "vite build --minify",
@@ -49,18 +49,18 @@
     "selenium-webdriver": "4.39.0"
   },
   "devDependencies": {
-    "@types/node": "25.0.2",
+    "@types/node": "25.0.3",
     "@types/selenium-webdriver": "4.35.4",
-    "@vitest/coverage-v8": "4.0.15",
-    "oxfmt": "0.18.0",
-    "oxlint": "1.33.0",
-    "oxlint-tsgolint": "0.9.1",
-    "rolldown-vite": "7.2.11",
+    "@vitest/coverage-v8": "4.0.16",
+    "oxfmt": "0.19.0",
+    "oxlint": "1.34.0",
+    "oxlint-tsgolint": "0.10.0",
+    "rolldown-vite": "7.3.0",
     "typescript": "5.9.3",
-    "vitest": "4.0.15"
+    "vitest": "4.0.16"
   },
-  "packageManager": "pnpm@10.26.0+sha512.3b3f6c725ebe712506c0ab1ad4133cf86b1f4b687effce62a9b38b4d72e3954242e643190fc51fa1642949c735f403debd44f5cb0edd657abe63a8b6a7e1e402",
   "engines": {
     "node": ">=20.12.0 <21 || >=21.7.0 <22 || >=22.13.0 <23 || >=23.5.0"
-  }
+  },
+  "packageManager": "pnpm@10.26.1+sha512.664074abc367d2c9324fdc18037097ce0a8f126034160f709928e9e9f95d98714347044e5c3164d65bd5da6c59c6be362b107546292a8eecb7999196e5ce58fa"
 }

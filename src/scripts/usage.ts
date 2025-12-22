@@ -3,8 +3,7 @@ import path from "node:path";
 import { Cli, ALL_COMMANDS } from "$cli";
 
 const generateUsage = (): string => {
-  const lines: string[] = [];
-  lines.push("Usage:");
+  const lines: string[] = ["Usage:"];
 
   for (const CmdClass of ALL_COMMANDS) {
     const cmd = CmdClass.COMMAND;

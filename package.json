@@ -1,6 +1,6 @@
 {
   "name": "ff-diff",
-  "version": "0.2.18",
+  "version": "0.2.19",
   "description": "Compare changes in user preference files between two versions of Firefox",
   "keywords": [
     "diff",

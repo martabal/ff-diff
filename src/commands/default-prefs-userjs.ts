@@ -6,39 +6,64 @@ import {
   getFirefoxVersion,
   getFirefoxDefaultProfile,
   getPrefs,
+  type Pref,
 } from "$lib/firefox";
 import { defaultsUserJSDir, getPrefsFromInstalledVersion, installDir } from "$lib/install";
 import { Format, formatTicks, formatValue } from "$lib/format";
 import { parseUserPrefs } from "$lib/prefs";
 import { gettingPrefsMessage, gettingVersionMessage } from "$lib/helpers";
 import { UserJSBasedCommands } from "$commands";
+import { type InspectColor, styleText } from "node:util";
+
+interface WrongDefault {
+  key: string;
+  prefInConfig: Pref;
+  defaultPref: Pref;
+}
 
 const generateOutput = (
   format: Format,
-  wrongDefault: FirefoxPref[],
+  wrongDefault: WrongDefault[],
   alreadyDefault: FirefoxPref[],
-) => {
+): string[] => {
   const { tickKeyValue: tick } = formatTicks[format];
+  const isText = format === Format.Text;
+  const isMarkdown = format === Format.Markdown;
 
-  const formatPrefs = (title: string, prefs: FirefoxPref[], emptyMsg: string) => {
-    if (prefs.length === 0) {
-      return [emptyMsg];
-    }
-    return [
-      `${title}${format === Format.Markdown ? "\n" : ""}`,
-      ...prefs.map(
-        (pref) => `- ${tick}${pref.key}${tick}: ${tick}${formatValue(pref.value)}${tick}`,
-      ),
-    ];
+  const msg = (color: InspectColor, text: string): string =>
+    isText ? styleText(color, text) : text;
+
+  const formatPrefs = <T extends { key: string }>(
+    title: string,
+    prefs: T[],
+    emptyMsg: string,
+    formatter: (pref: T) => string,
+  ): string[] => {
+    if (prefs.length === 0) return [emptyMsg];
+
+    return [`${title}${isMarkdown ? "\n" : ""}`, ...prefs.map((pref) => `- ${formatter(pref)}`)];
   };
 
+  const formatFirefoxPref = ({ key }: FirefoxPref): string => `${tick}${key}${tick}`;
+
+  const formatWrongDefault = ({ key, prefInConfig, defaultPref }: WrongDefault): string =>
+    `${tick}${key}${tick}: ${tick}${formatValue(prefInConfig)}${tick} should be ${tick}${formatValue(defaultPref)}${tick}`;
+
+  const needsSpacer = wrongDefault.length > 0 || alreadyDefault.length > 0;
+
   return [
-    ...formatPrefs("Wrong default for:", wrongDefault, "No wrong default prefs"),
-    ...(wrongDefault.length > 0 || alreadyDefault.length > 0 ? [""] : []),
     ...formatPrefs(
-      "Explicit default not set for:",
+      msg("yellow", "Wrong default for:"),
+      wrongDefault,
+      msg("green", "No wrong default prefs"),
+      formatWrongDefault,
+    ),
+    ...(needsSpacer ? [""] : []),
+    ...formatPrefs(
+      msg("yellow", "Explicit default not set for:"),
       alreadyDefault,
-      "All prefs have a clear explicit default",
+      msg("green", "All prefs have a clear explicit default"),
+      formatFirefoxPref,
     ),
   ];
 };
@@ -56,7 +81,7 @@ export const defaultPrefsUserJS = async (opts: UserJSBasedCommands) => {
     opts.firefoxVersion
       ? getPrefsFromInstalledVersion(
           opts.firefoxVersion,
-          join(installDir, opts.firefoxVersion, "firefox"),
+          join(installDir, opts.firefoxVersion, "firefox", "firefox"),
         )
       : getPrefs({ profilePath }),
     getFirefoxVersion({ profilePath }),
@@ -65,7 +90,7 @@ export const defaultPrefsUserJS = async (opts: UserJSBasedCommands) => {
   const userKeys = parseUserPrefs(userJsContent);
   userKeys.sort((a, b) => a.key.localeCompare(b.key));
   const alreadyDefault: FirefoxPref[] = [];
-  const wrongDefault: FirefoxPref[] = [];
+  const wrongDefault: WrongDefault[] = [];
   for (const pref of userKeys) {
     const prefsValue = prefsFirefox.get(pref.key);
 
@@ -80,13 +105,19 @@ export const defaultPrefsUserJS = async (opts: UserJSBasedCommands) => {
       alreadyDefault.push({ key: pref.key, value: prefsValue });
     }
 
-    const isDefaultDefinedAndDifferent = pref.default?.value && pref.default?.value !== prefsValue;
+    if (pref.default?.value) {
+      const isDefaultDefinedAndDifferent = pref.default?.value !== prefsValue;
 
-    const isDefaultValueVersionInferior =
-      pref?.default?.version === undefined || pref?.default?.version <= parseInt(version, 10);
+      const isDefaultValueVersionInferior =
+        pref?.default?.version === undefined || pref?.default?.version <= parseInt(version, 10);
 
-    if (isDefaultDefinedAndDifferent && isDefaultValueVersionInferior) {
-      wrongDefault.push({ key: pref.key, value: prefsValue });
+      if (isDefaultDefinedAndDifferent && isDefaultValueVersionInferior) {
+        wrongDefault.push({
+          key: pref.key,
+          defaultPref: prefsValue,
+          prefInConfig: pref.default?.value,
+        });
+      }
     }
   }
 

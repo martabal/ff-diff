@@ -13,6 +13,7 @@ import { type AllFormatted, Format, formatTicks, formatValue, type PrintDiff } f
 import { isUnitDifferenceOne } from "$lib/helpers";
 import { commonChangedValuesForKeys, parseUserPrefs } from "$lib/prefs";
 import { diffsDir, getPrefsFromInstalledVersion, installDir } from "$lib/install";
+import { styleText } from "node:util";
 
 const handleFormatTicks = (format: Format, symbol: string): AllFormatted => {
   const { tickStart, tickSymbol, tickKeyValue, tickTransform } = formatTicks[format];
@@ -76,7 +77,7 @@ const handleCompareUsersJS = (
   newVersion: string,
 ) => {
   if (!printOptions.doNotPrintConsole) {
-    console.log("\n");
+    console.log();
   }
   console.log("Comparing prefs with the ones from your user.js\n");
 
@@ -121,7 +122,7 @@ const handleCompareUsersJS = (
     changed.length === 0 &&
     removed.length === 0
   ) {
-    console.log("No prefs from your user.js settings were changed or removed.");
+    console.log(styleText("green", "No prefs from your user.js settings were changed or removed."));
     return;
   }
 
@@ -160,11 +161,12 @@ const handleCompareUsersJS = (
 
   if (removed.length > 0) {
     output.push(
-      `${removedSymbol} The following prefs were removed:\n` +
+      `${removedSymbol} ` +
+        styleText("yellow", "The following prefs were removed:\n") +
         removed.map((pref) => `- ${pref.key}`).join("\n"),
     );
   } else {
-    output.push("No prefs from your user.js settings were removed.");
+    output.push(styleText("green", "No prefs from your user.js settings were removed."));
   }
 
   console.log(output.join("\n"));
@@ -210,7 +212,7 @@ const handleOutputDiff = (sections: PrintDiff[], newVersion: string, oldVersion:
       mkdirSync(diffsDir);
     }
     const diffsPath = join(diffsDir, `${oldVersion}-${newVersion}.md`);
-    console.log(`writing diffs to ${diffsPath}`);
+    console.log(`\nwriting diffs to ${diffsPath}`);
     writeFileSync(diffsPath, title + outputMD.join("\n") + "\n");
   }
 };
@@ -229,13 +231,13 @@ export const diff = async (args: Diff) => {
     return {
       version,
       dir,
-      installPath: join(dir, "firefox"),
+      executablePath: join(dir, "firefox"),
     };
   });
 
   const [prefsMapV1, prefsMapV2] = await Promise.all(
-    firefoxDirs.map(({ version, installPath }) =>
-      getPrefsFromInstalledVersion(version, installPath),
+    firefoxDirs.map(({ version, executablePath }) =>
+      getPrefsFromInstalledVersion(version, executablePath),
     ),
   );
 

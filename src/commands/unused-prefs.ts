@@ -5,6 +5,7 @@ import { readFileSync } from "node:fs";
 import { UserJSBasedCommands } from "$commands";
 import { getPrefsFromInstalledVersion, installDir } from "$lib/install";
 import { join } from "node:path";
+import { styleText } from "node:util";
 
 export const unusedPrefs = async (opts: UserJSBasedCommands) => {
   const userJsContent = readFileSync(opts.compareUserjs, "utf8");
@@ -37,9 +38,9 @@ export const unusedPrefs = async (opts: UserJSBasedCommands) => {
     }
   }
   if (missing.length === 0) {
-    console.log(`No unused prefs in ${opts.compareUserjs}`);
+    console.log(styleText("green", `No unused prefs in ${opts.compareUserjs}`));
   } else {
-    console.log(`Unused pref${missing.length === 1 ? "" : "s"}:`);
+    console.log(styleText("yellow", `Unused pref${missing.length === 1 ? "" : "s"}:`));
     for (const pref of missing) {
       console.log(`- ${pref}`);
     }

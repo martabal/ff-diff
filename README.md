@@ -29,10 +29,10 @@ pnpm i -g ff-diff
 $ ff-diff
 Usage:
   ff-diff clean [--keep version1,version2] [--keep-archives] [--keep-sources]
-  ff-diff diff <old-version> <new-version> [--clean-archives] [--clean-sources] [--do-not-print-in-console] [--save-output-in-file] [--compare-userjs path] [--hide-common-changed-values]
-  ff-diff default-prefs [--do-not-print-in-console] [--save-output-in-file] [--firefox-path path]
-  ff-diff unused-prefs-userjs path [--firefox-path path] [--force-default-profile] [--profile-path] [--firefox-version version]
-  ff-diff default-prefs-userjs path [--firefox-path path] [--do-not-print-in-console] [--save-output-in-file] [--force-default-profile] [--profile-path] [--firefox-version version]
+  ff-diff diff <old-version> <new-version> [--clean-archives] [--clean-sources] [--do-not-print-in-console] [--save-output-in-file] [--compare-userjs path] [--hide-common-changed-values] [--debug-firefox-version]
+  ff-diff default-prefs [--do-not-print-in-console] [--save-output-in-file] [--firefox-path path] [--firefox-version version] [--debug-firefox-version]
+  ff-diff unused-prefs-userjs path [--firefox-path path] [--force-default-profile] [--profile-path] [--firefox-version version] [--debug-firefox-version]
+  ff-diff default-prefs-userjs path [--firefox-path path] [--do-not-print-in-console] [--save-output-in-file] [--force-default-profile] [--profile-path] [--firefox-version version] [--debug-firefox-version]
 
 Options:
   -v, --version    Print version info and exit

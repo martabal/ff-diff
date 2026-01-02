@@ -1,6 +1,8 @@
+import { CLI_ARGS } from "$cli";
 import { existsSync, readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
+import { styleText } from "node:util";
 import { Browser, Builder, type WebDriver } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/firefox";
 
@@ -56,10 +58,14 @@ const createDriver = (opts: FirefoxInstallOptions): Promise<WebDriver> => {
   const options = new Options().addArguments("-headless");
 
   if (opts.profilePath) {
-    options.addArguments(`no-remote -P "${opts.profilePath}"`);
+    options.addArguments(`-no-remote -P "${opts.profilePath}"`);
   }
 
   if (opts.executablePath) {
+    if (!existsSync(opts.executablePath)) {
+      console.error(styleText("red", `${opts.executablePath} does not exist`));
+      process.exit(1);
+    }
     options.setBinary(opts.executablePath);
   }
 
@@ -103,7 +109,13 @@ export const getPrefs = async (options: FirefoxInstallOptions): Promise<Map<stri
     console.error("no preferences detected");
     process.exit(1);
   }
+
   const prefs = new Map<string, Pref>(prefsArray.map(({ key, value }) => [key, value]));
+
+  if (process.argv.includes(CLI_ARGS.DEBUG_FIREFOX_CAPABILITIES)) {
+    const caps = await driver.getCapabilities();
+    console.log(caps);
+  }
 
   await driver.quit();
 

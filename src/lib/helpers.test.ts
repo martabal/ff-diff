@@ -1,5 +1,9 @@
-import { describe, it, expect } from "vitest";
-import { isUnitDifferenceOne, startsWithNumberDotNumber } from "$lib/helpers";
+import { describe, it, expect, vi, afterEach } from "vitest";
+import {
+  isUnitDifferenceOne,
+  startsWithNumberDotNumber,
+  warnIncorrectOldVersion,
+} from "$lib/helpers";
 
 describe("startsWithNumberDotNumber", () => {
   it('should return true for "1.0"', () => {
@@ -91,5 +95,58 @@ describe("isUnitDifferenceOne", () => {
     expect(isUnitDifferenceOne("-0.5", "0.5")).toBe(true);
     expect(isUnitDifferenceOne("-2.0", "1.0")).toBe(false);
     expect(isUnitDifferenceOne("-1.0", "0.0")).toBe(true);
+  });
+});
+
+describe("warnIncorrectOldVersion", () => {
+  const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+  afterEach(() => {
+    warnSpy.mockClear();
+  });
+
+  it("warns when oldVersion is greater than newVersion", () => {
+    warnIncorrectOldVersion("2.0.0", "1.9.9");
+
+    expect(warnSpy).toHaveBeenCalledOnce();
+    expect(warnSpy).toHaveBeenCalledWith(
+      "Warning: The previous version `2.0.0` is greater than the new version `1.9.9`",
+    );
+  });
+
+  it("does not warn when oldVersion is less than newVersion", () => {
+    warnIncorrectOldVersion("1.2.3", "1.3.0");
+
+    expect(warnSpy).not.toHaveBeenCalled();
+  });
+
+  it("does not warn when versions are equal", () => {
+    warnIncorrectOldVersion("1.2.3", "1.2.3");
+
+    expect(warnSpy).not.toHaveBeenCalled();
+  });
+
+  it("handles different version lengths correctly", () => {
+    warnIncorrectOldVersion("1.2.1", "1.2");
+
+    expect(warnSpy).toHaveBeenCalledOnce();
+  });
+
+  it("treats missing version segments as zero", () => {
+    warnIncorrectOldVersion("1.2", "1.2.0");
+
+    expect(warnSpy).not.toHaveBeenCalled();
+  });
+
+  it("handles single-number versions", () => {
+    warnIncorrectOldVersion("2", "10");
+
+    expect(warnSpy).not.toHaveBeenCalled();
+  });
+
+  it("handles non-numeric parts gracefully", () => {
+    warnIncorrectOldVersion("1.a.0", "1.0.0");
+
+    expect(warnSpy).not.toHaveBeenCalled();
   });
 });

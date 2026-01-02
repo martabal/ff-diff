@@ -5,7 +5,7 @@ import { diff } from "$commands/diff";
 import { unusedPrefs } from "$commands/unused-prefs";
 import { getArgumentValue, parseKeepArgument } from "$lib/cli";
 import { getFirefoxReleaseProfilePath } from "$lib/firefox";
-import { startsWithNumberDotNumber } from "$lib/helpers";
+import { startsWithNumberDotNumber, warnIncorrectOldVersion } from "$lib/helpers";
 import { styleText } from "node:util";
 
 interface SourceCleanupOptions {
@@ -165,6 +165,7 @@ abstract class BaseCli {
   public readonly commands: readonly CliCommand[];
   public readonly options: readonly CliOption[];
   protected fail: boolean;
+  protected error?: string;
 
   constructor(
     fail: boolean = true,
@@ -206,6 +207,9 @@ abstract class BaseCli {
     }
 
     if (this.fail) {
+      if (this.error) {
+        console.error(this.error);
+      }
       process.exit(1);
     }
   }
@@ -392,17 +396,31 @@ class DiffCommand extends BaseCli {
   public async entrypoint(): Promise<void> {
     const [, , , oldVersion, newVersion] = process.argv;
 
-    if (
-      !oldVersion ||
-      !newVersion ||
-      !startsWithNumberDotNumber(oldVersion) ||
-      !startsWithNumberDotNumber(newVersion)
-    ) {
+    if (!oldVersion || !newVersion) {
+      this.usage();
+    }
+
+    const invalidVersions = [];
+
+    if (!startsWithNumberDotNumber(oldVersion)) {
+      invalidVersions.push(`"${oldVersion}"`);
+    }
+
+    if (!startsWithNumberDotNumber(newVersion)) {
+      invalidVersions.push(`"${newVersion}"`);
+    }
+
+    if (invalidVersions.length > 0) {
+      this.error =
+        `Invalid version format for ${invalidVersions.join(" and ")}. ` +
+        `Expected version in format "major.minor" or "major.minor<betaVersion>" ` +
+        `(e.g. 142.0 or 142.0b1).`;
       this.usage();
     }
 
     const compareUserJS = getArgumentValue(CLI_ARGS.COMPARE_USERJS);
     const hideCommonChangedValues = process.argv.includes(CLI_ARGS.HIDE_COMMON_CHANGED_VALUES);
+    warnIncorrectOldVersion(oldVersion, newVersion);
     await diff({
       compareUserJS,
       oldVersion,

@@ -1,7 +1,6 @@
 import { existsSync, readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
-import { exit } from "node:process";
 import { Browser, Builder, type WebDriver } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/firefox";
 
@@ -102,7 +101,7 @@ export const getPrefs = async (options: FirefoxInstallOptions): Promise<Map<stri
   });
   if (prefsArray.length === 0) {
     console.error("no preferences detected");
-    exit(1);
+    process.exit(1);
   }
   const prefs = new Map<string, Pref>(prefsArray.map(({ key, value }) => [key, value]));
 

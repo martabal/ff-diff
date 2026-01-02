@@ -23,6 +23,7 @@ export const VERSION_ARGS = {
   longOption: "--version",
   doc: "Print version info and exit",
 };
+
 export const VERSION_ARGS_VALUES = Object.values(VERSION_ARGS);
 export const HELP_ARGS = {
   shortOption: "-h",
@@ -35,6 +36,7 @@ export const CLI_ARGS = {
   CLEAN_ARCHIVES: "--clean-archives",
   CLEAN_SOURCES: "--clean-sources",
   COMPARE_USERJS: "--compare-userjs",
+  DEBUG_FIREFOX_CAPABILITIES: "--debug-firefox-version",
   DO_NOT_PRINT_IN_CONSOLE: "--do-not-print-in-console",
   FIREFOX_PATH: "--firefox-path",
   FIREFOX_VERSION: "--firefox-version",
@@ -80,6 +82,11 @@ const printAndSave: CliOption[] = [
     doc: "Save output to a file",
   },
 ];
+
+const debugFirefoxCapabilities: CliOption = {
+  longOption: CLI_ARGS.DEBUG_FIREFOX_CAPABILITIES,
+  doc: "Print firefox capabilities",
+};
 
 const pathToFirefox: CliOption = {
   longOption: `${CLI_ARGS.FIREFOX_PATH} ${CLI_VALUES.PATH_USAGE}`,
@@ -295,6 +302,7 @@ class DefaultPrefsUserJSCommand extends BaseCli {
     forceDefaultFFProfile,
     FFProfilePath,
     FFVersion,
+    debugFirefoxCapabilities,
   ];
 
   constructor(fail: boolean = true) {
@@ -325,7 +333,12 @@ class DefaultPrefsCommand extends BaseCli {
   public static readonly SMALL_DESCRIPTION = undefined;
   public static readonly DESCRIPTION = `Get a list of all default prefs`;
   public static readonly COMMANDS: readonly CliCommand[] = [];
-  public static readonly OPTIONS: readonly CliOption[] = [...printAndSave, pathToFirefox];
+  public static readonly OPTIONS: readonly CliOption[] = [
+    ...printAndSave,
+    pathToFirefox,
+    FFVersion,
+    debugFirefoxCapabilities,
+  ];
 
   constructor(fail: boolean = true) {
     super(
@@ -337,12 +350,18 @@ class DefaultPrefsCommand extends BaseCli {
   }
 
   public async entrypoint(): Promise<void> {
-    const install = getFirefoxReleaseProfilePath();
-    if (install === null) {
+    const firefoxInstallPath = getArgumentValue(CLI_ARGS.FIREFOX_PATH);
+    const firefoxVersion = getArgumentValue(CLI_ARGS.FIREFOX_VERSION);
+    if (firefoxInstallPath && firefoxVersion) {
+      exitWithError(CLI_ARGS.FIREFOX_VERSION, CLI_ARGS.PROFILE_PATH);
+    }
+    const profilePath = firefoxInstallPath ?? getFirefoxReleaseProfilePath()?.profilePath;
+    if (profilePath === undefined) {
       this.usage();
       return;
     }
-    await getDefaultPrefs(install.profilePath);
+
+    await getDefaultPrefs(profilePath, firefoxVersion);
   }
 }
 
@@ -387,6 +406,7 @@ class DiffCommand extends BaseCli {
       longOption: CLI_ARGS.HIDE_COMMON_CHANGED_VALUES,
       doc: "Hide the common changed values",
     },
+    debugFirefoxCapabilities,
   ];
 
   constructor(fail: boolean = true) {
@@ -440,6 +460,7 @@ class UnusedPrefCommand extends BaseCli {
     forceDefaultFFProfile,
     FFProfilePath,
     FFVersion,
+    debugFirefoxCapabilities,
   ];
 
   constructor(fail: boolean = true) {

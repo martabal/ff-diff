@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { printOptions } from "$cli";
 import { getFirefoxVersion, getPrefs, type Pref } from "$lib/firefox";
-import { defaultsDir } from "$lib/install";
+import { defaultsDir, getPrefsFromInstalledVersion, installDir } from "$lib/install";
 import { gettingPrefsMessage, gettingVersionMessage } from "$lib/helpers";
 
 const formatPrefs = (entries: [string, Pref][], template: (k: string, v: Pref) => string) =>
@@ -18,7 +18,7 @@ const handleOutput = (sortedEntries: [string, Pref][], version: string, hash?: s
     if (!existsSync(defaultsDir)) mkdirSync(defaultsDir, { recursive: true });
     const filename = (hash ? `${hash}-` : "") + `${version}-user.js`;
     const diffsPath = join(defaultsDir, filename);
-    console.log(`Writing diffs to ${diffsPath}`);
+    console.log(`\nWriting diffs to ${diffsPath}`);
 
     const fileContent = formatPrefs(
       sortedEntries,
@@ -28,13 +28,20 @@ const handleOutput = (sortedEntries: [string, Pref][], version: string, hash?: s
   }
 };
 
-export const getDefaultPrefs = async (profilePath: string) => {
+export const getDefaultPrefs = async (profilePath: string, firefoxVersion?: string) => {
   console.log(gettingPrefsMessage);
-  console.log(gettingVersionMessage);
+  if (!firefoxVersion) {
+    console.log(gettingVersionMessage);
+  }
 
   const [prefsFirefox, version] = await Promise.all([
-    getPrefs({ profilePath }),
-    getFirefoxVersion({ profilePath }),
+    firefoxVersion
+      ? getPrefsFromInstalledVersion(
+          firefoxVersion,
+          join(installDir, firefoxVersion, "firefox", "firefox"),
+        )
+      : getPrefs({ profilePath }),
+    firefoxVersion ?? getFirefoxVersion({ profilePath }),
   ]);
   const sortedEntries = [...prefsFirefox.entries()].toSorted(([a], [b]) => a.localeCompare(b));
   handleOutput(sortedEntries, version);

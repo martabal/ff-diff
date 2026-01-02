@@ -4,6 +4,10 @@ on:
   release:
     types: [published]
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -32,14 +36,6 @@ jobs:
 
       - name: Build
         run: pnpm run build:prod
-
-      - name: Set npmrc
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
-          echo "registry=https://registry.npmjs.org" >> ~/.npmrc
-          echo "always-auth=true" >> ~/.npmrc
 
       - name: Publish package
         run: pnpm publish --access public --no-git-checks

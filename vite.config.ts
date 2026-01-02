@@ -1,5 +1,5 @@
-import { defineConfig } from "rolldown-vite";
-import pkg from "./package.json";
+import { defineConfig } from "vite";
+import pkg from "./package.json" with { type: "json" };
 import path from "node:path";
 
 const input = process.env.USAGE

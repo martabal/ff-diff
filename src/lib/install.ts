@@ -3,7 +3,6 @@ import { execSync } from "node:child_process";
 import { createWriteStream, existsSync, mkdirSync, readdirSync, rmSync } from "node:fs";
 import { arch, homedir, platform } from "node:os";
 import { join } from "node:path";
-import { exit } from "node:process";
 import { pipeline, Readable } from "node:stream";
 import { promisify } from "node:util";
 import { getPrefs, Pref } from "$lib/firefox";
@@ -45,7 +44,7 @@ const getPlatformOS = (): Host => {
   const platformOS = mapPlatformArch.get(key);
   if (platformOS === undefined) {
     console.error(`Unsupported architecture/OS: ${key}`);
-    exit(1);
+    process.exit(1);
   }
   return { os, platformOS, architecture };
 };

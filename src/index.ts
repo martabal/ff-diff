@@ -7,6 +7,7 @@ import {
   hasAnyArg,
   ALL_COMMANDS,
 } from "$cli";
+import { exit } from "$lib/helpers";
 import { styleText } from "node:util";
 
 const showVersion = (): void => {
@@ -48,8 +49,7 @@ const main = async (): Promise<void> => {
 };
 
 const printErrorAndQuit = (message: string, err?: Error): void => {
-  console.error(err ? `${message} ${err}` : message);
-  process.exit(1);
+  exit(err ? `${message} ${err}` : message);
 };
 
 const mainWithErrorHandling = async (): Promise<void> => {

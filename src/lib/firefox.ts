@@ -2,9 +2,9 @@ import { CLI_ARGS } from "$cli";
 import { existsSync, readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
-import { styleText } from "node:util";
 import { Browser, Builder, type WebDriver } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/firefox";
+import { exit, getPathType } from "$lib/helpers";
 
 export interface FirefoxPref {
   key: string;
@@ -54,7 +54,7 @@ interface FirefoxGlobal {
 
 export const installedMozilla = ".mozilla/firefox";
 
-const createDriver = (opts: FirefoxInstallOptions): Promise<WebDriver> => {
+const createDriver = async (opts: FirefoxInstallOptions): Promise<WebDriver> => {
   const options = new Options().addArguments("-headless");
 
   if (opts.profilePath) {
@@ -62,9 +62,11 @@ const createDriver = (opts: FirefoxInstallOptions): Promise<WebDriver> => {
   }
 
   if (opts.executablePath) {
+    const pathType = await getPathType(opts.executablePath);
     if (!existsSync(opts.executablePath)) {
-      console.error(styleText("red", `${opts.executablePath} does not exist`));
-      process.exit(1);
+      exit(`${opts.executablePath} does not exist`);
+    } else if (pathType !== "file") {
+      exit(`${opts.executablePath} is not a file`);
     }
     options.setBinary(opts.executablePath);
   }
@@ -106,8 +108,7 @@ export const getPrefs = async (options: FirefoxInstallOptions): Promise<Map<stri
     return prefs;
   });
   if (prefsArray.length === 0) {
-    console.error("no preferences detected");
-    process.exit(1);
+    exit("no preferences detected");
   }
 
   const prefs = new Map<string, Pref>(prefsArray.map(({ key, value }) => [key, value]));
@@ -165,7 +166,7 @@ export const getFirefoxVersion = async (options: FirefoxInstallOptions): Promise
   return browserVersion;
 };
 
-export const getFirefoxReleaseProfilePath = (): InstallFirefox | null => {
+export const getFirefoxReleaseProfilePath = async (): Promise<InstallFirefox | null> => {
   const getPath = (): InstallFirefox | null => {
     return {
       profilePath: `${mozillaPath}/${currentSection["Path"]}`,
@@ -176,8 +177,12 @@ export const getFirefoxReleaseProfilePath = (): InstallFirefox | null => {
   const mozillaPath = join(homedir(), installedMozilla);
   const iniPath = join(mozillaPath, "profiles.ini");
 
+  const pathType = await getPathType(iniPath);
+
   if (!existsSync(iniPath)) {
     return null;
+  } else if (pathType !== "file") {
+    exit(`${iniPath} is not a file`);
   }
 
   const iniContent = readFileSync(iniPath, "utf8");
@@ -203,12 +208,19 @@ export const getFirefoxReleaseProfilePath = (): InstallFirefox | null => {
   return null;
 };
 
-export const getFirefoxDefaultProfile = (): InstallFirefox => {
-  const firefoxPath = getFirefoxReleaseProfilePath();
+export const getFirefoxDefaultProfile = async (): Promise<InstallFirefox> => {
+  const firefoxPath = await getFirefoxReleaseProfilePath();
 
-  if (firefoxPath === null || !existsSync(firefoxPath.profilePath)) {
+  if (firefoxPath === null) {
     console.error("Can't find installed firefox version");
     process.exit(1);
   }
+
+  const type = await getPathType(firefoxPath.profilePath);
+
+  if (type !== "file") {
+    exit("Firefox profile path is not a file");
+  }
+
   return firefoxPath;
 };

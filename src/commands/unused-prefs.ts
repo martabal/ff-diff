@@ -11,7 +11,7 @@ export const unusedPrefs = async (opts: UserJSBasedCommands) => {
   const userJsContent = readFileSync(opts.compareUserjs, "utf8");
 
   const profilePath = opts.forceDefaultProfile
-    ? getFirefoxDefaultProfile().profilePath
+    ? (await getFirefoxDefaultProfile()).profilePath
     : opts.profilePath;
   console.log(gettingPrefsMessage);
 

@@ -1,12 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { getArgumentValue, getArgumentValues } from "$lib/cli";
+import * as helpers from "$lib/helpers";
 
-const expectExitError = "process.exit";
-const mockProcessExit = vi.spyOn(process, "exit").mockImplementation(() => {
+const expectExitError = `process.exit unexpectedly called with "1"`;
+
+// Mock the exit function from helpers
+const mockExit = vi.spyOn(helpers, "exit").mockImplementation(() => {
   throw new Error(expectExitError);
 });
-
-const mockConsoleError = vi.spyOn(console, "error").mockImplementation(() => {});
 
 describe("getArgumentValue", () => {
   beforeEach(() => {
@@ -19,36 +20,34 @@ describe("getArgumentValue", () => {
     const result = getArgumentValue("--config");
 
     expect(result).toBe("config.json");
-    expect(mockProcessExit).not.toHaveBeenCalled();
+    expect(mockExit).not.toHaveBeenCalled();
   });
 
-  it("should return null when argument does not exist", () => {
+  it("should return undefined when argument does not exist", () => {
     process.argv = ["node", "script.js", "--other", "value"];
 
     const result = getArgumentValue("--config");
 
     expect(result).toBe(undefined);
-    expect(mockProcessExit).not.toHaveBeenCalled();
+    expect(mockExit).not.toHaveBeenCalled();
   });
 
-  it("should throw error when argument is at the end of argv", () => {
+  it("should call exit when argument is at the end of argv", () => {
     process.argv = ["node", "script.js", "--config"];
 
     expect(() => getArgumentValue("--config")).toThrow(expectExitError);
-    expect(mockConsoleError).toHaveBeenCalledWith(
+    expect(mockExit).toHaveBeenCalledWith(
       'Error: Argument "--config" is provided but has no value.',
     );
-    expect(mockProcessExit).toHaveBeenCalledWith(1);
   });
 
-  it("should throw error when argument value starts with --", () => {
+  it("should call exit when argument value starts with --", () => {
     process.argv = ["node", "script.js", "--config", "--another-flag"];
 
     expect(() => getArgumentValue("--config")).toThrow(expectExitError);
-    expect(mockConsoleError).toHaveBeenCalledWith(
+    expect(mockExit).toHaveBeenCalledWith(
       'Error: Argument "--config" is provided but has no value.',
     );
-    expect(mockProcessExit).toHaveBeenCalledWith(1);
   });
 
   it("should return the correct value when multiple arguments exist", () => {
@@ -57,7 +56,7 @@ describe("getArgumentValue", () => {
     const result = getArgumentValue("--config");
 
     expect(result).toBe("config.json");
-    expect(mockProcessExit).not.toHaveBeenCalled();
+    expect(mockExit).not.toHaveBeenCalled();
   });
 
   it("should return the first occurrence when argument appears multiple times", () => {
@@ -66,7 +65,7 @@ describe("getArgumentValue", () => {
     const result = getArgumentValue("--config");
 
     expect(result).toBe("first.json");
-    expect(mockProcessExit).not.toHaveBeenCalled();
+    expect(mockExit).not.toHaveBeenCalled();
   });
 
   it("should handle arguments with special characters", () => {
@@ -75,7 +74,7 @@ describe("getArgumentValue", () => {
     const result = getArgumentValue("--path");
 
     expect(result).toBe("/path/to/file.json");
-    expect(mockProcessExit).not.toHaveBeenCalled();
+    expect(mockExit).not.toHaveBeenCalled();
   });
 
   it("should handle empty string values", () => {
@@ -84,7 +83,7 @@ describe("getArgumentValue", () => {
     const result = getArgumentValue("--config");
 
     expect(result).toBe("");
-    expect(mockProcessExit).not.toHaveBeenCalled();
+    expect(mockExit).not.toHaveBeenCalled();
   });
 
   it("should handle arguments with equals-like values", () => {
@@ -93,7 +92,7 @@ describe("getArgumentValue", () => {
     const result = getArgumentValue("--url");
 
     expect(result).toBe("http://example.com?param=value");
-    expect(mockProcessExit).not.toHaveBeenCalled();
+    expect(mockExit).not.toHaveBeenCalled();
   });
 
   it("should handle single character flags", () => {
@@ -102,17 +101,14 @@ describe("getArgumentValue", () => {
     const result = getArgumentValue("-v");
 
     expect(result).toBe("1.0.0");
-    expect(mockProcessExit).not.toHaveBeenCalled();
+    expect(mockExit).not.toHaveBeenCalled();
   });
 
-  it("should throw error when single character flag has no value", () => {
+  it("should call exit when single character flag has no value", () => {
     process.argv = ["node", "script.js", "", "-v"];
 
     expect(() => getArgumentValue("-v")).toThrow(expectExitError);
-    expect(mockConsoleError).toHaveBeenCalledWith(
-      'Error: Argument "-v" is provided but has no value.',
-    );
-    expect(mockProcessExit).toHaveBeenCalledWith(1);
+    expect(mockExit).toHaveBeenCalledWith('Error: Argument "-v" is provided but has no value.');
   });
 });
 
@@ -194,8 +190,11 @@ describe("getArgumentValues", () => {
     expect(result).toEqual(["urgent"]);
   });
 
-  it("should handle mixed valid and invalid occurrences", () => {
+  it("should call exit for mixed valid and invalid occurrences", () => {
     process.argv = ["node", "script.js", "--files", "file1.js", "--files"];
     expect(() => getArgumentValues("--files")).toThrow(expectExitError);
+    expect(mockExit).toHaveBeenCalledWith(
+      'Error: Argument "--files" is provided but has no value.',
+    );
   });
 });

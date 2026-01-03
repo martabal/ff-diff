@@ -187,7 +187,7 @@ describe("unusedPrefs", () => {
     const mockDefaultProfile = { profilePath: "/default/profile" };
 
     vi.mocked(readFileSync).mockReturnValue(mockUserJsContent);
-    vi.mocked(firefox.getFirefoxDefaultProfile).mockReturnValue(mockDefaultProfile);
+    vi.mocked(firefox.getFirefoxDefaultProfile).mockResolvedValue(mockDefaultProfile);
     vi.mocked(firefox.getPrefs).mockResolvedValue(mockFirefoxPrefs);
 
     await unusedPrefs({

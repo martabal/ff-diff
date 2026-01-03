@@ -5,7 +5,7 @@ import { diff } from "$commands/diff";
 import { unusedPrefs } from "$commands/unused-prefs";
 import { getArgumentValue, parseKeepArgument } from "$lib/cli";
 import { getFirefoxReleaseProfilePath } from "$lib/firefox";
-import { startsWithNumberDotNumber, warnIncorrectOldVersion } from "$lib/helpers";
+import { exit, startsWithNumberDotNumber, warnIncorrectOldVersion } from "$lib/helpers";
 import { styleText } from "node:util";
 
 interface SourceCleanupOptions {
@@ -36,7 +36,7 @@ export const CLI_ARGS = {
   CLEAN_ARCHIVES: "--clean-archives",
   CLEAN_SOURCES: "--clean-sources",
   COMPARE_USERJS: "--compare-userjs",
-  DEBUG_FIREFOX_CAPABILITIES: "--debug-firefox-version",
+  DEBUG_FIREFOX_CAPABILITIES: "--debug-firefox-capabilities",
   DO_NOT_PRINT_IN_CONSOLE: "--do-not-print-in-console",
   FIREFOX_PATH: "--firefox-path",
   FIREFOX_VERSION: "--firefox-version",
@@ -109,8 +109,7 @@ const FFVersion: CliOption = {
 };
 
 const exitWithError = (firstArg: string, secondArg: string) => {
-  console.error(`You can't have ${firstArg} and ${secondArg} set at the same time`);
-  process.exit(1);
+  exit(`You can't have ${firstArg} and ${secondArg} set at the same time`);
 };
 
 const getUserJSBasedCommands = () => {
@@ -214,10 +213,7 @@ abstract class BaseCli {
     }
 
     if (this.fail) {
-      if (this.error) {
-        console.error(this.error);
-      }
-      process.exit(1);
+      exit(this.error);
     }
   }
 
@@ -355,7 +351,7 @@ class DefaultPrefsCommand extends BaseCli {
     if (firefoxInstallPath && firefoxVersion) {
       exitWithError(CLI_ARGS.FIREFOX_VERSION, CLI_ARGS.PROFILE_PATH);
     }
-    const profilePath = firefoxInstallPath ?? getFirefoxReleaseProfilePath()?.profilePath;
+    const profilePath = firefoxInstallPath ?? (await getFirefoxReleaseProfilePath())?.profilePath;
     if (profilePath === undefined) {
       this.usage();
       return;

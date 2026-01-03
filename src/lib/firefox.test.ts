@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { homedir } from "node:os";
 import { existsSync, readFileSync } from "node:fs";
 import { getFirefoxReleaseProfilePath, installedMozilla } from "$lib/firefox";
+import { getPathType } from "./helpers";
 
 vi.mock("fs");
 vi.mock("os");
@@ -11,6 +12,11 @@ vi.mock("path");
 vi.mock("./install", () => ({
   getPlatform: () => "linux",
   getArchitecture: () => "x86_64",
+}));
+
+vi.mock("$lib/helpers", () => ({
+  getPathType: vi.fn(),
+  exit: vi.fn(),
 }));
 
 describe("getFirefoxReleaseProfilePath", () => {
@@ -29,17 +35,17 @@ describe("getFirefoxReleaseProfilePath", () => {
     vi.restoreAllMocks();
   });
 
-  it("should return null when profiles.ini does not exist", () => {
+  it("should return null when profiles.ini does not exist", async () => {
     vi.mocked(existsSync).mockReturnValue(false);
 
-    const result = getFirefoxReleaseProfilePath();
+    const result = await getFirefoxReleaseProfilePath();
 
     expect(result).toBeNull();
     expect(existsSync).toHaveBeenCalledWith(mockIniPath);
     expect(readFileSync).not.toHaveBeenCalled();
   });
 
-  it("should return the correct path when release profile exists", () => {
+  it("should return the correct path when release profile exists", async () => {
     const mockIniContent = `[Install7OQB4VLD66BGRBRQ]
 Default=def456.default-release
 Locked=1
@@ -62,7 +68,7 @@ Version=2`;
     vi.mocked(existsSync).mockReturnValue(true);
     vi.mocked(readFileSync).mockReturnValue(mockIniContent);
 
-    const result = getFirefoxReleaseProfilePath();
+    const result = await getFirefoxReleaseProfilePath();
 
     expect(result).toStrictEqual({
       profilePath: `${mockMozillaPath}/def456.default-release`,
@@ -72,7 +78,7 @@ Version=2`;
     expect(readFileSync).toHaveBeenCalledWith(mockIniPath, "utf8");
   });
 
-  it("should return null when no release profile exists", () => {
+  it("should return null when no release profile exists", async () => {
     const mockIniContent = `[Profile0]
 Name=default
 IsRelative=1
@@ -90,12 +96,12 @@ Version=2`;
     vi.mocked(existsSync).mockReturnValue(true);
     vi.mocked(readFileSync).mockReturnValue(mockIniContent);
 
-    const result = getFirefoxReleaseProfilePath();
+    const result = await getFirefoxReleaseProfilePath();
 
     expect(result).toBeNull();
   });
 
-  it("should return null when release profile has no Path", () => {
+  it("should return null when release profile has no Path", async () => {
     const mockIniContent = `[Profile0]
 Name=release
 IsRelative=1
@@ -108,21 +114,21 @@ Version=2
     vi.mocked(existsSync).mockReturnValue(true);
     vi.mocked(readFileSync).mockReturnValue(mockIniContent);
 
-    const result = getFirefoxReleaseProfilePath();
+    const result = await getFirefoxReleaseProfilePath();
 
     expect(result).toBeNull();
   });
 
-  it("should handle empty profiles.ini file", () => {
+  it("should handle empty profiles.ini file", async () => {
     vi.mocked(existsSync).mockReturnValue(true);
     vi.mocked(readFileSync).mockReturnValue("");
 
-    const result = getFirefoxReleaseProfilePath();
+    const result = await getFirefoxReleaseProfilePath();
 
     expect(result).toBeNull();
   });
 
-  it("should handle ini content with extra whitespace", () => {
+  it("should handle ini content with extra whitespace", async () => {
     const mockIniContent = `[Profile0]
 Name = release  
 IsRelative = 1
@@ -135,7 +141,7 @@ Version=2`;
     vi.mocked(existsSync).mockReturnValue(true);
     vi.mocked(readFileSync).mockReturnValue(mockIniContent);
 
-    const result = getFirefoxReleaseProfilePath();
+    const result = await getFirefoxReleaseProfilePath();
 
     expect(result).toStrictEqual({
       profilePath: `${mockMozillaPath}/abc123.release`,
@@ -143,7 +149,7 @@ Version=2`;
     });
   });
 
-  it("should return the first matching release profile when multiple exist", () => {
+  it("should return the first matching release profile when multiple exist", async () => {
     const mockIniContent = `[Profile0]
 Name=first-release
 IsRelative=1
@@ -160,8 +166,9 @@ Version=2`;
 
     vi.mocked(existsSync).mockReturnValue(true);
     vi.mocked(readFileSync).mockReturnValue(mockIniContent);
+    vi.mocked(getPathType).mockResolvedValue("file");
 
-    const result = getFirefoxReleaseProfilePath();
+    const result = await getFirefoxReleaseProfilePath();
 
     expect(result).toStrictEqual({
       profilePath: `${mockMozillaPath}/first.release`,
@@ -169,7 +176,7 @@ Version=2`;
     });
   });
 
-  it("should handle case sensitivity in profile names", () => {
+  it("should handle case sensitivity in profile names", async () => {
     const mockIniContent = `
 [Profile0]
 Name=Release
@@ -183,7 +190,7 @@ Version=2`;
     vi.mocked(existsSync).mockReturnValue(true);
     vi.mocked(readFileSync).mockReturnValue(mockIniContent);
 
-    const result = getFirefoxReleaseProfilePath();
+    const result = await getFirefoxReleaseProfilePath();
 
     expect(result).toBeNull();
   });

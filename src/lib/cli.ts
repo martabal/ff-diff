@@ -1,8 +1,8 @@
 import { CLI_ARGS } from "$cli";
+import { exit } from "$lib/helpers";
 
 const argumentWithoutValue = (argument: string) => {
-  console.error(`Error: Argument "${argument}" is provided but has no value.`);
-  process.exit(1);
+  exit(`Error: Argument "${argument}" is provided but has no value.`);
 };
 
 export const getArgumentValue = (argument: string): undefined | string => {
@@ -55,8 +55,7 @@ export const parseKeepArgument = (): number[] => {
   const versions = args.map((value) => {
     const version = Number.parseInt(value, 10);
     if (isNaN(version)) {
-      console.error(`Error: Invalid version '${value}' provided.`);
-      process.exit(1);
+      argumentWithoutValue(`Error: Invalid version '${value}' provided.`);
     }
     return version;
   });

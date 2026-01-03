@@ -1,3 +1,5 @@
+import { ENOENT } from "node:constants";
+import { stat } from "node:fs/promises";
 import { styleText } from "node:util";
 
 export const startsWithNumberDotNumber = (str: string): boolean => {
@@ -52,4 +54,29 @@ export const warnIncorrectOldVersion = (oldVersion: string, newVersion: string):
       return;
     }
   }
+};
+
+export const getPathType = async (
+  path: string,
+): Promise<"file" | "directory" | "other" | "missing"> => {
+  try {
+    const s = await stat(path);
+
+    if (s.isFile()) return "file";
+    if (s.isDirectory()) return "directory";
+    return "other";
+  } catch (err) {
+    if ((err as NodeJS.ErrnoException).errno === ENOENT) {
+      return "missing";
+    }
+    console.error(err);
+    process.exit(1);
+  }
+};
+
+export const exit = (msg?: string): never => {
+  if (msg) {
+    console.error(styleText("red", msg));
+  }
+  process.exit(1);
 };

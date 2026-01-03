@@ -10,7 +10,7 @@ import {
   comparePrefs,
 } from "$lib/firefox";
 import { type AllFormatted, Format, formatTicks, formatValue, type PrintDiff } from "$lib/format";
-import { isUnitDifferenceOne } from "$lib/helpers";
+import { exit, getPathType, isUnitDifferenceOne } from "$lib/helpers";
 import { commonChangedValuesForKeys, parseUserPrefs } from "$lib/prefs";
 import { diffsDir, getPrefsFromInstalledVersion, installDir } from "$lib/install";
 import { styleText } from "node:util";
@@ -199,7 +199,7 @@ const generateOutput = (format: Format, sections: PrintDiff[], newVersion: strin
   return lines;
 };
 
-const handleOutputDiff = (sections: PrintDiff[], newVersion: string, oldVersion: string) => {
+const handleOutputDiff = async (sections: PrintDiff[], newVersion: string, oldVersion: string) => {
   if (!printOptions.doNotPrintConsole) {
     const outputTXT = generateOutput(Format.Text, sections, newVersion);
     console.log(outputTXT.join("\n"));
@@ -207,9 +207,12 @@ const handleOutputDiff = (sections: PrintDiff[], newVersion: string, oldVersion:
   if (printOptions.saveOutput) {
     const outputMD = generateOutput(Format.Markdown, sections, newVersion);
     const title = `# Diffs Firefox ${oldVersion}-${newVersion}\n\n`;
+    const pathType = await getPathType(diffsDir);
     if (!existsSync(diffsDir)) {
       console.log("creating diffs directory");
       mkdirSync(diffsDir);
+    } else if (pathType !== "directory") {
+      exit(`there's already something here \`${diffsDir}\``);
     }
     const diffsPath = join(diffsDir, `${oldVersion}-${newVersion}.md`);
     console.log(`\nwriting diffs to ${diffsPath}`);
@@ -219,9 +222,11 @@ const handleOutputDiff = (sections: PrintDiff[], newVersion: string, oldVersion:
 
 export const diff = async (args: Diff) => {
   console.info(`Installing Firefox ${args.oldVersion} and ${args.newVersion} in "${installDir}"`);
-
+  const pathType = await getPathType(installDir);
   if (!existsSync(installDir)) {
     mkdirSync(installDir, { recursive: true });
+  } else if (pathType !== "directory") {
+    console.error(`there's already something here \`${installDir}\``);
   }
 
   const versions = [args.oldVersion, args.newVersion];
@@ -260,7 +265,7 @@ export const diff = async (args: Diff) => {
 
   const sections = getSections(configDiff);
 
-  handleOutputDiff(sections, args.newVersion, args.oldVersion);
+  await handleOutputDiff(sections, args.newVersion, args.oldVersion);
 
   if (args.compareUserJS) {
     handleCompareUsersJS(args.compareUserJS, configDiff, args.oldVersion, args.newVersion);

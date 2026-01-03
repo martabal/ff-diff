@@ -11,7 +11,7 @@ import {
 import { defaultsUserJSDir, getPrefsFromInstalledVersion, installDir } from "$lib/install";
 import { Format, formatTicks, formatValue } from "$lib/format";
 import { parseUserPrefs } from "$lib/prefs";
-import { gettingPrefsMessage, gettingVersionMessage } from "$lib/helpers";
+import { exit, getPathType, gettingPrefsMessage, gettingVersionMessage } from "$lib/helpers";
 import { UserJSBasedCommands } from "$commands";
 import { type InspectColor, styleText } from "node:util";
 
@@ -72,7 +72,7 @@ export const defaultPrefsUserJS = async (opts: UserJSBasedCommands) => {
   const userJsContent = readFileSync(opts.compareUserjs, "utf8");
 
   const profilePath = opts.forceDefaultProfile
-    ? getFirefoxDefaultProfile().profilePath
+    ? (await getFirefoxDefaultProfile()).profilePath
     : opts.profilePath;
   console.log(gettingPrefsMessage);
   console.log(gettingVersionMessage);
@@ -129,9 +129,12 @@ export const defaultPrefsUserJS = async (opts: UserJSBasedCommands) => {
   if (printOptions.saveOutput) {
     const outputMD = generateOutput(Format.Markdown, wrongDefault, alreadyDefault);
     const title = `# Default in your user.js and in Firefox ${version}\n\n`;
+    const pathType = await getPathType(defaultsUserJSDir);
     if (!existsSync(defaultsUserJSDir)) {
       console.log("creating diffs directory");
       mkdirSync(defaultsUserJSDir);
+    } else if (pathType !== "directory") {
+      exit(`there's already something here \`${defaultsUserJSDir}\``);
     }
     const diffsPath = join(defaultsUserJSDir, `default-userjs-${version}.md`);
     console.log(`${printOptions.doNotPrintConsole ? "" : "\n"}writing diffs to ${diffsPath}`);

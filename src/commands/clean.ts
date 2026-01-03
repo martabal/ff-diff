@@ -2,6 +2,7 @@ import { readdir, rm } from "node:fs/promises";
 import { join } from "node:path";
 import { keepOptions } from "$cli";
 import { installDir } from "$lib/install";
+import { exit } from "$lib/helpers";
 
 export const clean = async (keptVersions: number[]) => {
   try {
@@ -40,7 +41,6 @@ export const clean = async (keptVersions: number[]) => {
       console.log("No archives/sources has been removed");
     }
   } catch (error) {
-    console.error("Error reading dist/ directory:", error);
-    process.exit(1);
+    exit(`Error reading dist/ directory: ${String(error)}`);
   }
 };

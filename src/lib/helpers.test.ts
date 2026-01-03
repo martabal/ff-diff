@@ -1,9 +1,14 @@
-import { describe, it, expect, vi, afterEach } from "vitest";
+import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
 import {
+  exit,
+  getPathType,
   isUnitDifferenceOne,
   startsWithNumberDotNumber,
   warnIncorrectOldVersion,
 } from "$lib/helpers";
+import { ENOENT } from "node:constants";
+import type { Stats } from "fs";
+import { stat } from "fs/promises";
 
 describe("startsWithNumberDotNumber", () => {
   it('should return true for "1.0"', () => {
@@ -148,5 +153,106 @@ describe("warnIncorrectOldVersion", () => {
     warnIncorrectOldVersion("1.a.0", "1.0.0");
 
     expect(warnSpy).not.toHaveBeenCalled();
+  });
+});
+
+describe("getPathType", () => {
+  vi.mock("fs/promises", () => ({
+    stat: vi.fn(),
+  }));
+
+  const mockStat = vi.mocked(stat);
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+  it("returns 'file' for files", async () => {
+    const stats = {
+      isFile: () => true,
+      isDirectory: () => false,
+    } as Stats;
+
+    mockStat.mockResolvedValue(stats);
+
+    await expect(getPathType("file.txt")).resolves.toBe("file");
+  });
+
+  it("returns 'directory' for directories", async () => {
+    const stats = {
+      isFile: () => false,
+      isDirectory: () => true,
+    } as Stats;
+
+    mockStat.mockResolvedValue(stats);
+
+    await expect(getPathType("dir")).resolves.toBe("directory");
+  });
+
+  it("returns 'other' for non-file, non-directory", async () => {
+    const stats = {
+      isFile: () => false,
+      isDirectory: () => false,
+    } as Stats;
+
+    mockStat.mockResolvedValue(stats);
+
+    await expect(getPathType("socket")).resolves.toBe("other");
+  });
+
+  it("returns 'missing' when errno is ENOENT", async () => {
+    const err: NodeJS.ErrnoException = new Error("not found");
+    err.errno = ENOENT;
+
+    mockStat.mockRejectedValue(err);
+
+    await expect(getPathType("missing")).resolves.toBe("missing");
+  });
+
+  it("logs error and exits for unexpected errors", async () => {
+    const err: NodeJS.ErrnoException = new Error("EACCES");
+    err.errno = 13;
+
+    mockStat.mockRejectedValue(err);
+
+    const exitSpy = vi.spyOn(process, "exit").mockImplementation((() => null) as never);
+
+    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => null);
+
+    await getPathType("forbidden");
+
+    expect(consoleSpy).toHaveBeenCalledWith(err);
+    expect(exitSpy).toHaveBeenCalledWith(1);
+  });
+});
+
+describe("exit", () => {
+  let consoleErrorMock: ReturnType<typeof vi.fn>;
+  let processExitMock: ReturnType<typeof vi.fn>;
+
+  beforeEach(() => {
+    consoleErrorMock = vi.fn();
+    processExitMock = vi.fn();
+
+    vi.stubGlobal("console", { ...console, error: consoleErrorMock });
+    vi.stubGlobal("process", { ...process, exit: processExitMock });
+    vi.mock("./style", () => ({
+      styleText: vi.fn((color, msg) => `styled-${msg}`),
+    }));
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("calls process.exit(1) without message", () => {
+    exit();
+    expect(processExitMock).toHaveBeenCalledWith(1);
+    expect(consoleErrorMock).not.toHaveBeenCalled();
+  });
+
+  it("calls console.error and process.exit(1) with a message", () => {
+    exit("fatal error");
+    expect(consoleErrorMock).toHaveBeenCalledWith("fatal error");
+    expect(processExitMock).toHaveBeenCalledWith(1);
   });
 });

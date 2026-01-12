@@ -154,13 +154,31 @@ describe("warnIncorrectOldVersion", () => {
 
     expect(warnSpy).not.toHaveBeenCalled();
   });
+
+  it("handles old version has superior beta version but inferior minor version", () => {
+    warnIncorrectOldVersion("1.1b2", "1.2b1");
+
+    expect(warnSpy).not.toHaveBeenCalled();
+  });
+
+  it("handles old version has superior beta version but inferior minor version", () => {
+    warnIncorrectOldVersion("135.0b2", "136.0b1");
+
+    expect(warnSpy).not.toHaveBeenCalled();
+  });
+
+  it("handles old version has superior beta version", () => {
+    warnIncorrectOldVersion("135.0b2", "135.0b1");
+
+    expect(warnSpy).toHaveBeenCalledOnce();
+  });
 });
 
-describe("getPathType", () => {
-  vi.mock("fs/promises", () => ({
-    stat: vi.fn(),
-  }));
+vi.mock("fs/promises", () => ({
+  stat: vi.fn(),
+}));
 
+describe("getPathType", () => {
   const mockStat = vi.mocked(stat);
 
   afterEach(() => {
@@ -225,6 +243,10 @@ describe("getPathType", () => {
   });
 });
 
+vi.mock("./style", () => ({
+  styleText: vi.fn((color, msg) => `styled-${msg}`),
+}));
+
 describe("exit", () => {
   let consoleErrorMock: ReturnType<typeof vi.fn>;
   let processExitMock: ReturnType<typeof vi.fn>;
@@ -235,9 +257,6 @@ describe("exit", () => {
 
     vi.stubGlobal("console", { ...console, error: consoleErrorMock });
     vi.stubGlobal("process", { ...process, exit: processExitMock });
-    vi.mock("./style", () => ({
-      styleText: vi.fn((color, msg) => `styled-${msg}`),
-    }));
   });
 
   afterEach(() => {

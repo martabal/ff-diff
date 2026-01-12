@@ -214,7 +214,7 @@ describe("unusedPrefs", () => {
 
     expect(install.getPrefsFromInstalledVersion).toHaveBeenCalledWith(
       "140.0",
-      "/mock/install/dir/140.0/firefox",
+      "/mock/install/dir/140.0/firefox/firefox",
     );
     expect(consoleLogSpy).toHaveBeenCalledWith("No unused prefs in /path/to/user.js");
   });

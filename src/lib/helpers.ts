@@ -29,31 +29,70 @@ export const isUnitDifferenceOne = (a: string, b: string): boolean => {
   return Math.abs(unitA - unitB) === 1;
 };
 
-const parse = (v: string): number[] => v.split(".").map((part) => Number(part) || 0);
+type ParsedVersion = {
+  parts: number[];
+  beta: number | null;
+};
+
+const parseVersion = (v: string): ParsedVersion => {
+  let beta: number | null = null;
+  let base = v;
+
+  const bIndex = v.indexOf("b");
+  if (bIndex !== -1) {
+    base = v.slice(0, bIndex);
+
+    const betaPart = v.slice(bIndex + 1);
+    const betaNum = Number(betaPart);
+    beta = Number.isFinite(betaNum) ? betaNum : null;
+  }
+
+  const parts = base.split(".").map((p) => {
+    const n = Number(p);
+    return Number.isFinite(n) ? n : 0;
+  });
+
+  return { parts, beta };
+};
 
 export const warnIncorrectOldVersion = (oldVersion: string, newVersion: string): void => {
-  const a = parse(oldVersion);
-  const b = parse(newVersion);
+  const a = parseVersion(oldVersion);
+  const b = parseVersion(newVersion);
 
-  const len = Math.max(a.length, b.length);
+  const len = Math.max(a.parts.length, b.parts.length);
 
+  // Compare numeric parts
   for (let i = 0; i < len; i++) {
-    const diff = (a[i] ?? 0) - (b[i] ?? 0);
+    const av = a.parts[i] ?? 0;
+    const bv = b.parts[i] ?? 0;
 
-    if (diff > 0) {
-      console.warn(
-        styleText(
-          "yellow",
-          `Warning: The previous version \`${oldVersion}\` is greater than the new version \`${newVersion}\``,
-        ),
-      );
-      return;
-    }
-
-    if (diff < 0) {
+    if (av !== bv) {
+      if (av > bv) warn(oldVersion, newVersion);
       return;
     }
   }
+
+  if (a.beta === null && b.beta !== null) {
+    warn(oldVersion, newVersion);
+    return;
+  }
+
+  if (a.beta !== null && b.beta === null) {
+    return;
+  }
+
+  if (a.beta !== null && b.beta !== null && a.beta > b.beta) {
+    warn(oldVersion, newVersion);
+  }
+};
+
+const warn = (oldVersion: string, newVersion: string): void => {
+  console.warn(
+    styleText(
+      "yellow",
+      `Warning: The previous version \`${oldVersion}\` is greater than the new version \`${newVersion}\``,
+    ),
+  );
 };
 
 export const getPathType = async (

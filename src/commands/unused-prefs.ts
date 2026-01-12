@@ -18,7 +18,7 @@ export const unusedPrefs = async (opts: UserJSBasedCommands) => {
   const prefsFirefox = await (opts.firefoxVersion
     ? getPrefsFromInstalledVersion(
         opts.firefoxVersion,
-        join(installDir, opts.firefoxVersion, "firefox"),
+        join(installDir, opts.firefoxVersion, "firefox", "firefox"),
       )
     : getPrefs({ profilePath }));
   console.log(gettingVersionMessage);

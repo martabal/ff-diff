@@ -207,12 +207,14 @@ const handleOutputDiff = async (sections: PrintDiff[], newVersion: string, oldVe
   if (printOptions.saveOutput) {
     const outputMD = generateOutput(Format.Markdown, sections, newVersion);
     const title = `# Diffs Firefox ${oldVersion}-${newVersion}\n\n`;
-    const pathType = await getPathType(diffsDir);
-    if (!existsSync(diffsDir)) {
+    if (existsSync(diffsDir)) {
+      const pathType = await getPathType(diffsDir);
+      if (pathType !== "directory") {
+        exit(`there's already something here \`${diffsDir}\``);
+      }
+    } else {
       console.log("creating diffs directory");
       mkdirSync(diffsDir);
-    } else if (pathType !== "directory") {
-      exit(`there's already something here \`${diffsDir}\``);
     }
     const diffsPath = join(diffsDir, `${oldVersion}-${newVersion}.md`);
     console.log(`\nwriting diffs to ${diffsPath}`);
@@ -222,11 +224,14 @@ const handleOutputDiff = async (sections: PrintDiff[], newVersion: string, oldVe
 
 export const diff = async (args: Diff) => {
   console.info(`Installing Firefox ${args.oldVersion} and ${args.newVersion} in "${installDir}"`);
-  const pathType = await getPathType(installDir);
-  if (!existsSync(installDir)) {
+
+  if (existsSync(installDir)) {
+    const pathType = await getPathType(installDir);
+    if (pathType !== "directory") {
+      console.error(`there's already something here \`${installDir}\``);
+    }
+  } else {
     mkdirSync(installDir, { recursive: true });
-  } else if (pathType !== "directory") {
-    console.error(`there's already something here \`${installDir}\``);
   }
 
   const versions = [args.oldVersion, args.newVersion];

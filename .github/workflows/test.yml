@@ -29,7 +29,7 @@ jobs:
           run_install: false
 
       - name: Install latest node LTS
-        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
           node-version-file: "package.json"
           cache: "pnpm"
@@ -55,7 +55,7 @@ jobs:
           run_install: false
 
       - name: Install latest node LTS
-        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
           node-version-file: "package.json"
           cache: "pnpm"
@@ -81,7 +81,7 @@ jobs:
           run_install: false
 
       - name: Install latest node LTS
-        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
           node-version-file: "package.json"
           cache: "pnpm"
@@ -107,7 +107,7 @@ jobs:
           run_install: false
 
       - name: Install latest node LTS
-        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
           node-version-file: "package.json"
           cache: "pnpm"
@@ -133,7 +133,7 @@ jobs:
           run_install: false
 
       - name: Install latest node LTS
-        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
           node-version-file: "package.json"
           cache: "pnpm"
@@ -165,7 +165,7 @@ jobs:
           run_install: false
 
       - name: Install latest node LTS
-        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
           node-version-file: "package.json"
           cache: "pnpm"
@@ -191,7 +191,7 @@ jobs:
           run_install: false
 
       - name: Install latest node LTS
-        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
           node-version-file: "package.json"
           cache: "pnpm"
@@ -217,7 +217,7 @@ jobs:
           run_install: false
 
       - name: Install latest node LTS
-        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
           node-version-file: "package.json"
           cache: "pnpm"
@@ -243,7 +243,7 @@ jobs:
           run_install: false
 
       - name: Install latest node LTS
-        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
           node-version-file: "package.json"
           cache: "pnpm"
@@ -274,4 +274,4 @@ jobs:
           persist-credentials: false
 
       - name: Spell check code
-        uses: crate-ci/typos@2d0ce569feab1f8752f1dde43cc2f2aa53236e06 # v1.40.0
+        uses: crate-ci/typos@bb4666ad77b539a6b4ce4eda7ebb6de553704021 # v1.42.0

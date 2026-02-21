@@ -506,9 +506,9 @@ export class Cli extends BaseCli {
   }
 }
 
-export const createCommand = (command: string, fail = true): BaseCli => {
+export const createCommand = (command: string, shouldFail = true): BaseCli => {
   const commands = Object.fromEntries(
     ALL_COMMANDS.map((cmd) => [cmd.COMMAND, (fail = true) => new cmd(fail)]),
   );
-  return commands[command]?.(fail) ?? new Cli(fail);
+  return commands[command]?.(shouldFail) ?? new Cli(shouldFail);
 };

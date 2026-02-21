@@ -9,6 +9,9 @@ import {
 import { ENOENT } from "node:constants";
 import type { Stats } from "fs";
 import { stat } from "fs/promises";
+vi.mock("fs/promises", () => ({
+  stat: vi.fn(),
+}));
 
 describe("startsWithNumberDotNumber", () => {
   it('should return true for "1.0"', () => {
@@ -173,10 +176,6 @@ describe("warnIncorrectOldVersion", () => {
     expect(warnSpy).toHaveBeenCalledOnce();
   });
 });
-
-vi.mock("fs/promises", () => ({
-  stat: vi.fn(),
-}));
 
 describe("getPathType", () => {
   const mockStat = vi.mocked(stat);

@@ -46,26 +46,21 @@
     "update:corepack": "corepack use pnpm@latest"
   },
   "dependencies": {
-    "selenium-webdriver": "4.40.0"
+    "selenium-webdriver": "4.41.0"
   },
   "devDependencies": {
-    "@types/node": "25.0.10",
+    "@types/node": "25.3.0",
     "@types/selenium-webdriver": "4.35.5",
     "@vitest/coverage-v8": "4.0.18",
-    "oxfmt": "0.26.0",
-    "oxlint": "1.41.0",
-    "oxlint-tsgolint": "0.11.1",
+    "oxfmt": "0.34.0",
+    "oxlint": "1.49.0",
+    "oxlint-tsgolint": "0.14.2",
     "typescript": "5.9.3",
-    "vite": "8.0.0-beta.9",
+    "vite": "8.0.0-beta.15",
     "vitest": "4.0.18"
   },
   "engines": {
     "node": ">=20.12.0 <21 || >=21.7.0 <22 || >=22.13.0 <23 || >=23.5.0"
   },
-  "packageManager": "pnpm@10.28.0+sha512.05df71d1421f21399e053fde567cea34d446fa02c76571441bfc1c7956e98e363088982d940465fd34480d4d90a0668bc12362f8aa88000a64e83d0b0e47be48",
-  "pnpm": {
-    "overrides": {
-      "vite": "8.0.0-beta.9"
-    }
-  }
+  "packageManager": "pnpm@10.30.1+sha512.3590e550d5384caa39bd5c7c739f72270234b2f6059e13018f975c313b1eb9fefcc09714048765d4d9efe961382c312e624572c0420762bdc5d5940cdf9be73a"
 }

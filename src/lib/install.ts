@@ -1,5 +1,5 @@
 import { cleanOptions } from "$cli";
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { createWriteStream, existsSync, mkdirSync, readdirSync, rmSync } from "node:fs";
 import { arch, homedir, platform } from "node:os";
 import { join } from "node:path";
@@ -155,7 +155,7 @@ const extractArchive = async (
 ) => {
   mkdirSync(destPath, { recursive: true });
   try {
-    execSync(`tar -xvf ${potentialArchivePath} -C ${destPath}`, {
+    execFileSync("tar", ["-xvf", potentialArchivePath, "-C", destPath], {
       stdio: "ignore",
     });
   } catch (error) {

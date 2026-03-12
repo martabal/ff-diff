@@ -49,18 +49,18 @@
     "selenium-webdriver": "4.41.0"
   },
   "devDependencies": {
-    "@types/node": "25.3.0",
+    "@types/node": "25.5.0",
     "@types/selenium-webdriver": "4.35.5",
-    "@vitest/coverage-v8": "4.0.18",
-    "oxfmt": "0.35.0",
-    "oxlint": "1.50.0",
-    "oxlint-tsgolint": "0.15.0",
+    "@vitest/coverage-v8": "4.1.0",
+    "oxfmt": "0.40.0",
+    "oxlint": "1.55.0",
+    "oxlint-tsgolint": "0.16.0",
     "typescript": "5.9.3",
-    "vite": "8.0.0-beta.15",
-    "vitest": "4.0.18"
+    "vite": "8.0.0",
+    "vitest": "4.1.0"
   },
   "engines": {
     "node": ">=20.12.0 <21 || >=21.7.0 <22 || >=22.13.0 <23 || >=23.5.0"
   },
-  "packageManager": "pnpm@10.30.2+sha512.36cdc707e7b7940a988c9c1ecf88d084f8514b5c3f085f53a2e244c2921d3b2545bc20dd4ebe1fc245feec463bb298aecea7a63ed1f7680b877dc6379d8d0cb4"
+  "packageManager": "pnpm@10.32.1+sha512.a706938f0e89ac1456b6563eab4edf1d1faf3368d1191fc5c59790e96dc918e4456ab2e67d613de1043d2e8c81f87303e6b40d4ffeca9df15ef1ad567348f2be"
 }

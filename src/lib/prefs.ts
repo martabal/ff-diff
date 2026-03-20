@@ -50,7 +50,15 @@ const getVersionValue = (comment: string, regex: RegExp): number | undefined => 
   return comment.match(regex)?.[1] ? Number(comment.match(regex)![1]) : undefined;
 };
 
-export const commonChangedValuesForKeys = ["browser.newtabpage.activity-stream.support.url"];
+export const commonChangedValuesForKeys = [
+  "browser.newtabpage.activity-stream.support.url",
+  //beta
+  "app.releaseNotesURL",
+  "app.releaseNotesURL.aboutDialog",
+  "app.update.channel",
+  "app.update.url.details",
+  "app.update.url.manual",
+];
 
 export const parseUserPrefs = (content: string): PrefInfo[] => {
   const regex = /user_pref\(\s*['"]([^'"]+)['"]\s*,\s*([\s\S]*?)\s*\)(?:;\s*\/\/\s*(.*))?/gm;

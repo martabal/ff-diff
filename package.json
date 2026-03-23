@@ -51,13 +51,13 @@
   "devDependencies": {
     "@types/node": "25.5.0",
     "@types/selenium-webdriver": "4.35.5",
-    "@vitest/coverage-v8": "4.1.0",
+    "@vitest/coverage-v8": "4.1.1",
     "oxfmt": "0.41.0",
     "oxlint": "1.56.0",
     "oxlint-tsgolint": "0.17.1",
-    "typescript": "5.9.3",
-    "vite": "8.0.1",
-    "vitest": "4.1.0"
+    "typescript": "6.0.2",
+    "vite": "8.0.2",
+    "vitest": "4.1.1"
   },
   "engines": {
     "node": ">=20.12.0 <21 || >=21.7.0 <22 || >=22.13.0 <23 || >=23.5.0"

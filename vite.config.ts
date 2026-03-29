@@ -2,11 +2,7 @@ import { defineConfig } from "vite";
 import pkg from "./package.json" with { type: "json" };
 import path from "node:path";
 
-const input = process.env.USAGE
-  ? "src/scripts/usage.ts"
-  : process.env.COMPLETION
-    ? "src/scripts/shell-completion.ts"
-    : "src/index.ts";
+const input = process.env.USAGE ? "src/scripts/usage.ts" : "src/index.ts";
 
 export default defineConfig({
   build: {

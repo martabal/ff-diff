@@ -33,6 +33,7 @@ Usage:
   ff-diff default-prefs [--do-not-print-in-console] [--save-output-in-file] [--firefox-path path] [--firefox-version version] [--debug-firefox-capabilities]
   ff-diff unused-prefs-userjs path [--firefox-path path] [--force-default-profile] [--profile-path] [--firefox-version version] [--debug-firefox-capabilities]
   ff-diff default-prefs-userjs path [--firefox-path path] [--do-not-print-in-console] [--save-output-in-file] [--force-default-profile] [--profile-path] [--firefox-version version] [--debug-firefox-capabilities]
+  ff-diff activate [bash|fish]
 
 Options:
   -v, --version    Print version info and exit

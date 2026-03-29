@@ -141,9 +141,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Run generating shells completion script
-        run: pnpm run generate:shell-completion
-
       - name: Run ShellCheck
         uses: ludeeus/action-shellcheck@00cae500b08a931fb5698e11e79bfbd38e612a38 # v2.0.0
         if: ${{ !cancelled() }}

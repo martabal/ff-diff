@@ -3,19 +3,20 @@ import { unusedPrefs } from "$commands/unused-prefs";
 import * as firefox from "$lib/firefox";
 import * as install from "$lib/install";
 import { readFileSync } from "node:fs";
+import { type Pref } from "$lib/firefox";
 
 // Mock modules
 vi.mock("node:fs", () => ({
-  readFileSync: vi.fn(),
+  readFileSync: vi.fn<() => Buffer<ArrayBuffer>>(),
 }));
 
 vi.mock("$lib/firefox", () => ({
-  getFirefoxDefaultProfile: vi.fn(),
-  getPrefs: vi.fn(),
+  getFirefoxDefaultProfile: vi.fn<() => Promise<Map<string, Pref>>>(),
+  getPrefs: vi.fn<() => Promise<Map<string, Pref>>>(),
 }));
 
 vi.mock("$lib/install", () => ({
-  getPrefsFromInstalledVersion: vi.fn(),
+  getPrefsFromInstalledVersion: vi.fn<() => Promise<Map<string, Pref>>>(),
   installDir: "/mock/install/dir",
 }));
 

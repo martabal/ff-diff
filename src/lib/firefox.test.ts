@@ -15,8 +15,8 @@ vi.mock("./install", () => ({
 }));
 
 vi.mock("$lib/helpers", () => ({
-  getPathType: vi.fn(),
-  exit: vi.fn(),
+  getPathType: vi.fn<() => Promise<"file" | "directory" | "other" | "missing">>(),
+  exit: vi.fn<() => never>(),
 }));
 
 describe("getFirefoxReleaseProfilePath", () => {

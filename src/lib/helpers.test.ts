@@ -9,8 +9,9 @@ import {
 import { ENOENT } from "node:constants";
 import type { Stats } from "fs";
 import { stat } from "fs/promises";
+
 vi.mock("fs/promises", () => ({
-  stat: vi.fn(),
+  stat: vi.fn<() => Promise<Stats>>(),
 }));
 
 describe("startsWithNumberDotNumber", () => {
@@ -242,17 +243,13 @@ describe("getPathType", () => {
   });
 });
 
-vi.mock("./style", () => ({
-  styleText: vi.fn((color, msg) => `styled-${msg}`),
-}));
-
 describe("exit", () => {
   let consoleErrorMock: ReturnType<typeof vi.fn>;
   let processExitMock: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
-    consoleErrorMock = vi.fn();
-    processExitMock = vi.fn();
+    consoleErrorMock = vi.fn<() => void>();
+    processExitMock = vi.fn<() => void>();
 
     vi.stubGlobal("console", { ...console, error: consoleErrorMock });
     vi.stubGlobal("process", { ...process, exit: processExitMock });

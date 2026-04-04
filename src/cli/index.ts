@@ -7,6 +7,7 @@ import { getArgumentValue, parseKeepArgument } from "$lib/cli";
 import { getFirefoxReleaseProfilePath } from "$lib/firefox";
 import { exit, startsWithNumberDotNumber, warnIncorrectOldVersion } from "$lib/helpers";
 import { styleText } from "node:util";
+import { create_shells_completions } from "$lib/shell-completion";
 
 interface SourceCleanupOptions {
   archives: boolean;
@@ -49,6 +50,14 @@ export const CLI_ARGS = {
   PATH: "--path",
   PROFILE_PATH: "--profile-path",
 } as const;
+
+export const SUPPORTED_SHELLS_COMPLETION = {
+  BASH: "bash",
+  FISH: "fish",
+} as const;
+
+export type SupportedShell =
+  (typeof SUPPORTED_SHELLS_COMPLETION)[keyof typeof SUPPORTED_SHELLS_COMPLETION];
 
 const EXAMPLE_VERSION = {
   NEW_VERSION: "140",
@@ -446,6 +455,39 @@ class DiffCommand extends BaseCli {
   }
 }
 
+class ActivateCommand extends BaseCli {
+  public static readonly COMMAND = "activate";
+  public static readonly SMALL_DESCRIPTION = `Initializes ${APP_NAME} in the current shell session`;
+  public static readonly DESCRIPTION = DiffCommand.SMALL_DESCRIPTION + " and highlight differences";
+
+  public static readonly COMMANDS: readonly CliCommand[] = [
+    {
+      values: [`[${Object.values(SUPPORTED_SHELLS_COMPLETION).join("|")}]`],
+      doc: "Shell type to generate the script for\n[possible values: bash, fish",
+    },
+  ];
+
+  public static readonly OPTIONS: readonly CliOption[] = [];
+
+  constructor(fail: boolean = true) {
+    super(fail, ActivateCommand.DESCRIPTION, ActivateCommand.COMMANDS, ActivateCommand.OPTIONS);
+  }
+
+  public entrypoint(): void {
+    const [, , , shell] = process.argv;
+
+    if (
+      shell === undefined ||
+      !Object.values(SUPPORTED_SHELLS_COMPLETION).includes(shell as SupportedShell)
+    ) {
+      this.error = `${shell} is not a supported shell`;
+      this.usage();
+    }
+
+    create_shells_completions(shell as SupportedShell);
+  }
+}
+
 class UnusedPrefCommand extends BaseCli {
   public static readonly COMMAND = "unused-prefs-userjs";
   public static readonly SMALL_DESCRIPTION = undefined;
@@ -485,6 +527,7 @@ export const ALL_COMMANDS = [
   DefaultPrefsCommand,
   UnusedPrefCommand,
   DefaultPrefsUserJSCommand,
+  ActivateCommand,
 ];
 
 export class Cli extends BaseCli {

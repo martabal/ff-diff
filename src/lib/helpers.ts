@@ -109,7 +109,7 @@ export const getPathType = async (
       return "missing";
     }
     console.error(err);
-    process.exit(1);
+    return process.exit(1);
   }
 };
 

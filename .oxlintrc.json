@@ -13,6 +13,8 @@
     "max-classes-per-file": "off",
     "max-lines": "off",
     "max-dependencies": "off",
-    "typescript/no-unsafe-type-assertion": "off"
+    "typescript/no-unsafe-type-assertion": "off",
+    "prefer-readonly-parameter-types": "off",
+    "strict-void-return": "off"
   }
 }

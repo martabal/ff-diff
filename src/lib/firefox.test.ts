@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { join } from "node:path";
 import { homedir } from "node:os";
 import { existsSync, readFileSync } from "node:fs";
-import { getFirefoxReleaseProfilePath, installedMozilla } from "$lib/firefox";
+import { comparePrefs, getFirefoxReleaseProfilePath, installedMozilla } from "$lib/firefox";
 import { getPathType } from "./helpers";
 
 vi.mock("fs");
@@ -193,5 +193,148 @@ Version=2`;
     const result = await getFirefoxReleaseProfilePath();
 
     expect(result).toBeNull();
+  });
+});
+
+describe("comparePrefs", () => {
+  it("should return empty diff when both maps are empty", () => {
+    const result = comparePrefs(new Map(), new Map());
+
+    expect(result).toStrictEqual({ addedKeys: [], removedKeys: [], changedKeys: [] });
+  });
+
+  it("should return empty diff when both maps are identical", () => {
+    const v1 = new Map([
+      ["a.pref", true],
+      ["b.pref", 42],
+    ]);
+    const v2 = new Map([
+      ["a.pref", true],
+      ["b.pref", 42],
+    ]);
+
+    const result = comparePrefs(v1, v2);
+
+    expect(result).toStrictEqual({ addedKeys: [], removedKeys: [], changedKeys: [] });
+  });
+
+  it("should detect added keys (present in v2 but not v1)", () => {
+    const v1 = new Map<string, string | number | boolean>();
+    const v2 = new Map([["new.pref", "hello"]]);
+
+    const result = comparePrefs(v1, v2);
+
+    expect(result.addedKeys).toStrictEqual([{ key: "new.pref", value: "hello" }]);
+    expect(result.removedKeys).toHaveLength(0);
+    expect(result.changedKeys).toHaveLength(0);
+  });
+
+  it("should detect removed keys (present in v1 but not v2)", () => {
+    const v1 = new Map([["old.pref", false]]);
+    const v2 = new Map<string, string | number | boolean>();
+
+    const result = comparePrefs(v1, v2);
+
+    expect(result.removedKeys).toStrictEqual([{ key: "old.pref", value: false }]);
+    expect(result.addedKeys).toHaveLength(0);
+    expect(result.changedKeys).toHaveLength(0);
+  });
+
+  it("should detect changed keys (same key, different value)", () => {
+    const v1 = new Map([["changed.pref", true]]);
+    const v2 = new Map([["changed.pref", false]]);
+
+    const result = comparePrefs(v1, v2);
+
+    expect(result.changedKeys).toStrictEqual([
+      { key: "changed.pref", value: true, newValue: false },
+    ]);
+    expect(result.addedKeys).toHaveLength(0);
+    expect(result.removedKeys).toHaveLength(0);
+  });
+
+  it("should detect all three categories in a mixed scenario", () => {
+    const v1 = new Map<string, string | number | boolean>([
+      ["removed.pref", 1],
+      ["changed.pref", "old"],
+      ["same.pref", true],
+    ]);
+    const v2 = new Map<string, string | number | boolean>([
+      ["added.pref", 99],
+      ["changed.pref", "new"],
+      ["same.pref", true],
+    ]);
+
+    const result = comparePrefs(v1, v2);
+
+    expect(result.addedKeys).toStrictEqual([{ key: "added.pref", value: 99 }]);
+    expect(result.removedKeys).toStrictEqual([{ key: "removed.pref", value: 1 }]);
+    expect(result.changedKeys).toStrictEqual([
+      { key: "changed.pref", value: "old", newValue: "new" },
+    ]);
+  });
+
+  it("should sort added keys alphabetically", () => {
+    const v1 = new Map<string, string | number | boolean>();
+    const v2 = new Map<string, string | number | boolean>([
+      ["zebra.pref", 1],
+      ["alpha.pref", 2],
+      ["middle.pref", 3],
+    ]);
+
+    const result = comparePrefs(v1, v2);
+
+    expect(result.addedKeys.map((k) => k.key)).toStrictEqual([
+      "alpha.pref",
+      "middle.pref",
+      "zebra.pref",
+    ]);
+  });
+
+  it("should sort removed keys alphabetically", () => {
+    const v1 = new Map<string, string | number | boolean>([
+      ["zebra.pref", 1],
+      ["alpha.pref", 2],
+      ["middle.pref", 3],
+    ]);
+    const v2 = new Map<string, string | number | boolean>();
+
+    const result = comparePrefs(v1, v2);
+
+    expect(result.removedKeys.map((k) => k.key)).toStrictEqual([
+      "alpha.pref",
+      "middle.pref",
+      "zebra.pref",
+    ]);
+  });
+
+  it("should sort changed keys alphabetically", () => {
+    const v1 = new Map<string, string | number | boolean>([
+      ["zebra.pref", 1],
+      ["alpha.pref", 2],
+      ["middle.pref", 3],
+    ]);
+    const v2 = new Map<string, string | number | boolean>([
+      ["zebra.pref", 10],
+      ["alpha.pref", 20],
+      ["middle.pref", 30],
+    ]);
+
+    const result = comparePrefs(v1, v2);
+
+    expect(result.changedKeys.map((k) => k.key)).toStrictEqual([
+      "alpha.pref",
+      "middle.pref",
+      "zebra.pref",
+    ]);
+  });
+
+  it("should handle value type changes (number to boolean)", () => {
+    const v1 = new Map<string, string | number | boolean>([["pref", 0]]);
+    const v2 = new Map<string, string | number | boolean>([["pref", false]]);
+
+    const result = comparePrefs(v1, v2);
+
+    expect(result.changedKeys).toStrictEqual([{ key: "pref", value: 0, newValue: false }]);
   });
 });

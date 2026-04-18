@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { getArgumentValue, getArgumentValues } from "$lib/cli";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { getArgumentValue, getArgumentValues, parseKeepArgument } from "$lib/cli";
 import * as helpers from "$lib/helpers";
 
 const expectExitError = `process.exit unexpectedly called with "1"`;
@@ -12,6 +12,9 @@ const mockExit = vi.spyOn(helpers, "exit").mockImplementation(() => {
 describe("getArgumentValue", () => {
   beforeEach(() => {
     vi.resetAllMocks();
+    mockExit.mockImplementation(() => {
+      throw new Error(expectExitError);
+    });
   });
 
   it("should return the value when argument exists with valid value", () => {
@@ -115,6 +118,9 @@ describe("getArgumentValue", () => {
 describe("getArgumentValues", () => {
   beforeEach(() => {
     vi.resetAllMocks();
+    mockExit.mockImplementation(() => {
+      throw new Error(expectExitError);
+    });
   });
 
   it("should return empty array when argument does not exist", () => {
@@ -195,6 +201,58 @@ describe("getArgumentValues", () => {
     expect(() => getArgumentValues("--files")).toThrow(expectExitError);
     expect(mockExit).toHaveBeenCalledWith(
       'Error: Argument "--files" is provided but has no value.',
+    );
+  });
+});
+
+describe("parseKeepArgument", () => {
+  let consoleLogSpy: ReturnType<typeof vi.spyOn>;
+
+  beforeEach(() => {
+    vi.resetAllMocks();
+    mockExit.mockImplementation(() => {
+      throw new Error(expectExitError);
+    });
+    consoleLogSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    consoleLogSpy.mockRestore();
+  });
+
+  it("should return empty array when --keep is not provided", () => {
+    process.argv = ["node", "script.js"];
+
+    const result = parseKeepArgument();
+
+    expect(result).toStrictEqual([]);
+    expect(consoleLogSpy).not.toHaveBeenCalled();
+  });
+
+  it("should return a single version number when one value is provided", () => {
+    process.argv = ["node", "script.js", "--keep", "139"];
+
+    const result = parseKeepArgument();
+
+    expect(result).toStrictEqual([139]);
+    expect(consoleLogSpy).toHaveBeenCalledWith("Versions kept:", "139");
+  });
+
+  it("should return multiple version numbers when comma-separated values are provided", () => {
+    process.argv = ["node", "script.js", "--keep", "139,140"];
+
+    const result = parseKeepArgument();
+
+    expect(result).toStrictEqual([139, 140]);
+    expect(consoleLogSpy).toHaveBeenCalledWith("Versions kept:", "139, 140");
+  });
+
+  it("should call exit when an invalid (non-numeric) version is provided", () => {
+    process.argv = ["node", "script.js", "--keep", "abc"];
+
+    expect(() => parseKeepArgument()).toThrow(expectExitError);
+    expect(mockExit).toHaveBeenCalledWith(
+      `Error: Argument "Error: Invalid version 'abc' provided." is provided but has no value.`,
     );
   });
 });

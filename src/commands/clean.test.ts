@@ -32,7 +32,7 @@ const makeEntry = (name: string, isDir: boolean): Dirent =>
   }) as unknown as Dirent;
 
 describe("clean", () => {
-  let consoleLogSpy: ReturnType<typeof vi.spyOn>;
+  let consoleLogSpy: ReturnType<typeof vi.spyOn<Console, "log">>;
 
   beforeEach(() => {
     vi.clearAllMocks();

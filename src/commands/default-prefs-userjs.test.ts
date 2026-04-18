@@ -38,7 +38,7 @@ vi.mock("$cli", () => ({
 }));
 
 describe("defaultPrefsUserJS", () => {
-  let consoleLogSpy: ReturnType<typeof vi.spyOn>;
+  let consoleLogSpy: ReturnType<typeof vi.spyOn<Console, "log">>;
 
   beforeEach(async () => {
     vi.clearAllMocks();

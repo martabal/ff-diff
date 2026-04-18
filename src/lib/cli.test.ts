@@ -206,7 +206,7 @@ describe("getArgumentValues", () => {
 });
 
 describe("parseKeepArgument", () => {
-  let consoleLogSpy: ReturnType<typeof vi.spyOn>;
+  let consoleLogSpy: ReturnType<typeof vi.spyOn<Console, "log">>;
 
   beforeEach(() => {
     vi.resetAllMocks();

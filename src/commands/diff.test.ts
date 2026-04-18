@@ -38,8 +38,8 @@ vi.mock("$cli", () => ({
 }));
 
 describe("diff", () => {
-  let consoleLogSpy: ReturnType<typeof vi.spyOn>;
-  let consoleInfoSpy: ReturnType<typeof vi.spyOn>;
+  let consoleLogSpy: ReturnType<typeof vi.spyOn<Console, "log">>;
+  let consoleInfoSpy: ReturnType<typeof vi.spyOn<Console, "info">>;
 
   const v1Prefs = new Map<string, Pref>([
     ["removed.pref", true],
@@ -166,11 +166,8 @@ describe("diff", () => {
     await diff({ oldVersion: "139.0", newVersion: "140.0", hideCommonChangedValues: false });
 
     // Only the install message (console.info) should appear; the prefs output (console.log) is suppressed
-    const logCalls = consoleLogSpy.mock.calls;
-    const prefOutputCalls = logCalls.filter((c) =>
-      String(c[0]).includes("New keys") || String(c[0]).includes("Removed keys"),
-    );
-    expect(prefOutputCalls).toHaveLength(0);
+    expect(consoleLogSpy).not.toHaveBeenCalledWith(expect.stringContaining("New keys"));
+    expect(consoleLogSpy).not.toHaveBeenCalledWith(expect.stringContaining("Removed keys"));
   });
 
   it("should compare user.js when compareUserJS is provided", async () => {

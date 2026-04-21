@@ -26,8 +26,8 @@
   "scripts": {
     "build": "vite build",
     "build:prod": "vite build --minify",
-    "check:typescript": "tsc --noEmit",
     "check:all": "pnpm run check:typescript && pnpm run test:all && pnpm run format && pnpm run lint && pnpm run typos",
+    "check:typescript": "tsc --noEmit",
     "ff-diff": "vite build -l warn && USE_CURRENT_DIR=true node dist/index.js",
     "format": "oxfmt --check",
     "format:fix": "oxfmt",
@@ -37,8 +37,8 @@
     "release": "git-cliff -l | wl-copy",
     "test": "vitest --run --exclude '**/*.end-to-end.test.ts'",
     "test:all": "pnpm run build && vitest --run",
-    "test:end-to-end": "pnpm run build && vitest end-to-end --run",
     "test:cov": "pnpm run build && vitest --coverage",
+    "test:end-to-end": "pnpm run build && vitest end-to-end --run",
     "test:watch": "pnpm run build && vitest",
     "typos": "typos .",
     "update": "pnpm up --latest && pnpm run update:corepack && pnpm update",
@@ -50,16 +50,16 @@
   "devDependencies": {
     "@types/node": "25.6.0",
     "@types/selenium-webdriver": "4.35.5",
-    "@vitest/coverage-v8": "4.1.4",
-    "oxfmt": "0.45.0",
-    "oxlint": "1.60.0",
+    "@vitest/coverage-v8": "4.1.5",
+    "oxfmt": "0.46.0",
+    "oxlint": "1.61.0",
     "oxlint-tsgolint": "0.21.1",
     "typescript": "6.0.3",
-    "vite": "8.0.8",
-    "vitest": "4.1.4"
+    "vite": "8.0.9",
+    "vitest": "4.1.5"
   },
   "engines": {
     "node": ">=20.12.0 <21 || >=21.7.0 <22 || >=22.13.0 <23 || >=23.5.0"
   },
-  "packageManager": "pnpm@10.32.1+sha512.a706938f0e89ac1456b6563eab4edf1d1faf3368d1191fc5c59790e96dc918e4456ab2e67d613de1043d2e8c81f87303e6b40d4ffeca9df15ef1ad567348f2be"
+  "packageManager": "pnpm@10.33.0+sha512.10568bb4a6afb58c9eb3630da90cc9516417abebd3fabbe6739f0ae795728da1491e9db5a544c76ad8eb7570f5c4bb3d6c637b2cb41bfdcdb47fa823c8649319"
 }

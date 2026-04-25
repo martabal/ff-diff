@@ -130,3 +130,47 @@ describe(`${APP_NAME} command arguments`, () => {
     expect(stdout).toContain("Compare the default preferences");
   });
 });
+
+describe(`${APP_NAME} activate command`, () => {
+  it("should show help message for activate", async () => {
+    const { stdout, exitCode } = await execWithExitCode(`activate --help`);
+    expect(exitCode).toBe(0);
+    expect(stdout).toContain("Usage:");
+    expect(stdout).toContain("bash");
+    expect(stdout).toContain("fish");
+  });
+
+  it("should generate bash completion script", async () => {
+    const { stdout, exitCode } = await execWithExitCode(`activate bash`);
+    expect(exitCode).toBe(0);
+    expect(stdout).toContain("complete -F");
+    expect(stdout).toContain(APP_NAME);
+  });
+
+  it("should generate fish completion script", async () => {
+    const { stdout, exitCode } = await execWithExitCode(`activate fish`);
+    expect(exitCode).toBe(0);
+    expect(stdout).toContain("complete -c");
+    expect(stdout).toContain(APP_NAME);
+  });
+
+  it("should fail when no shell argument is provided", async () => {
+    const { exitCode, stderr } = await execWithExitCode(`activate`);
+    expect(exitCode).toBe(1);
+    expect(stderr).toContain("is not a supported shell");
+  });
+
+  it("should fail when an unsupported shell is provided", async () => {
+    const { exitCode, stderr } = await execWithExitCode(`activate zsh`);
+    expect(exitCode).toBe(1);
+    expect(stderr).toContain("is not a supported shell");
+  });
+});
+
+describe(`${APP_NAME} error handling`, () => {
+  it("should show error for an unknown command followed by --help", async () => {
+    const { exitCode, stderr } = await execWithExitCode(`unknown_cmd --help`);
+    expect(exitCode).toBe(1);
+    expect(stderr).toContain("Unknown command");
+  });
+});

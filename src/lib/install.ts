@@ -51,17 +51,17 @@ const getPlatformOS = (): Host => {
 
 const RELATIVE_INSTALL_DIR = `.${APP_NAME}`;
 
-const __dirname =
+const dir_name =
   process.env.USE_CURRENT_DIR === "true"
     ? join(process.cwd(), RELATIVE_INSTALL_DIR)
     : join(homedir(), RELATIVE_INSTALL_DIR);
 
 const host: Host = getPlatformOS();
 
-export const installDir = join(__dirname, "firefox", host.os);
-export const diffsDir = join(__dirname, "diffs");
-export const defaultsDir = join(__dirname, "default");
-export const defaultsUserJSDir = join(__dirname, "default-userjs");
+export const installDir = join(dir_name, "firefox", host.os);
+export const diffsDir = join(dir_name, "diffs");
+export const defaultsDir = join(dir_name, "default");
+export const defaultsUserJSDir = join(dir_name, "default-userjs");
 
 const streamPipeline = promisify(pipeline);
 

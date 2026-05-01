@@ -34,7 +34,7 @@ const parseValue = (rawValue: string): Pref => {
 };
 
 const parseDefaultValue = (comment: string): Default | undefined => {
-  const match = comment.match(/\[DEFAULT:\s*([^[\]]+?)(\s+FF(\d+)\+)?\]/);
+  const match = comment.match(/\[DEFAULT:\s*([^[\]]+?)(\s+FF(\d+)\+)?\]/u);
   if (!match) return undefined;
 
   const parsed = parseValue(match[1]);
@@ -61,7 +61,7 @@ export const commonChangedValuesForKeys = [
 ];
 
 export const parseUserPrefs = (content: string): PrefInfo[] => {
-  const regex = /user_pref\(\s*['"]([^'"]+)['"]\s*,\s*([\s\S]*?)\s*\)(?:;\s*\/\/\s*(.*))?/gm;
+  const regex = /user_pref\(\s*['"]([^'"]+)['"]\s*,\s*([\s\S]*?)\s*\)(?:;\s*\/\/\s*(.*))?/gmu;
   const result: PrefInfo[] = [];
   let match: RegExpExecArray | null;
 
@@ -71,8 +71,8 @@ export const parseUserPrefs = (content: string): PrefInfo[] => {
     const pref: PrefInfo = {
       key,
       value: parseValue(rawValue),
-      versionAdded: getVersionValue(comment, /\[FF(\d+)\+\]/),
-      versionRemoved: getVersionValue(comment, /\[FF(\d+)-\]/),
+      versionAdded: getVersionValue(comment, /\[FF(\d+)\+\]/u),
+      versionRemoved: getVersionValue(comment, /\[FF(\d+)-\]/u),
       custom: comment.includes("[CUSTOM PREF]"),
       hidden: comment.includes("[HIDDEN PREF]"),
     };

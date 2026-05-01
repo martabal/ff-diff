@@ -42,7 +42,7 @@ const updateReadme = async () => {
   const usageBlock = ["```bash", `$ ${APP_NAME}`, generateUsage(), "```"].join("\n");
 
   const updated = readme.replace(
-    /(<!--- Begin usage -->)([\s\S]*?)(<!--- End usage -->)/,
+    /(<!--- Begin usage -->)([\s\S]*?)(<!--- End usage -->)/u,
     `$1\n\n${usageBlock}\n\n$3`,
   );
 

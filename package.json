@@ -26,7 +26,7 @@
   "scripts": {
     "build": "vite build",
     "build:prod": "vite build --minify",
-    "check:all": "pnpm run check:typescript && pnpm run test:all && pnpm run format && pnpm run lint && pnpm run typos",
+    "check:all": "pnpm run check:typescript && pnpm run test:all && pnpm run format",
     "check:typescript": "tsgo --noEmit",
     "ff-diff": "vite build -l warn && USE_CURRENT_DIR=true node dist/index.js",
     "format": "oxfmt --check",
@@ -40,7 +40,6 @@
     "test:cov": "pnpm run build && vitest --coverage",
     "test:end-to-end": "pnpm run build && vitest end-to-end --run",
     "test:watch": "pnpm run build && vitest",
-    "typos": "typos .",
     "update": "pnpm up --latest && pnpm run update:corepack && pnpm update",
     "update:corepack": "corepack use pnpm@latest"
   },

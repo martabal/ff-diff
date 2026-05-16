@@ -1,0 +1,87 @@
+x-steps:
+  mise: &step-mise
+    _type: step
+    check: mise fmt --check
+    fix: mise fmt
+    depends: []
+    env: {}
+
+  typos: &step-typos
+    _type: step
+    check: typos .
+    fix: typos --force-exclude --write-changes
+    depends: []
+    env: {}
+
+  rumdl: &step-rumdl
+    _type: step
+    check: rumdl check
+    fix: rumdl check --fix
+    depends: []
+    env: {}
+
+  oxlint: &step-oxlint
+    _type: step
+    check: pnpm run lint
+    fix: pnpm run lint:fix
+    output_summary: hide
+    depends: []
+    env: {}
+
+  oxfmt: &step-oxfmt
+    _type: step
+    check: pnpm run format
+    fix: pnpm run format:fix
+    output_summary: hide
+    depends: []
+    env: {}
+
+  check-ts: &step-check-ts
+    _type: step
+    check: pnpm run check:typescript
+    output_summary: hide
+    depends: []
+    env: {}
+
+  tests: &step-tests
+    _type: step
+    check: pnpm run test:all
+    output_summary: hide
+    depends: []
+    env: {}
+
+  actionlint: &step-actionlint
+    _type: step
+    check: actionlint
+    output_summary: hide
+    depends: []
+    env: {}
+
+hooks:
+  pre-commit:
+    steps:
+      mise: *step-mise
+      typos: *step-typos
+      rumdl: *step-rumdl
+      oxlint: *step-oxlint
+      oxfmt: *step-oxfmt
+      check-ts: *step-check-ts
+      tests: *step-tests
+      actionlint: *step-actionlint
+  fix:
+    steps:
+      mise: *step-mise
+      typos: *step-typos
+      rumdl: *step-rumdl
+      oxlint: *step-oxlint
+      oxfmt: *step-oxfmt
+  check:
+    steps:
+      mise: *step-mise
+      typos: *step-typos
+      rumdl: *step-rumdl
+      oxlint: *step-oxlint
+      oxfmt: *step-oxfmt
+      check-ts: *step-check-ts
+      tests: *step-tests
+      actionlint: *step-actionlint

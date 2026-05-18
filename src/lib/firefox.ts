@@ -3,7 +3,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { Browser, Builder, type WebDriver } from "selenium-webdriver";
-import { Options } from "selenium-webdriver/firefox";
+import { Options, ServiceBuilder } from "selenium-webdriver/firefox";
 import { exit, getPathType } from "$lib/helpers";
 
 export interface FirefoxPref {
@@ -34,20 +34,22 @@ export interface FirefoxInstallOptions {
 }
 
 interface FirefoxGlobal {
-  Services: {
-    prefs: {
-      getDefaultBranch: (prefix: string) => {
-        getChildList: (prefix: string) => string[];
-        getPrefType: (name: string) => number;
-        getBoolPref: (name: string) => boolean;
-        getIntPref: (name: string) => number;
-        getStringPref: (name: string) => string;
-        prefHasDefaultValue: (name: string) => boolean;
-        PREF_BOOL: number;
-        PREF_INT: number;
-        PREF_STRING: number;
-        PREF_INVALID: number;
-      };
+  Services: FirefoxServices;
+}
+
+interface FirefoxServices {
+  prefs: {
+    getDefaultBranch: (prefix: string) => {
+      getChildList: (prefix: string) => string[];
+      getPrefType: (name: string) => number;
+      getBoolPref: (name: string) => boolean;
+      getIntPref: (name: string) => number;
+      getStringPref: (name: string) => string;
+      prefHasDefaultValue: (name: string) => boolean;
+      PREF_BOOL: number;
+      PREF_INT: number;
+      PREF_STRING: number;
+      PREF_INVALID: number;
     };
   };
 }
@@ -55,7 +57,7 @@ interface FirefoxGlobal {
 export const installedMozilla = ".mozilla/firefox";
 
 const createDriver = async (opts: FirefoxInstallOptions): Promise<WebDriver> => {
-  const options = new Options().addArguments("-headless");
+  const options = new Options().addArguments("-headless").addArguments("--allow-system-access");
 
   if (opts.profilePath) {
     options.addArguments(`-no-remote -P "${opts.profilePath}"`);
@@ -71,7 +73,13 @@ const createDriver = async (opts: FirefoxInstallOptions): Promise<WebDriver> => 
     options.setBinary(opts.executablePath);
   }
 
-  return new Builder().forBrowser(Browser.FIREFOX).setFirefoxOptions(options).build();
+  const serviceBuilder = new ServiceBuilder().addArguments("--allow-system-access");
+
+  return new Builder()
+    .forBrowser(Browser.FIREFOX)
+    .setFirefoxOptions(options)
+    .setFirefoxService(serviceBuilder)
+    .build();
 };
 
 export const getPrefs = async (options: FirefoxInstallOptions): Promise<Map<string, Pref>> => {

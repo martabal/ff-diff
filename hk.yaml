@@ -50,6 +50,13 @@ x-steps:
     depends: []
     env: {}
 
+  tests-e2e: &step-tests-e2e
+    _type: step
+    check: pnpm run test:all
+    output_summary: hide
+    depends: []
+    env: {}
+
   actionlint: &step-actionlint
     _type: step
     check: actionlint
@@ -67,6 +74,7 @@ hooks:
       oxfmt: *step-oxfmt
       check-ts: *step-check-ts
       tests: *step-tests
+      tests-e2e: *step-tests-e2e
       actionlint: *step-actionlint
   fix:
     steps:
@@ -83,5 +91,6 @@ hooks:
       oxlint: *step-oxlint
       oxfmt: *step-oxfmt
       check-ts: *step-check-ts
+      tests-e2e: *step-tests-e2e
       tests: *step-tests
       actionlint: *step-actionlint

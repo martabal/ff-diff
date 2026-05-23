@@ -48,7 +48,7 @@
   "devDependencies": {
     "@types/node": "25.9.1",
     "@types/selenium-webdriver": "4.35.5",
-    "@typescript/native-preview": "7.0.0-dev.20260522.1",
+    "@typescript/native-preview": "7.0.0-dev.20260523.1",
     "@vitest/coverage-v8": "4.1.7",
     "oxfmt": "0.51.0",
     "oxlint": "1.66.0",

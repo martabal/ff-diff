@@ -46,9 +46,9 @@
     "selenium-webdriver": "4.44.0"
   },
   "devDependencies": {
-    "@types/node": "25.9.2",
+    "@types/node": "25.9.3",
     "@types/selenium-webdriver": "4.35.6",
-    "@typescript/native-preview": "7.0.0-dev.20260608.1",
+    "@typescript/native-preview": "7.0.0-dev.20260611.2",
     "@vitest/coverage-v8": "4.1.8",
     "oxfmt": "0.54.0",
     "oxlint": "1.69.0",

@@ -6,7 +6,7 @@ const APP_ENTRY = "node dist/index.js";
 interface ExecResult {
   stdout: string;
   stderr: string;
-  exitCode: number;
+  exitCode: string | number;
 }
 
 const execWithExitCode = (command: string): Promise<ExecResult> => {

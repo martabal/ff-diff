@@ -1,5 +1,6 @@
 x-steps:
   mise: &step-mise
+    glob: ["mise.toml"]
     _type: step
     check: mise fmt --check
     fix: mise fmt
@@ -7,6 +8,7 @@ x-steps:
     env: {}
 
   typos: &step-typos
+    glob: ["mise.lock"]
     _type: step
     check: typos .
     fix: typos --force-exclude --write-changes
@@ -14,6 +16,7 @@ x-steps:
     env: {}
 
   rumdl: &step-rumdl
+    glob: ["**/*.md"]
     _type: step
     check: rumdl check
     fix: rumdl check --fix
@@ -21,6 +24,7 @@ x-steps:
     env: {}
 
   oxlint: &step-oxlint
+    glob: ["**/*.ts", "package.json", "pnpm-lock.yaml"]
     _type: step
     check: pnpm run lint
     fix: pnpm run lint:fix
@@ -29,6 +33,18 @@ x-steps:
     env: {}
 
   oxfmt: &step-oxfmt
+    glob:
+      [
+        "**/*.js",
+        "**/*.ts",
+        "**/*.json",
+        "**/*.yaml",
+        "**/*.yml",
+        "**/*.toml",
+        "**/*.md",
+        "package.json",
+        "pnpm-lock.yaml",
+      ]
     _type: step
     check: pnpm run format
     fix: pnpm run format:fix
@@ -37,6 +53,7 @@ x-steps:
     env: {}
 
   check-ts: &step-check-ts
+    glob: ["**/*.ts", "package.json", "pnpm-lock.yaml"]
     _type: step
     check: pnpm run check:typescript
     output_summary: hide
@@ -44,6 +61,7 @@ x-steps:
     env: {}
 
   tests: &step-tests
+    glob: ["**/*.ts", "package.json", "pnpm-lock.yaml"]
     _type: step
     check: pnpm run test:all
     output_summary: hide
@@ -51,6 +69,7 @@ x-steps:
     env: {}
 
   tests-e2e: &step-tests-e2e
+    glob: ["**/*.ts", "package.json", "pnpm-lock.yaml"]
     _type: step
     check: pnpm run test:all
     output_summary: hide
@@ -58,6 +77,7 @@ x-steps:
     env: {}
 
   actionlint: &step-actionlint
+    glob: [".github/workflows/*.yml", ".github/workflows/*.yaml"]
     _type: step
     check: actionlint
     output_summary: hide
@@ -66,6 +86,7 @@ x-steps:
 
 hooks:
   pre-commit:
+    fix: true
     steps:
       mise: *step-mise
       typos: *step-typos

@@ -14,7 +14,7 @@ export const clean = async (keptVersions: number[]) => {
       if (
         entry.isDirectory() &&
         !keepOptions.sources &&
-        !keptVersions.includes(Number.parseInt(entry.name, 10))
+        !keptVersions.includes(Math.trunc(Number(entry.name)))
       ) {
         console.log(`Removing folder: ${entry.name}`);
         await rm(fullPath, { recursive: true, force: true });
@@ -22,7 +22,7 @@ export const clean = async (keptVersions: number[]) => {
       }
 
       if (entry.isFile() && !keepOptions.archives && entry.name.startsWith("firefox-")) {
-        const version = Number.parseInt(entry.name.slice("firefox-".length), 10);
+        const version = Math.trunc(Number(entry.name.slice("firefox-".length)));
         if (!keptVersions.includes(version)) {
           console.log(`Remove archive: ${entry.name}`);
           await rm(fullPath, { recursive: true, force: true });

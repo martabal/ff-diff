@@ -109,7 +109,8 @@ export const defaultPrefsUserJS = async (opts: UserJSBasedCommands) => {
       const isDefaultDefinedAndDifferent = pref.default?.value !== prefsValue;
 
       const isDefaultValueVersionInferior =
-        pref?.default?.version === undefined || pref?.default?.version <= parseInt(version, 10);
+        pref?.default?.version === undefined ||
+        pref?.default?.version <= Math.trunc(Number(version));
 
       if (isDefaultDefinedAndDifferent && isDefaultValueVersionInferior) {
         wrongDefault.push({

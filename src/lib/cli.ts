@@ -53,7 +53,7 @@ export const parseKeepArgument = (): number[] => {
     return [];
   }
   const versions = args.map((value) => {
-    const version = Number.parseInt(value, 10);
+    const version = Math.trunc(Number(value));
     if (isNaN(version)) {
       argumentWithoutValue(`Error: Invalid version '${value}' provided.`);
     }

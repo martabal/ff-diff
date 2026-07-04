@@ -2,13 +2,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { rm } from "node:fs/promises";
 import { join } from "node:path";
 import { cleanOptions, Diff, printOptions } from "$cli";
-import {
-  type FirefoxChangedPref,
-  type FirefoxPref,
-  type Pref,
-  type PrefsDiff,
-  comparePrefs,
-} from "$lib/firefox";
+import { type FirefoxChangedPref, type Pref, type PrefsDiff, comparePrefs } from "$lib/firefox";
 import { type AllFormatted, Format, formatTicks, formatValue, type PrintDiff } from "$lib/format";
 import { exit, getPathType, isUnitDifferenceOne } from "$lib/helpers";
 import { commonChangedValuesForKeys, parseUserPrefs } from "$lib/prefs";
@@ -36,7 +30,7 @@ const getSections = (configDiff: PrefsDiff): PrintDiff[] => {
       label: `${addedSymbol} New keys`,
       keys: configDiff.addedKeys,
       formatter: (item, format) => {
-        const { key, value } = item as FirefoxPref;
+        const { key, value } = item;
         const { tickStart, tickSymbol, tickKeyValue: tick } = handleFormatTicks(format, "+");
         const formattedValue = formatValue(value);
         return `${tickStart}${tickSymbol} ${tick}${key}${tick}: ${tick}${formattedValue}${tick}`;
@@ -46,7 +40,7 @@ const getSections = (configDiff: PrefsDiff): PrintDiff[] => {
       label: `${removedSymbol} Removed keys`,
       keys: configDiff.removedKeys,
       formatter: (item, format) => {
-        const { key } = item as FirefoxPref;
+        const { key } = item;
         const { tickStart, tickSymbol, tickKeyValue: tick } = handleFormatTicks(format, "-");
         return `${tickStart}${tickSymbol} ${tick}${key}${tick}`;
       },

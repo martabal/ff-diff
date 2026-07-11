@@ -1,10 +1,10 @@
 [tools]
 actionlint = "1.7.12"
-hk = "1.48.0"
-node = "26.3.1"
-pnpm = "11.8.0"
-rumdl = "0.2.20"
-typos = "1.47.2"
+hk = "1.50.0"
+node = "26.5.0"
+pnpm = "11.11.0"
+rumdl = "0.2.30"
+typos = "1.48.0"
 
 [settings]
 experimental = true

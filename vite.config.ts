@@ -6,7 +6,7 @@ const input = process.env.USAGE ? "src/scripts/usage.ts" : "src/index.ts";
 
 export default defineConfig({
   build: {
-    rollupOptions: {
+    rolldownOptions: {
       input,
       output: {
         dir: "dist",

@@ -43,7 +43,7 @@
     "update:corepack": "corepack use pnpm@latest"
   },
   "dependencies": {
-    "selenium-webdriver": "4.46.0"
+    "selenium-webdriver": "4.47.0"
   },
   "devDependencies": {
     "@types/node": "26.2.0",

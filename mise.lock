@@ -41,38 +41,38 @@ url = "https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_
 provenance = "github-attestations"
 
 [[tools.hk]]
-version = "1.54.1"
+version = "1.55.0"
 backend = "aqua:jdx/hk"
 
 [tools.hk."platforms.linux-arm64"]
-checksum = "sha256:e00420ef742e2e222c2030253a8fa868033daf43fe670de17c2e6957dc577443"
-url = "https://github.com/jdx/hk/releases/download/v1.54.1/hk-aarch64-unknown-linux-gnu.tar.gz"
-url_api = "https://api.github.com/repos/jdx/hk/releases/assets/505018166"
+checksum = "sha256:64c44aa0f26e995f7d9c44cc9c5116e20052bcefc821daf17ce3df265bb0b2d6"
+url = "https://github.com/jdx/hk/releases/download/v1.55.0/hk-aarch64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/jdx/hk/releases/assets/510729669"
 
 [tools.hk."platforms.linux-arm64-musl"]
-checksum = "sha256:a98f4e8d97bc4e07bef4528201f3dced2b2a9b3881ced92d0d38935a89b7ecfa"
-url = "https://github.com/jdx/hk/releases/download/v1.54.1/hk-aarch64-unknown-linux-musl.tar.gz"
-url_api = "https://api.github.com/repos/jdx/hk/releases/assets/505018162"
+checksum = "sha256:21eccba81a4b9ac73431d876d8ed5add16a01df360f6d3d576279903254599f6"
+url = "https://github.com/jdx/hk/releases/download/v1.55.0/hk-aarch64-unknown-linux-musl.tar.gz"
+url_api = "https://api.github.com/repos/jdx/hk/releases/assets/510729671"
 
 [tools.hk."platforms.linux-x64"]
-checksum = "sha256:20775cfb4e8065aa25e790d888856d4d62cc2e688725c010f8a5fc112aa759b5"
-url = "https://github.com/jdx/hk/releases/download/v1.54.1/hk-x86_64-unknown-linux-gnu.tar.gz"
-url_api = "https://api.github.com/repos/jdx/hk/releases/assets/505018180"
+checksum = "sha256:efd6ed276ae8a26cc95fcb8c83051d9a3fd05e124d38170c0f057a716e9de94d"
+url = "https://github.com/jdx/hk/releases/download/v1.55.0/hk-x86_64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/jdx/hk/releases/assets/510729679"
 
 [tools.hk."platforms.linux-x64-musl"]
-checksum = "sha256:a78ee242f310d329843b36e41766df9b45ef29609c7424a6d84244b278f8cb3d"
-url = "https://github.com/jdx/hk/releases/download/v1.54.1/hk-x86_64-unknown-linux-musl.tar.gz"
-url_api = "https://api.github.com/repos/jdx/hk/releases/assets/505018181"
+checksum = "sha256:f00e04f536bec16bbc8c7cf8696f834d6ad80ddbcc1e653e3110d12ee4de2b42"
+url = "https://github.com/jdx/hk/releases/download/v1.55.0/hk-x86_64-unknown-linux-musl.tar.gz"
+url_api = "https://api.github.com/repos/jdx/hk/releases/assets/510729680"
 
 [tools.hk."platforms.macos-arm64"]
-checksum = "sha256:8384262050e5f523c58af9e23cd92e2274e38cf95b4e72cf66f63545afa149b2"
-url = "https://github.com/jdx/hk/releases/download/v1.54.1/hk-aarch64-apple-darwin.tar.gz"
-url_api = "https://api.github.com/repos/jdx/hk/releases/assets/505018164"
+checksum = "sha256:a995ff68402bcf6c16ab054e4c45db592213bcd661c9b92003d4a62f2d56d4b1"
+url = "https://github.com/jdx/hk/releases/download/v1.55.0/hk-aarch64-apple-darwin.tar.gz"
+url_api = "https://api.github.com/repos/jdx/hk/releases/assets/510729670"
 
 [tools.hk."platforms.windows-x64"]
-checksum = "sha256:32c28a6ec024ddfd59482334f0225f6e6c5202fdb3a5fdc74f3c987a1fd08007"
-url = "https://github.com/jdx/hk/releases/download/v1.54.1/hk-x86_64-pc-windows-msvc.zip"
-url_api = "https://api.github.com/repos/jdx/hk/releases/assets/505018165"
+checksum = "sha256:402b3c9c5f9a5b3cb8ab6229d0f6d169b122fc3db1e39fc2fa53421a1aa24fc5"
+url = "https://github.com/jdx/hk/releases/download/v1.55.0/hk-x86_64-pc-windows-msvc.zip"
+url_api = "https://api.github.com/repos/jdx/hk/releases/assets/510729674"
 
 [[tools.node]]
 version = "26.7.0"
@@ -107,89 +107,89 @@ checksum = "sha256:d3bd72755141ed32bbcd841228ee81897c8a98d50dfa7dae2179399a0a7c9
 url = "https://nodejs.org/dist/v26.7.0/node-v26.7.0-win-x64.zip"
 
 [[tools.pnpm]]
-version = "11.21.0"
+version = "11.22.0"
 backend = "aqua:pnpm/pnpm"
 
 [tools.pnpm."platforms.linux-arm64"]
-checksum = "sha256:64eb219b008f7a4c176d81fbce919c20b0b7e093e815cbb669d46e681451f43b"
-url = "https://github.com/pnpm/pnpm/releases/download/v11.21.0/pnpm-linux-arm64.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/507585528"
+checksum = "sha256:f1426231f365bdfd46c15fa3d1211c3936ee2c4e557afd304f6c66dbf1b2a8bf"
+url = "https://github.com/pnpm/pnpm/releases/download/v11.22.0/pnpm-linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/515895951"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.linux-arm64-musl"]
-checksum = "sha256:43587a1f3d26ee009c640378ef377cac3531990579acf0f35646531b7832831d"
-url = "https://github.com/pnpm/pnpm/releases/download/v11.21.0/pnpm-linux-arm64-musl.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/507585511"
+checksum = "sha256:6e53557024be48e59ab8760f9117c0e5c0e0a37ab420f71f302d86216970d28f"
+url = "https://github.com/pnpm/pnpm/releases/download/v11.22.0/pnpm-linux-arm64-musl.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/515895950"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.linux-x64"]
-checksum = "sha256:aadc489ce4473c2af0fec06a5c19e113b5793d404eac49853c8153bf4b0d8263"
-url = "https://github.com/pnpm/pnpm/releases/download/v11.21.0/pnpm-linux-x64.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/507585503"
+checksum = "sha256:4c592fa410eb23b69691a9efb9bf21c87c15b3e9d88c6ec8acdd354a0eb8de71"
+url = "https://github.com/pnpm/pnpm/releases/download/v11.22.0/pnpm-linux-x64.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/515895948"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.linux-x64-musl"]
-checksum = "sha256:8cad0a4d20318c0445d992630ace51edc0853fd259573f50ee5d0216dce9b420"
-url = "https://github.com/pnpm/pnpm/releases/download/v11.21.0/pnpm-linux-x64-musl.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/507585524"
+checksum = "sha256:45425b06e747cbcaff4940d7b4a55e694645f15f9339dbf7f2601cfb21400545"
+url = "https://github.com/pnpm/pnpm/releases/download/v11.22.0/pnpm-linux-x64-musl.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/515895945"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.macos-arm64"]
-checksum = "sha256:860a96978a79ca5132bdc247375f94150a3c98edbecbee36e9f8e0c9e2f7f056"
-url = "https://github.com/pnpm/pnpm/releases/download/v11.21.0/pnpm-darwin-arm64.tar.gz"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/507585526"
+checksum = "sha256:2000dcc8f0718852c2806ba4dca1edaedf18a4a39264474d5a1c8fcee250adfd"
+url = "https://github.com/pnpm/pnpm/releases/download/v11.22.0/pnpm-darwin-arm64.tar.gz"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/515895947"
 provenance = "github-attestations"
 
 [tools.pnpm."platforms.windows-x64"]
-checksum = "sha256:6643043caa3b01c65c431039926a2af954326d5cefbdb4da7baceceb17f5051f"
-url = "https://github.com/pnpm/pnpm/releases/download/v11.21.0/pnpm-win32-x64.zip"
-url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/507585516"
+checksum = "sha256:1de83ad5100acfd2adb5c8bc6f8a428cee9ff4e365deff57c22bfc0cccaa4ddb"
+url = "https://github.com/pnpm/pnpm/releases/download/v11.22.0/pnpm-win32-x64.zip"
+url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/515895946"
 provenance = "github-attestations"
 
 [[tools.rumdl]]
-version = "0.2.53"
+version = "0.2.56"
 backend = "aqua:rvben/rumdl"
 
 [tools.rumdl."platforms.linux-arm64"]
-checksum = "sha256:6043c839497daa28b4a98983a28cb5b379e8f66a7bda6ee66994d06d58b3f61c"
-url = "https://github.com/rvben/rumdl/releases/download/v0.2.53/rumdl-v0.2.53-aarch64-unknown-linux-musl.tar.gz"
-url_api = "https://api.github.com/repos/rvben/rumdl/releases/assets/508363442"
+checksum = "sha256:a5e644bbc80c02d301d63b3441a20f6d2085f7d92e0cd5ba78bb6ed281c0a589"
+url = "https://github.com/rvben/rumdl/releases/download/v0.2.56/rumdl-v0.2.56-aarch64-unknown-linux-musl.tar.gz"
+url_api = "https://api.github.com/repos/rvben/rumdl/releases/assets/519203273"
 provenance = "github-attestations"
 
 [tools.rumdl."platforms.linux-arm64-musl"]
-checksum = "sha256:6043c839497daa28b4a98983a28cb5b379e8f66a7bda6ee66994d06d58b3f61c"
-url = "https://github.com/rvben/rumdl/releases/download/v0.2.53/rumdl-v0.2.53-aarch64-unknown-linux-musl.tar.gz"
-url_api = "https://api.github.com/repos/rvben/rumdl/releases/assets/508363442"
+checksum = "sha256:a5e644bbc80c02d301d63b3441a20f6d2085f7d92e0cd5ba78bb6ed281c0a589"
+url = "https://github.com/rvben/rumdl/releases/download/v0.2.56/rumdl-v0.2.56-aarch64-unknown-linux-musl.tar.gz"
+url_api = "https://api.github.com/repos/rvben/rumdl/releases/assets/519203273"
 provenance = "github-attestations"
 
 [tools.rumdl."platforms.linux-x64"]
-checksum = "sha256:5c85fc85f1fedf8f39ea7316b6fc090c2be112cc9d8997006e59e9ce2315aa11"
-url = "https://github.com/rvben/rumdl/releases/download/v0.2.53/rumdl-v0.2.53-x86_64-unknown-linux-musl.tar.gz"
-url_api = "https://api.github.com/repos/rvben/rumdl/releases/assets/508363440"
+checksum = "sha256:93d6709bbe9a47ef7cbcb341fc61511c7c87b965c6a8af207f8f3fd408893f85"
+url = "https://github.com/rvben/rumdl/releases/download/v0.2.56/rumdl-v0.2.56-x86_64-unknown-linux-musl.tar.gz"
+url_api = "https://api.github.com/repos/rvben/rumdl/releases/assets/519203270"
 provenance = "github-attestations"
 
 [tools.rumdl."platforms.linux-x64-musl"]
-checksum = "sha256:5c85fc85f1fedf8f39ea7316b6fc090c2be112cc9d8997006e59e9ce2315aa11"
-url = "https://github.com/rvben/rumdl/releases/download/v0.2.53/rumdl-v0.2.53-x86_64-unknown-linux-musl.tar.gz"
-url_api = "https://api.github.com/repos/rvben/rumdl/releases/assets/508363440"
+checksum = "sha256:93d6709bbe9a47ef7cbcb341fc61511c7c87b965c6a8af207f8f3fd408893f85"
+url = "https://github.com/rvben/rumdl/releases/download/v0.2.56/rumdl-v0.2.56-x86_64-unknown-linux-musl.tar.gz"
+url_api = "https://api.github.com/repos/rvben/rumdl/releases/assets/519203270"
 provenance = "github-attestations"
 
 [tools.rumdl."platforms.macos-arm64"]
-checksum = "sha256:bcda6474f0b625c9a6d11d6ff9ee627f1b7df5e61253fef708702c71a2394d68"
-url = "https://github.com/rvben/rumdl/releases/download/v0.2.53/rumdl-v0.2.53-aarch64-apple-darwin.tar.gz"
-url_api = "https://api.github.com/repos/rvben/rumdl/releases/assets/508363449"
+checksum = "sha256:11448582ee9b3259e1dd22c46e29f50061da1461b1938bc575d8f47f15d41a23"
+url = "https://github.com/rvben/rumdl/releases/download/v0.2.56/rumdl-v0.2.56-aarch64-apple-darwin.tar.gz"
+url_api = "https://api.github.com/repos/rvben/rumdl/releases/assets/519203269"
 provenance = "github-attestations"
 
 [tools.rumdl."platforms.macos-x64"]
-checksum = "sha256:139eac66cb17286c69a0da81d990cae2800519ed17abb9d94ad674d38ebaf942"
-url = "https://github.com/rvben/rumdl/releases/download/v0.2.53/rumdl-v0.2.53-x86_64-apple-darwin.tar.gz"
-url_api = "https://api.github.com/repos/rvben/rumdl/releases/assets/508363447"
+checksum = "sha256:9023102de7128764bf510e785687968012b5640c7d52c72f7d7c40ba7604e5fb"
+url = "https://github.com/rvben/rumdl/releases/download/v0.2.56/rumdl-v0.2.56-x86_64-apple-darwin.tar.gz"
+url_api = "https://api.github.com/repos/rvben/rumdl/releases/assets/519203260"
 provenance = "github-attestations"
 
 [tools.rumdl."platforms.windows-x64"]
-checksum = "sha256:a3ed95a30acb131c4d56c902bfa79129f72d2d02b4f386d84ae6b54c70917bba"
-url = "https://github.com/rvben/rumdl/releases/download/v0.2.53/rumdl-v0.2.53-x86_64-pc-windows-msvc.zip"
-url_api = "https://api.github.com/repos/rvben/rumdl/releases/assets/508363443"
+checksum = "sha256:bdf569bbfe1e29a7b7dd1e360ba61154fa851e3c745f2e984c5e9b11f3584c8e"
+url = "https://github.com/rvben/rumdl/releases/download/v0.2.56/rumdl-v0.2.56-x86_64-pc-windows-msvc.zip"
+url_api = "https://api.github.com/repos/rvben/rumdl/releases/assets/519203267"
 provenance = "github-attestations"
 
 [[tools.typos]]

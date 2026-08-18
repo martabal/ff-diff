@@ -52,6 +52,7 @@ const getVersionValue = (comment: string, regex: RegExp): number | undefined => 
 
 export const commonChangedValuesForKeys = [
   "browser.newtabpage.activity-stream.privacyInfo.url",
+  "browser.newtabpage.activity-stream.sectionsLearnMore.url",
   "browser.newtabpage.activity-stream.support.url",
   //beta
   "app.releaseNotesURL",

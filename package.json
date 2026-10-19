@@ -43,18 +43,18 @@
     "update:corepack": "corepack use pnpm@latest"
   },
   "dependencies": {
-    "selenium-webdriver": "4.49.0"
+    "selenium-webdriver": "4.51.0"
   },
   "devDependencies": {
-    "@types/node": "26.6.1",
+    "@types/node": "26.6.5",
     "@types/selenium-webdriver": "4.35.7",
-    "@vitest/coverage-v8": "5.0.1",
-    "oxfmt": "0.68.0",
-    "oxlint": "1.83.0",
-    "oxlint-tsgolint": "7.0.2002",
+    "@vitest/coverage-v8": "5.0.5",
+    "oxfmt": "0.73.0",
+    "oxlint": "1.88.0",
+    "oxlint-tsgolint": "7.0.2004",
     "typescript": "7.0.2",
-    "vite": "8.3.0",
-    "vitest": "5.0.1"
+    "vite": "8.3.4",
+    "vitest": "5.0.5"
   },
   "engines": {
     "node": ">=20.12.0 <21 || >=21.7.0 <22 || >=22.13.0 <23 || >=23.5.0"

@@ -1,0 +1,109 @@
+amends "package://github.com/jdx/hk/releases/download/v2.8.0/hk@2.8.0#/Config.pkl"
+
+local mise = new Step {
+  glob = List("mise.toml")
+  check = "mise fmt --check"
+  fix = "mise fmt"
+}
+
+local typos = new Step {
+  glob = List("mise.lock")
+  check = "typos ."
+  fix = "typos --force-exclude --write-changes"
+}
+
+local rumdl = new Step {
+  glob = List("**/*.md")
+  check = "rumdl check"
+  fix = "rumdl check --fix"
+}
+
+local oxlint = new Step {
+  glob = List("**/*.ts", "package.json", "pnpm-lock.yaml")
+  check = "pnpm run lint"
+  fix = "pnpm run lint:fix"
+  output_summary = "hide"
+}
+
+local oxfmt = new Step {
+  glob = List(
+    "**/*.js",
+    "**/*.ts",
+    "**/*.json",
+    "**/*.yaml",
+    "**/*.yml",
+    "**/*.toml",
+    "**/*.md",
+    "package.json",
+    "pnpm-lock.yaml"
+  )
+  check = "pnpm run format"
+  fix = "pnpm run format:fix"
+  output_summary = "hide"
+}
+
+local check_ts = new Step {
+  glob = List("**/*.ts", "package.json", "pnpm-lock.yaml")
+  check = "pnpm run check:typescript"
+  output_summary = "hide"
+}
+
+local tests = new Step {
+  glob = List("**/*.ts", "package.json", "pnpm-lock.yaml")
+  check = "pnpm run test:all"
+  output_summary = "hide"
+}
+
+local tests_e2e = new Step {
+  glob = List("**/*.ts", "package.json", "pnpm-lock.yaml")
+  check = "pnpm run test:all"
+  output_summary = "hide"
+}
+
+local actionlint = new Step {
+  glob = List(".github/workflows/*.yml", ".github/workflows/*.yaml")
+  check = "actionlint"
+  output_summary = "hide"
+}
+
+hooks {
+  ["pre-commit"] {
+    fix = true
+    stage = true
+    stash = "git"
+    steps {
+      ["mise"] = mise
+      ["typos"] = typos
+      ["rumdl"] = rumdl
+      ["oxlint"] = oxlint
+      ["oxfmt"] = oxfmt
+      ["check-ts"] = check_ts
+      ["tests"] = tests
+      ["tests-e2e"] = tests_e2e
+      ["actionlint"] = actionlint
+    }
+  }
+  ["fix"] {
+    fix = true
+    steps {
+      ["mise"] = mise
+      ["typos"] = typos
+      ["rumdl"] = rumdl
+      ["oxlint"] = oxlint
+      ["oxfmt"] = oxfmt
+    }
+  }
+  ["check"] {
+    steps {
+      ["mise"] = mise
+      ["typos"] = typos
+      ["rumdl"] = rumdl
+      ["oxlint"] = oxlint
+      ["oxfmt"] = oxfmt
+      ["check-ts"] = check_ts
+      ["tests-e2e"] = tests_e2e
+      ["tests"] = tests
+      ["actionlint"] = actionlint
+    }
+  }
+}

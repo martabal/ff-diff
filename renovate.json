@@ -1,0 +1,34 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "enabledManagers": [
+    "github-actions",
+    "npm",
+    "mise"
+  ],
+  "schedule": [
+    "every day"
+  ],
+  "packageRules": [
+    {
+      "matchManagers": [
+        "github-actions"
+      ],
+      "groupName": "ci-dependencies"
+    },
+    {
+      "matchManagers": [
+        "npm"
+      ],
+      "groupName": "dev-dependencies"
+    },
+    {
+      "matchManagers": [
+        "mise"
+      ],
+      "groupName": "tools-dependencies"
+    }
+  ]
+}

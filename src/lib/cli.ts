@@ -5,21 +5,21 @@ const argumentWithoutValue = (argument: string) => {
   exit(`Error: Argument "${argument}" is provided but has no value.`);
 };
 
-export const getArgumentValue = (argument: string): undefined | string => {
+export const getArgumentValue = (argument: string): string | undefined => {
   const args = process.argv;
-  const versionIndex = args.indexOf(argument);
-  if (versionIndex + 1 >= args.length) {
+  const index = args.indexOf(argument);
+
+  if (index === -1) {
+    return undefined;
+  }
+
+  const value = args[index + 1];
+
+  if (value === undefined || value.startsWith("--")) {
     argumentWithoutValue(argument);
   }
-  let versionValue = undefined;
-  if (versionIndex !== -1 && args.length > versionIndex + 1) {
-    versionValue = args[versionIndex + 1];
-    if (versionValue.startsWith("--")) {
-      argumentWithoutValue(argument);
-    }
-    return versionValue;
-  }
-  return versionValue;
+
+  return value;
 };
 
 export const getArgumentValues = (argument: string): string[] => {

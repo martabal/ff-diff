@@ -1,9 +1,9 @@
 [tools]
 actionlint = "1.7.12"
-hk = "2.12.0"
-node = "26.13.0"
-pnpm = "12.18.0"
-rumdl = "0.3.3"
+hk = "2.13.0"
+node = "26.13.1"
+pnpm = "12.21.0"
+rumdl = "v0.3.5"
 shellcheck = "0.11.0"
 typos = "1.52.2"
 
